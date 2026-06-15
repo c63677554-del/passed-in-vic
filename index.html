@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passed In — Melbourne auction map</title>
+  <meta name="description" content="Residential properties that passed in at auction across Melbourne and Victoria, plotted on a map." />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="brand"><span class="pin">&#9679;</span>&nbsp;Passed In &middot; Melbourne</div>
+      <div class="toggle" role="tablist">
+        <button id="toList" class="on" type="button">List</button>
+        <button id="toMap" type="button">Map</button>
+      </div>
+      <div class="spacer"></div>
+      <span id="count" class="count"></span>
+      <select id="week" aria-label="Auction week"></select>
+    </header>
+
+    <div class="body">
+      <aside id="list" class="list" aria-label="Passed-in properties in view"></aside>
+      <div class="map">
+        <div id="map" role="application" aria-label="Map of properties that passed in at auction"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

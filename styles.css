@@ -1,0 +1,75 @@
+:root {
+  --red: #e4002b;            /* listing-portal red accent */
+  --red-dark: #b80022;
+  --ink: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --bg: #f8fafc;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+#app { display: grid; grid-template-rows: auto 1fr; height: 100%; }
+
+/* ---------- Header ---------- */
+.header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 16px; background: #fff; border-bottom: 1px solid var(--line); z-index: 1100;
+}
+.brand { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 16px; color: var(--ink); white-space: nowrap; }
+.brand .pin { color: var(--red); }
+.header .spacer { flex: 1; }
+.header select {
+  font: inherit; font-size: 14px; border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 10px; background: #fff; color: var(--ink); cursor: pointer;
+}
+.count { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.count b { color: var(--ink); }
+
+/* ---------- Body: list | map ---------- */
+.body { position: relative; min-height: 0; display: grid; grid-template-columns: minmax(340px, 390px) 1fr; }
+.list { overflow-y: auto; background: var(--bg); border-right: 1px solid var(--line); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.map { position: relative; }
+#map { position: absolute; inset: 0; background: #e8eef2; }
+
+/* ---------- Property card ---------- */
+.card {
+  background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  cursor: pointer; transition: box-shadow .15s, border-color .15s; scroll-margin: 10px;
+}
+.card:hover, .card.hl { box-shadow: 0 6px 20px rgba(0,0,0,.10); border-color: #f6b8c4; }
+.card.sel { border-color: var(--red); box-shadow: 0 0 0 2px rgba(228,0,43,.18); }
+.badge {
+  display: inline-block; background: #fde7ec; color: var(--red); font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .02em;
+}
+.card .addr { font-weight: 700; color: var(--ink); margin-top: 8px; font-size: 15px; line-height: 1.25; }
+.card .sub { color: var(--muted); font-size: 13px; margin-top: 1px; }
+.card .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.chip { background: #f3f4f6; color: #374151; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; }
+.card .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.card .search { color: var(--red); font-weight: 700; text-decoration: none; font-size: 12px; white-space: nowrap; }
+.empty { color: var(--muted); font-size: 14px; text-align: center; padding: 40px 16px; line-height: 1.5; }
+
+/* ---------- Leaflet popup ---------- */
+.leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,.18); }
+.leaflet-popup-content { margin: 12px 14px; width: 232px !important; font-family: inherit; }
+.pp .b { font-weight: 700; color: var(--ink); font-size: 15px; line-height: 1.25; }
+.pp .s { color: var(--muted); font-size: 12px; margin-top: 1px; }
+.pp .m { margin-top: 8px; font-size: 12px; color: #374151; line-height: 1.5; }
+.pp a { display: block; text-align: center; margin-top: 10px; background: var(--red); color: #fff; padding: 8px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 13px; }
+.pp a:hover { background: var(--red-dark); }
+
+/* ---------- Mobile: toggle map/list ---------- */
+.toggle { display: none; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.toggle button { border: 0; background: #fff; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.toggle button.on { background: var(--red); color: #fff; }
+@media (max-width: 900px) {
+  .body { grid-template-columns: 1fr; }
+  .list, .map { grid-column: 1; grid-row: 1; }
+  .map { display: none; }
+  #app.show-map .map { display: block; }
+  #app.show-map .list { display: none; }
+  .toggle { display: inline-flex; }
+  .brand { font-size: 14px; }
+}
