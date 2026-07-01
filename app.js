@@ -14,6 +14,7 @@ function weekLabel(iso) {
 const isVendor = (m) => /vendor/i.test(m || "");
 const resultChip = (m) => (isVendor(m) ? "Vendor bid" : "At auction");
 const fmtPrice = (n) => (n == null ? null : n >= 1e6 ? "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m" : "$" + Math.round(n / 1e3) + "k");
+const fmtGuide = (p) => (p.listLow == null ? null : p.listHigh > p.listLow ? fmtPrice(p.listLow) + " – " + fmtPrice(p.listHigh) : fmtPrice(p.listLow));
 const subline = (p) => [p.suburb, "VIC", p.postcode].filter(Boolean).join(" ");
 const googleUrl = (p) =>
   "https://www.google.com/search?q=" + encodeURIComponent([p.address, p.suburb, "VIC", p.postcode].filter(Boolean).join(" "));
@@ -45,7 +46,7 @@ const TYPES = ["House", "Townhouse", "Apartment", "Unit"];
 let activeTypes = new Set(); // empty = show every type
 let maxPrice = null; // null = any; else show only est. price <= maxPrice
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
-const priceOk = (p) => maxPrice == null || (p.priceEst != null && p.priceEst <= maxPrice);
+const priceOk = (p) => maxPrice == null || (p.listLow != null && p.listLow <= maxPrice);
 const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p)); // week + type + price
 function visible() {
   const sz = map.getSize();
@@ -63,7 +64,7 @@ function markerPopup(p) {
     <span class="badge">Passed In</span>
     <div class="b" style="margin-top:6px">${p.address}</div>
     <div class="s">${subline(p)}</div>
-    <div class="m">${line}${p.priceEst != null ? "<br>Est. " + fmtPrice(p.priceEst) + " <span style='color:#6b7280'>(suburb median)</span>" : ""}${sub ? "<br>" + sub : ""}</div>
+    <div class="m">${line}${p.listLow != null ? "<br><b>" + fmtGuide(p) + "</b> <span style='color:#6b7280'>(price guide)</span>" : "<br><span style='color:#6b7280'>Contact agent for price</span>"}${sub ? "<br>" + sub : ""}</div>
     <a href="${googleUrl(p)}" target="_blank" rel="noopener noreferrer">Search Property</a>
   </div>`;
 }
@@ -84,7 +85,7 @@ function cardHTML(p) {
     <span class="badge">Passed In</span>
     <div class="addr">${p.address}</div>
     <div class="sub">${subline(p)}</div>
-    ${p.priceEst != null ? `<div class="price">Est. ${fmtPrice(p.priceEst)} <span class="est">suburb median</span></div>` : ""}
+    <div class="price">${p.listLow != null ? `${fmtGuide(p)} <span class="est">price guide</span>` : `<span class="ca">Contact agent</span>`}</div>
     <div class="meta">
       ${p.type ? `<span class="chip">${p.type}</span>` : ""}
       ${p.beds != null ? `<span class="chip">${p.beds} bed</span>` : ""}
