@@ -1,5 +1,6 @@
-// REAL passed-in results from REIV; this week's homes carry the agent price guide (soho.com.au).
-// 228 properties; 15 with a listed price; weeks: 2026-06-27, 2026-06-13.
+// REAL passed-in results from REIV (reiv.com.au) with current agent price guides (soho.com.au).
+// 228 properties; 60 with a price guide; weeks: 2026-06-27, 2026-06-13.
+// Regenerate: node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js
 const PASSED_IN = [
   {
     "address": "6 Iramoo Ct",
@@ -37,7 +38,7 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 700000,
-    "listHigh": 750000
+    "listHigh": 700000
   },
   {
     "address": "2 Blanche St",
@@ -112,8 +113,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 2200000,
-    "listHigh": 2400000
+    "listLow": 2390000,
+    "listHigh": 2390000
   },
   {
     "address": "1 Lacy St",
@@ -207,8 +208,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 1400000,
-    "listHigh": 1540000
+    "listLow": 1390000,
+    "listHigh": 1390000
   },
   {
     "address": "36 Sylvander St",
@@ -473,8 +474,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 840000,
-    "listHigh": 920000
+    "listLow": 895000,
+    "listHigh": 895000
   },
   {
     "address": "2 Lauder Dr",
@@ -606,8 +607,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1,
+    "listHigh": 1
   },
   {
     "address": "15 Kerr Cr",
@@ -625,8 +626,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 2450000,
-    "listHigh": 2695000
+    "listLow": null,
+    "listHigh": null
   },
   {
     "address": "7/16 Shepparson Av",
@@ -701,8 +702,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "27/06/2026",
     "week": "2026-06-27",
-    "listLow": 1000000,
-    "listHigh": 1100000
+    "listLow": 1095000,
+    "listHigh": 1095000
   },
   {
     "address": "31A&31B Mawarra Cr",
@@ -739,8 +740,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 930000,
-    "listHigh": 1020000
+    "listLow": 1019000,
+    "listHigh": 1019000
   },
   {
     "address": "67 Diamond Pde",
@@ -777,8 +778,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 757000,
+    "listHigh": 757000
   },
   {
     "address": "42 Higinbotham St",
@@ -815,8 +816,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 1250000,
-    "listHigh": 1250000
+    "listLow": null,
+    "listHigh": null
   },
   {
     "address": "11 Sparkford Rd",
@@ -834,8 +835,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "23/06/2026",
     "week": "2026-06-27",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 667000,
+    "listHigh": 667000
   },
   {
     "address": "26 Kernan Ct",
@@ -948,8 +949,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 740000,
-    "listHigh": 760000
+    "listLow": 739000,
+    "listHigh": 739000
   },
   {
     "address": "6/29 Ardsley Cirt",
@@ -1005,8 +1006,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 700000,
+    "listHigh": 700000
   },
   {
     "address": "3 Christine Ct",
@@ -1024,8 +1025,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 1475000,
-    "listHigh": 1575000
+    "listLow": 1449000,
+    "listHigh": 1449000
   },
   {
     "address": "4 Glenfern Av",
@@ -1062,7 +1063,7 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 1695000,
+    "listLow": 1760000,
     "listHigh": 1850000
   },
   {
@@ -1138,8 +1139,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 2200000,
+    "listHigh": 2400000
   },
   {
     "address": "18 Clifton St",
@@ -1176,8 +1177,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 2450000,
+    "listHigh": 2450000
   },
   {
     "address": "1 Wynyard Cr",
@@ -1290,8 +1291,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "10/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1059000,
+    "listHigh": 1059000
   },
   {
     "address": "2/90 Deakin St",
@@ -1385,8 +1386,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 570000,
+    "listHigh": 595000
   },
   {
     "address": "3 Lusitano Rd",
@@ -1404,8 +1405,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 460000,
+    "listHigh": 460000
   },
   {
     "address": "5/13-15 Barcelona St",
@@ -1442,8 +1443,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1,
+    "listHigh": 1
   },
   {
     "address": "4/21 Tyne St",
@@ -1499,8 +1500,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 2295000,
+    "listHigh": 2295000
   },
   {
     "address": "16 Laura St",
@@ -1518,8 +1519,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1085000,
+    "listHigh": 1085000
   },
   {
     "address": "192 Thompsons Rd",
@@ -1632,8 +1633,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 749000,
+    "listHigh": 749000
   },
   {
     "address": "6/7 Toolambool Rd",
@@ -1651,8 +1652,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 745000,
+    "listHigh": 745000
   },
   {
     "address": "146 Lyrebird Dr",
@@ -1727,8 +1728,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "10/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 255000,
+    "listHigh": 255000
   },
   {
     "address": "2/25 Booker St",
@@ -1746,8 +1747,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1000000,
+    "listHigh": 1100000
   },
   {
     "address": "2 Rosella Av",
@@ -1898,8 +1899,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 697000,
+    "listHigh": 697000
   },
   {
     "address": "21 Wattletree St",
@@ -1917,8 +1918,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 780,
+    "listHigh": 780
   },
   {
     "address": "40 Lithic Rd",
@@ -1955,8 +1956,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 676000,
+    "listHigh": 676000
   },
   {
     "address": "60 Bonnyview Rd",
@@ -1974,8 +1975,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 789000,
+    "listHigh": 789000
   },
   {
     "address": "92 Golf View Dr",
@@ -2012,8 +2013,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 950000,
+    "listHigh": 950000
   },
   {
     "address": "7 Bridie St",
@@ -2164,8 +2165,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 720000,
+    "listHigh": 720000
   },
   {
     "address": "12A Kendall St",
@@ -2468,8 +2469,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 2350000,
+    "listHigh": 2350000
   },
   {
     "address": "20 Bell St",
@@ -2582,8 +2583,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 550000,
+    "listHigh": 600000
   },
   {
     "address": "6A Rose St",
@@ -2848,8 +2849,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1800000,
+    "listHigh": 1900000
   },
   {
     "address": "3 Windsor St",
@@ -2867,8 +2868,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1819000,
+    "listHigh": 1819000
   },
   {
     "address": "4/31-35 Foley St",
@@ -2924,8 +2925,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 2300000,
+    "listHigh": 2500000
   },
   {
     "address": "7 Goldhurst St",
@@ -2962,8 +2963,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1500000,
+    "listHigh": 1500000
   },
   {
     "address": "4 Harvey St",
@@ -2981,8 +2982,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 3695000,
+    "listHigh": 3695000
   },
   {
     "address": "70 Argyll St",
@@ -3038,8 +3039,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 515000,
+    "listHigh": 535000
   },
   {
     "address": "8B Mckinnon Rd",
@@ -3095,8 +3096,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 489000,
+    "listHigh": 509000
   },
   {
     "address": "2/223 Page St",
@@ -3133,8 +3134,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 2650000,
+    "listHigh": 2650000
   },
   {
     "address": "2 Irene Cr",
@@ -3475,8 +3476,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 840000,
+    "listHigh": 840000
   },
   {
     "address": "118 Melville Rd",
@@ -3646,8 +3647,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 735000,
+    "listHigh": 735000
   },
   {
     "address": "1 Arlington St",
@@ -3741,8 +3742,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1350000,
+    "listHigh": 1350000
   },
   {
     "address": "69 Moore St",
@@ -3836,8 +3837,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 530000,
+    "listHigh": 530000
   },
   {
     "address": "11/5 Herbert St",
@@ -3855,8 +3856,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 711000,
+    "listHigh": 711000
   },
   {
     "address": "104 Hilma St",
@@ -3874,8 +3875,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 899000,
+    "listHigh": 899000
   },
   {
     "address": "4/16 Bona Vista Av",
@@ -3912,8 +3913,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 950000,
+    "listHigh": 980000
   },
   {
     "address": "10 Pastoral Pl",
@@ -3931,8 +3932,8 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 749000,
+    "listHigh": 789000
   },
   {
     "address": "3 Boberrit Wynd",
@@ -4083,8 +4084,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1055000,
+    "listHigh": 1055000
   },
   {
     "address": "43 Ethel St",
@@ -4121,8 +4122,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 639000,
+    "listHigh": 649000
   },
   {
     "address": "5 Sissinghurst St",
@@ -4140,8 +4141,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 530000,
+    "listHigh": 530000
   },
   {
     "address": "240 Hawthorn Rd",
@@ -4159,8 +4160,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1380000,
+    "listHigh": 1480000
   },
   {
     "address": "19 Amersham Dr",
@@ -4197,8 +4198,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 800000,
+    "listHigh": 800000
   },
   {
     "address": "1/499 Spencer St",
@@ -4273,8 +4274,8 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1750000,
+    "listHigh": 1850000
   },
   {
     "address": "8/17-19 The Avenue",
@@ -4330,7 +4331,7 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": null,
-    "listHigh": null
+    "listLow": 1125000,
+    "listHigh": 1125000
   }
 ];
