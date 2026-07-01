@@ -81,7 +81,7 @@ function renderMarkers() {
 
 // ---------- list ----------
 function cardHTML(p) {
-  return `<div class="card" data-id="${p.id}">
+  return `<div class="card" data-id="${p.id}" role="button" tabindex="0" aria-label="Passed in: ${p.address}, ${p.suburb}">
     <span class="badge">Passed In</span>
     <div class="addr">${p.address}</div>
     <div class="sub">${subline(p)}</div>
@@ -191,6 +191,11 @@ function init() {
   list.addEventListener("click", (e) => { const c = e.target.closest(".card"); if (c) select(c.dataset.id, "list"); });
   list.addEventListener("mouseover", (e) => { const c = e.target.closest(".card"); if (c && byId[c.dataset.id] && c.dataset.id !== selectedId) byId[c.dataset.id].setStyle({ radius: 8.5 }); });
   list.addEventListener("mouseout", (e) => { const c = e.target.closest(".card"); if (c && byId[c.dataset.id] && c.dataset.id !== selectedId) byId[c.dataset.id].setStyle(dotStyle(false)); });
+  list.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { const c = e.target.closest(".card"); if (c) { e.preventDefault(); select(c.dataset.id, "list"); } } });
+
+  // data freshness indicator (from DATA_GENERATED in data.js)
+  const fr = el("fresh");
+  if (fr && typeof DATA_GENERATED !== "undefined") fr.textContent = "Updated " + new Date(DATA_GENERATED + "T00:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
 
   map.on("moveend", updateList);
   setWeek(WEEKS.length ? WEEKS[0].value : null);

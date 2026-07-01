@@ -36,6 +36,7 @@ async function pool(items, n, fn) { let i = 0; await Promise.all(Array.from({ le
   const weeks = [...new Set(data.map(d => d.week))].sort().reverse();
   const priceCount = data.filter(d => d.listLow != null).length;
   const hdr = '// REAL passed-in results from REIV (reiv.com.au) with current agent price guides (soho.com.au).\n// ' + data.length + ' properties; ' + priceCount + ' with a price guide; weeks: ' + weeks.join(', ') + '.\n// Regenerate: node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js\n';
-  fs.writeFileSync(DATA, hdr + 'const PASSED_IN = ' + JSON.stringify(data, null, 2) + ';\n');
+  const p2 = n => String(n).padStart(2, '0'); const nd = new Date(); const gen = nd.getFullYear() + '-' + p2(nd.getMonth() + 1) + '-' + p2(nd.getDate());
+  fs.writeFileSync(DATA, hdr + 'const DATA_GENERATED = ' + JSON.stringify(gen) + ';\n' + 'const PASSED_IN = ' + JSON.stringify(data, null, 2) + ';\n');
   console.log('WROTE data.js:', priceCount, 'priced across', weeks.length, 'weeks');
 })();

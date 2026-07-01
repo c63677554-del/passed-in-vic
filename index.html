@@ -4,7 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Passed In — Melbourne auction map</title>
-  <meta name="description" content="Residential properties that passed in at auction across Melbourne and Victoria, plotted on a map." />
+  <meta name="description" content="A live map and list of residential properties that passed in at auction across Melbourne and Victoria — refreshed weekly from REIV, with agent price guides." />
+  <meta name="theme-color" content="#e4002b" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Passed In · Melbourne — auction pass-in map" />
+  <meta property="og:description" content="Every residential property that passed in at auction across Melbourne/VIC, on a map with price guides. Refreshed weekly." />
+  <meta property="og:url" content="https://c63677554-del.github.io/passed-in-vic/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Passed In · Melbourne — auction pass-in map" />
+  <meta name="twitter:description" content="Every residential property that passed in at auction across Melbourne/VIC, on a map with price guides." />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
@@ -17,7 +25,7 @@
         <button id="toMap" type="button">Map</button>
       </div>
       <div class="spacer"></div>
-      <span id="count" class="count"></span>
+      <span id="count" class="count" aria-live="polite"></span>
       <select id="week" aria-label="Auction week"></select>
     </header>
 
@@ -25,7 +33,7 @@
       <span class="filterlabel">Type</span>
       <div id="typeFilter" class="types" role="group" aria-label="Filter by property type"></div>
       <span class="filterlabel">Max price</span>
-      <select id="maxPrice" class="pricesel" aria-label="Maximum estimated price"></select>
+      <select id="maxPrice" class="pricesel" aria-label="Maximum price"></select>
     </div>
 
     <div class="body">
@@ -34,6 +42,14 @@
         <div id="map" role="application" aria-label="Map of properties that passed in at auction"></div>
       </div>
     </div>
+
+    <footer class="foot">
+      <b id="fresh">Updated —</b>
+      <span class="sep">·</span>
+      <span>Data <a href="https://reiv.com.au" target="_blank" rel="noopener noreferrer">REIV</a>, guides <a href="https://soho.com.au" target="_blank" rel="noopener noreferrer">soho</a>, map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
+      <span class="foot-spacer"></span>
+      <span class="disc">Price guides are indicative &amp; change — confirm with the agent. Not financial advice.</span>
+    </footer>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

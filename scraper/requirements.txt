@@ -1,7 +1,0 @@
-# Scraper dependencies (Step 2). Install with:  pip install -r requirements.txt
-playwright>=1.45,<2          # headless browser for JS-rendered results pages
-beautifulsoup4>=4.12,<5      # HTML parsing
-lxml>=5.2                    # fast parser backend for BeautifulSoup
-supabase>=2.7,<3             # supabase-py client (Postgres REST)
-requests>=2.32               # geocoding HTTP calls
-python-dotenv>=1.0           # load .env into os.environ

@@ -1,6 +1,7 @@
 // REAL passed-in results from REIV (reiv.com.au) with current agent price guides (soho.com.au).
 // 228 properties; 60 with a price guide; weeks: 2026-06-27, 2026-06-13.
 // Regenerate: node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js
+const DATA_GENERATED = "2026-07-01";
 const PASSED_IN = [
   {
     "address": "6 Iramoo Ct",

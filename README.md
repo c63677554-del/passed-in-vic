@@ -1,56 +1,64 @@
 # Passed In · Melbourne 🏠📍
 
 A live **map + list** of residential properties that **passed in** at auction across
-Melbourne and Victoria — rebuilt automatically every week from public REIV results.
+Melbourne and Victoria — scraped weekly from public REIV results, with the agent's
+current price guide attached where one is published.
 
-**Live:** https://c63677554-del.github.io/passed-in-vic/ &nbsp;·&nbsp; refreshes every Sunday night.
+**Live:** https://c63677554-del.github.io/passed-in-vic/
 
 ## What it does
-- Scrapes **every** Victorian suburb's auction results from REIV, keeps only the
-  **"Passed in"** outcomes (at auction / vendor bid), geocodes them, and plots them.
-- REA/Domain-style **two-pane UI**: a scrollable property list beside the map that
-  re-filters to whatever is in the current viewport as you pan and zoom.
-- Click a dot or a card for details (result type, auction date, agent) and a one-click
-  Google search of the address.
+- Scrapes **every** Victorian suburb's auction table from REIV and keeps only the
+  **"Passed in"** outcomes (at auction / vendor bid).
+- Geocodes each address and attaches the **agent price guide** (from soho.com.au) where the
+  listing publishes one; otherwise the tile shows **"Contact agent."**
+- REA/Domain-style **two-pane UI**: a scrollable list beside the map that re-filters to the
+  current viewport as you pan/zoom, plus **Type** and **Max price** filters and a week selector.
+- Click a dot or card for details + a one-click Google search of the address.
 
 ## How it works
 ```
-REIV sitemap (≈2,955 suburb pages)
-  → scripts/scrape-reiv.js   fetch each suburb table, keep Method = "Passed in *"
-  → geocode                  Nominatim by default; Mapbox/Google via env
-  → data.js                  static data file
-  → index.html + app.js + styles.css   (Leaflet + OpenStreetMap, no API key)
-  → GitHub Pages             static hosting
+REIV sitemap (~2,955 suburb pages)
+  -> scripts/scrape-reiv.js    fetch each suburb table, keep Method = "Passed in *", geocode
+  -> scripts/enrich-prices.js  attach agent price guide from soho.com.au (listLow/listHigh)
+  -> data.js                   static data (const PASSED_IN + DATA_GENERATED)
+  -> index.html + app.js + styles.css   Leaflet + OpenStreetMap, no API key
+  -> GitHub Pages              static hosting
 ```
-A GitHub Action re-runs the scrape every Sunday and commits `data.js`; Pages redeploys.
+A weekly GitHub Action runs the whole pipeline and commits `data.js`; Pages redeploys.
 
 ## Run locally
 ```bash
-node server.js                       # serves the static site at http://localhost:4173
-node scripts/scrape-reiv.js --days=9 # refresh data.js from REIV (writes ../data.js)
+npm run serve       # static site at http://localhost:4173
+npm run build:data  # scrape REIV + enrich prices -> data.js  (a few minutes)
+# or individually:  npm run scrape   /   npm run enrich
 ```
 
-## Weekly automation
-[`.github/workflows/scrape-and-deploy.yml`](.github/workflows/scrape-and-deploy.yml)
-runs the scrape every Sunday 11:00 UTC (~9pm Melbourne) and commits the refreshed
-`data.js`, which redeploys the site. Trigger it manually from the Actions tab anytime.
+## Automation
+`.github/workflows/scrape-and-deploy.yml` runs every Sunday ~9pm Melbourne:
+scrape -> enrich -> commit -> Pages redeploys. Trigger manually from the Actions tab.
+_(Pushing the workflow file needs a `workflow`-scoped token: `gh auth refresh -h github.com -s workflow`.)_
 
-## Production geocoding
-The default geocoder is **OSM Nominatim**, cached in `scripts/geocache.json`. It's fine
-for low volume but **not licensed for bulk/automated use**. For the live weekly service,
-set a repo Variable `GEOCODER=mapbox` (or `google`) and the matching secret
-(`MAPBOX_TOKEN` / `GOOGLE_MAPS_API_KEY`) — the scraper picks it up automatically.
+## Data & honest limitations
+- **Coverage:** REIV's public per-suburb pages only surface the **last couple of weekends**
+  of results (older ones roll off), so the app typically shows ~2 recent weeks.
+- **Prices are guides, not sale prices.** Passed-in homes have no sale price; the figure is the
+  agent's *indicative* guide (Statement of Information range) from the live listing, and it
+  changes. Many listings are **"Contact agent."** Always confirm with the agent. Not financial advice.
+- **Geocoding:** OSM Nominatim by default (cached, rate-limited). For heavier/automated use set
+  `GEOCODER=mapbox|google` + the matching secret.
 
-## Data & responsible use
-Results come from REIV's public per-suburb pages (`robots.txt: Allow: /`). Scrape gently
-(this tool fetches with limited concurrency and caches geocodes), attribute REIV, and
-review their terms before any commercial use.
+## Responsible use
+Data comes from REIV (`robots.txt: Allow: /`) and soho.com.au. The tools fetch with limited
+concurrency and cache geocodes. Review each site's terms before any commercial use; the app
+footer attributes REIV, soho, and OpenStreetMap.
 
 ## Repo layout
 | Path | What |
 | --- | --- |
-| `index.html`, `app.js`, `styles.css`, `data.js` | the static map + list app |
+| `index.html`, `app.js`, `styles.css` | the static map + list app |
+| `data.js` | generated data (`PASSED_IN`, `DATA_GENERATED`) |
+| `scripts/scrape-reiv.js` | REIV passed-in scraper (-> data.js) |
+| `scripts/enrich-prices.js` | attaches agent price guides from soho |
+| `scripts/geocache.json` | address -> lat/lng cache |
 | `server.js` | tiny zero-dependency local static server |
-| `scripts/scrape-reiv.js` | the weekly REIV passed-in scraper |
-| `.github/workflows/scrape-and-deploy.yml` | weekly scrape + redeploy |
-| `web/`, `scraper/`, `supabase/` | earlier Next.js + Supabase + Python prototype (optional) |
+| `.github/workflows/scrape-and-deploy.yml` | weekly scrape + enrich + redeploy |

@@ -1,0 +1,15 @@
+{
+  "name": "passed-in-vic",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Live map + list of residential properties that passed in at auction across Melbourne/VIC, refreshed weekly from REIV with agent price guides.",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "serve": "node server.js",
+    "scrape": "node scripts/scrape-reiv.js --days=30",
+    "enrich": "node scripts/enrich-prices.js",
+    "build:data": "node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js"
+  }
+}
