@@ -79,8 +79,17 @@ async function geocode(q) {
     if (!g) continue;
     out.push({ address: p.address, suburb: p.suburb, postcode: p.postcode, lat: g.lat, lng: g.lng, type: p.type, beds: p.beds, baths: null, cars: null, price: null, vendor: null, agency: p.agency, method: p.method, saleDate: p.saleDate, week: weekSaturday(p.saleDate) });
   }
-  const weeks = [...new Set(out.map(o => o.week))].sort().reverse();
-  const hdr = '// REAL passed-in auction results scraped from REIV per-suburb pages (reiv.com.au),\n// geocoded via ' + GEOCODER + ' (cached). ' + out.length + ' properties; weeks: ' + weeks.join(', ') + '.\n// Regenerate: node scripts/scrape-reiv.js --days=' + DAYS + '\n';
-  fs.writeFileSync(path.join(ROOT, 'data.js'), hdr + 'const PASSED_IN = ' + JSON.stringify(out, null, 2) + ';\n');
-  console.log('WROTE data.js:', out.length, 'across', weeks.length, 'week(s):', weeks.join(', '));
+  // Accumulate: merge this run into any existing data.js so the week dropdown
+  // grows over time (dedup by address|suburb|week; keeps all past weeks).
+  const dataPath = path.join(ROOT, 'data.js');
+  let existing = [];
+  try { const txt = fs.readFileSync(dataPath, 'utf8'); const a = txt.indexOf('['), b = txt.lastIndexOf(']'); if (a >= 0 && b > a) existing = JSON.parse(txt.slice(a, b + 1)); } catch {}
+  const key = p => (p.address + '|' + p.suburb + '|' + p.week).toLowerCase();
+  const merged = existing.slice(); const seenKeys = new Set(existing.map(key));
+  for (const p of out) { const k = key(p); if (!seenKeys.has(k)) { seenKeys.add(k); merged.push(p); } }
+  merged.sort((a, b) => (b.week || '').localeCompare(a.week || '') || (a.suburb || '').localeCompare(b.suburb || '') || a.address.localeCompare(b.address));
+  const weeks = [...new Set(merged.map(o => o.week))].sort().reverse();
+  const hdr = '// REAL passed-in auction results scraped from REIV per-suburb pages (reiv.com.au),\n// geocoded via ' + GEOCODER + ' (cached). Accumulates weekly. ' + merged.length + ' properties across ' + weeks.length + ' week(s): ' + weeks.join(', ') + '.\n// Regenerate: node scripts/scrape-reiv.js --days=' + DAYS + '\n';
+  fs.writeFileSync(dataPath, hdr + 'const PASSED_IN = ' + JSON.stringify(merged, null, 2) + ';\n');
+  console.log('WROTE data.js:', merged.length, 'total across', weeks.length, 'week(s) (+' + (merged.length - existing.length) + ' new)');
 })();

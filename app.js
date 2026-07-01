@@ -40,11 +40,15 @@ function addBasemap() {
 
 // ---------- data slices ----------
 const forWeek = () => PASSED_IN.filter((p) => p.week === week && p.lat != null && p.lng != null);
+const TYPES = ["House", "Townhouse", "Apartment", "Unit"];
+let activeTypes = new Set(); // empty = show every type
+const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
+const forView = () => forWeek().filter(typeOk); // current week + active type filter
 function visible() {
   const sz = map.getSize();
-  if (!sz || sz.x < 10 || sz.y < 10) return forWeek(); // map hidden (mobile list view) -> show all
+  if (!sz || sz.x < 10 || sz.y < 10) return forView(); // map hidden (mobile list view) -> show all in view set
   const b = map.getBounds();
-  return forWeek().filter((p) => b.contains([p.lat, p.lng]));
+  return forView().filter((p) => b.contains([p.lat, p.lng]));
 }
 
 // ---------- markers ----------
@@ -62,7 +66,7 @@ function markerPopup(p) {
 }
 function renderMarkers() {
   layer.clearLayers(); byId = {};
-  forWeek().forEach((p) => {
+  forView().forEach((p) => {
     const m = L.circleMarker([p.lat, p.lng], dotStyle(false)).bindPopup(markerPopup(p), { maxWidth: 262 });
     m.on("click", () => select(p.id, "map"));
     m.on("mouseover", () => { if (p.id !== selectedId) m.setStyle({ radius: 8.5 }); const c = cardEl(p.id); if (c) c.classList.add("hl"); });
@@ -90,7 +94,7 @@ function cardHTML(p) {
 }
 function updateList() {
   const vis = visible().sort((a, b) => (a.suburb || "").localeCompare(b.suburb || "") || a.address.localeCompare(b.address));
-  const total = forWeek().length;
+  const total = forView().length;
   el("count").innerHTML = `<b>${vis.length}</b> passed in${vis.length !== total ? " in this area" : ""}`;
   el("list").innerHTML = vis.length
     ? vis.map(cardHTML).join("")
@@ -129,12 +133,38 @@ function showMap() {
 }
 function showList() { el("app").classList.remove("show-map"); setActive("toList"); updateList(); }
 
+// ---------- type filter chips ----------
+function buildTypeChips() {
+  const chips = [{ label: "All", val: "__all" }].concat(TYPES.map((t) => ({ label: t, val: t })));
+  el("typeFilter").innerHTML = chips
+    .map((ch) => `<button type="button" class="tchip" data-type="${ch.val}">${ch.label}</button>`)
+    .join("");
+  el("typeFilter").addEventListener("click", (e) => {
+    const b = e.target.closest(".tchip"); if (!b) return;
+    const v = b.dataset.type;
+    if (v === "__all") activeTypes.clear();
+    else if (activeTypes.has(v)) activeTypes.delete(v);
+    else activeTypes.add(v);
+    refreshChips();
+    renderMarkers();
+    updateList();
+  });
+  refreshChips();
+}
+function refreshChips() {
+  document.querySelectorAll("#typeFilter .tchip").forEach((b) => {
+    const v = b.dataset.type;
+    b.classList.toggle("on", v === "__all" ? activeTypes.size === 0 : activeTypes.has(v));
+  });
+}
+
 // ---------- init ----------
 function init() {
   map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([-37.81, 144.96], 11);
   addBasemap();
   layer = L.layerGroup().addTo(map);
 
+  buildTypeChips();
   el("week").innerHTML = WEEKS.map((w) => `<option value="${w.value}">${w.label}</option>`).join("");
   el("week").onchange = (e) => setWeek(e.target.value);
   el("toMap").onclick = showMap;
