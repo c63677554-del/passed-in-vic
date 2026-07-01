@@ -33,6 +33,9 @@ html, body { margin: 0; height: 100%; }
 .tchip { font: inherit; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid var(--line); background: #fff; color: #374151; padding: 5px 12px; border-radius: 999px; }
 .tchip:hover { border-color: #cbd5e1; }
 .tchip.on { background: var(--red); border-color: var(--red); color: #fff; }
+.pricesel { font: inherit; font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; background: #fff; color: var(--ink); cursor: pointer; }
+.card .price { margin-top: 6px; font-weight: 800; font-size: 14px; color: var(--ink); }
+.card .price .est { font-weight: 500; font-size: 11px; color: var(--muted); }
 
 /* ---------- Body: list | map ---------- */
 .body { position: relative; min-height: 0; display: grid; grid-template-columns: minmax(340px, 390px) 1fr; }

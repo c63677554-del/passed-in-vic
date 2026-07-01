@@ -1,6 +1,5 @@
-// REAL passed-in auction results scraped from REIV per-suburb pages (reiv.com.au),
-// geocoded via nominatim (cached). Accumulates weekly. 228 properties across 2 week(s): 2026-06-27, 2026-06-13.
-// Regenerate: node scripts/scrape-reiv.js --days=20
+// REAL passed-in results from REIV (reiv.com.au), geocoded; priceEst = suburb median by type/beds.
+// 228 properties across 2 week(s): 2026-06-27, 2026-06-13.
 const PASSED_IN = [
   {
     "address": "6 Iramoo Ct",
@@ -14,6 +13,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 666500,
     "agency": "One Agency Carlo Puglia Property",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -31,6 +31,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 720000,
     "agency": "Ray White",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -48,6 +49,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 733000,
     "agency": "Douglas Kay Sunshine",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -65,6 +67,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2150000,
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -82,6 +85,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2150000,
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -99,6 +103,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2200000,
     "agency": "Marshall White",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -116,6 +121,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1340000,
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -133,6 +139,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": null,
     "agency": "Ray White Ballarat",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -150,6 +157,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2700000,
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -167,6 +175,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 775000,
     "agency": "Ray White Carnegie",
     "method": "Passed in at Auction",
     "saleDate": "24/06/2026",
@@ -184,6 +193,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1888888,
     "agency": "Fletchers",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -201,6 +211,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2240000,
     "agency": "Harcourts Vermont South",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -218,6 +229,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": null,
     "agency": "Ray White Highton",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -235,6 +247,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 745000,
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -252,6 +265,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1134000,
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -269,6 +283,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1000000,
     "agency": "Ivy Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -286,6 +301,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1195000,
     "agency": "Jellis Craig Mentone & Chelsea",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -303,6 +319,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 770000,
     "agency": "Burnham",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -320,6 +337,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1877500,
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -337,6 +355,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2420000,
     "agency": "Buxton",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -354,6 +373,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 656000,
     "agency": "YPA Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -371,6 +391,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 630000,
     "agency": "YSH Realestate",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -388,6 +409,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1393750,
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -405,6 +427,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1387500,
     "agency": "McGrath Doncaster",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -422,6 +445,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1300000,
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -439,6 +463,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 880000,
     "agency": "Ray White Bundoora",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -456,6 +481,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 750000,
     "agency": "Austrump Glen Pty Ltd",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -473,6 +499,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 462000,
     "agency": "Ray White Bundoora",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -490,6 +517,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 880000,
     "agency": "Fletchers",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -507,6 +535,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 700000,
     "agency": "Burnham",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -524,6 +553,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 990000,
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -541,6 +571,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1400000,
     "agency": "Barry Plant",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -558,6 +589,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2400000,
     "agency": "VICPROP Balwyn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -575,6 +607,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 641500,
     "agency": "Ray White Carnegie",
     "method": "Passed in Vendor Bid",
     "saleDate": "24/06/2026",
@@ -592,6 +625,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 885000,
     "agency": "Local Expertz Realty",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -609,6 +643,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 652500,
     "agency": "RT Edgar Glen Eira",
     "method": "Passed in Vendor Bid",
     "saleDate": "27/06/2026",
@@ -626,6 +661,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1310000,
     "agency": "Gary Peer & Associates",
     "method": "Passed in Vendor Bid",
     "saleDate": "27/06/2026",
@@ -643,6 +679,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1400000,
     "agency": "Buxton",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -660,6 +697,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1230000,
     "agency": "Eleven North",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -677,6 +715,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 620000,
     "agency": "Ray White Melton",
     "method": "Passed in at Auction",
     "saleDate": "23/06/2026",
@@ -694,6 +733,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 635000,
     "agency": "The Realest Estate",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -711,6 +751,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1545000,
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -720,14 +761,15 @@ const PASSED_IN = [
     "address": "60 Ronald St",
     "suburb": "Coburg North",
     "postcode": "3058",
-    "lat": -37.733655,
-    "lng": 144.959243,
+    "lat": -37.729884,
+    "lng": 144.978602,
     "type": "House",
     "beds": 4,
     "baths": null,
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1340000,
     "agency": "Ray White",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -748,7 +790,8 @@ const PASSED_IN = [
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "23/06/2026",
-    "week": "2026-06-27"
+    "week": "2026-06-27",
+    "priceEst": 662750
   },
   {
     "address": "26 Kernan Ct",
@@ -762,6 +805,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 662750,
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -779,6 +823,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 775000,
     "agency": "Redrok Real Estate",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -796,6 +841,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 775000,
     "agency": "Reliance Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -813,6 +859,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 775000,
     "agency": "Montera Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "27/06/2026",
@@ -830,6 +877,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 760000,
     "agency": "Bombay Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -847,6 +895,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 775000,
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -867,7 +916,8 @@ const PASSED_IN = [
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "23/06/2026",
-    "week": "2026-06-27"
+    "week": "2026-06-27",
+    "priceEst": 441000
   },
   {
     "address": "8 Falmer Pl",
@@ -881,6 +931,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 662750,
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -901,7 +952,8 @@ const PASSED_IN = [
     "agency": "Ray White Dandenong",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
-    "week": "2026-06-27"
+    "week": "2026-06-27",
+    "priceEst": 765000
   },
   {
     "address": "3 Christine Ct",
@@ -915,6 +967,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1562000,
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -932,6 +985,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1562000,
     "agency": "Marshall White & Co",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -949,6 +1003,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 1500000,
     "agency": "VICPROP Balwyn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -966,6 +1021,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 571000,
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -983,6 +1039,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2300000,
     "agency": "Kay & Burton",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -1000,6 +1057,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2825000,
     "agency": "Heavyside",
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
@@ -1017,6 +1075,7 @@ const PASSED_IN = [
     "cars": null,
     "price": null,
     "vendor": null,
+    "priceEst": 2042500,
     "agency": "VICPROP Balwyn",
     "method": "Passed in at Auction",
     "saleDate": "26/06/2026",
@@ -1037,7 +1096,8 @@ const PASSED_IN = [
     "agency": "McDonald Upton",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1700000
   },
   {
     "address": "38 King St",
@@ -1054,7 +1114,8 @@ const PASSED_IN = [
     "agency": "Fletchers",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2700000
   },
   {
     "address": "1 Wynyard Cr",
@@ -1071,7 +1132,8 @@ const PASSED_IN = [
     "agency": "Kay & Burton",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2300000
   },
   {
     "address": "143 Doncaster Rd",
@@ -1088,7 +1150,8 @@ const PASSED_IN = [
     "agency": "Harcourts Balwyn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1888888
   },
   {
     "address": "16 Glenthorn Av",
@@ -1105,7 +1168,8 @@ const PASSED_IN = [
     "agency": "Marshall White & Co",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2240000
   },
   {
     "address": "1/33-35 Nicholson St",
@@ -1122,7 +1186,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1180000
   },
   {
     "address": "6 Somers St",
@@ -1139,7 +1204,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1800000
   },
   {
     "address": "2/16 Schulz St",
@@ -1156,7 +1222,8 @@ const PASSED_IN = [
     "agency": "Ray White Carnegie",
     "method": "Passed in at Auction",
     "saleDate": "10/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1200000
   },
   {
     "address": "2/90 Deakin St",
@@ -1173,7 +1240,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1200000
   },
   {
     "address": "3/8 Chauvel St",
@@ -1190,7 +1258,8 @@ const PASSED_IN = [
     "agency": "Gary Peer & Associates",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 738200
   },
   {
     "address": "53B Kennedy St",
@@ -1207,7 +1276,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1300000
   },
   {
     "address": "49 Stanley Gr",
@@ -1224,7 +1294,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1389000
   },
   {
     "address": "16 Konark Rd",
@@ -1241,7 +1312,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 666000
   },
   {
     "address": "3 Lusitano Rd",
@@ -1258,7 +1330,8 @@ const PASSED_IN = [
     "agency": "Estatier Pty Ltd",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 665000
   },
   {
     "address": "5/13-15 Barcelona St",
@@ -1275,7 +1348,8 @@ const PASSED_IN = [
     "agency": "McGrath Doncaster",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 852500
   },
   {
     "address": "21 Linda Av",
@@ -1292,7 +1366,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1275000
   },
   {
     "address": "4/21 Tyne St",
@@ -1309,7 +1384,8 @@ const PASSED_IN = [
     "agency": "Biggin & Scott Box Hill",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 749000
   },
   {
     "address": "5/1-3 Landcox St",
@@ -1326,7 +1402,8 @@ const PASSED_IN = [
     "agency": "Hodges",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 894250
   },
   {
     "address": "9 Robinson St",
@@ -1343,7 +1420,8 @@ const PASSED_IN = [
     "agency": "Marshall White",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2385000
   },
   {
     "address": "16 Laura St",
@@ -1360,7 +1438,8 @@ const PASSED_IN = [
     "agency": "John Cataldo Realty",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1090000
   },
   {
     "address": "192 Thompsons Rd",
@@ -1377,7 +1456,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1250000
   },
   {
     "address": "2/38 Flannery Av",
@@ -1394,7 +1474,8 @@ const PASSED_IN = [
     "agency": "Harcourts Balwyn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 750000
   },
   {
     "address": "18 Hutchinson St",
@@ -1411,7 +1492,8 @@ const PASSED_IN = [
     "agency": "McGrath Blackburn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1250000
   },
   {
     "address": "147 Fordham Av",
@@ -1428,7 +1510,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2000000
   },
   {
     "address": "35 Canterbury Rd",
@@ -1445,7 +1528,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2400000
   },
   {
     "address": "3/150 Grange Rd",
@@ -1462,7 +1546,8 @@ const PASSED_IN = [
     "agency": "Ray White Carnegie",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 641500
   },
   {
     "address": "6/7 Toolambool Rd",
@@ -1479,7 +1564,8 @@ const PASSED_IN = [
     "agency": "Ray White Carnegie",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 641500
   },
   {
     "address": "146 Lyrebird Dr",
@@ -1496,7 +1582,8 @@ const PASSED_IN = [
     "agency": "Harcourts TDP Group",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 802500
   },
   {
     "address": "32 Shearwater Dr",
@@ -1513,7 +1600,8 @@ const PASSED_IN = [
     "agency": "Harcourts TDP Group",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 802500
   },
   {
     "address": "10B Miriam St",
@@ -1530,7 +1618,8 @@ const PASSED_IN = [
     "agency": "Ray White Carnegie",
     "method": "Passed in Vendor Bid",
     "saleDate": "10/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1100000
   },
   {
     "address": "213/7 Dudley St",
@@ -1547,7 +1636,8 @@ const PASSED_IN = [
     "agency": "Ray White Carnegie",
     "method": "Passed in Vendor Bid",
     "saleDate": "10/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 416000
   },
   {
     "address": "2/25 Booker St",
@@ -1564,7 +1654,8 @@ const PASSED_IN = [
     "agency": "Ray White - The Bayside Group",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 987500
   },
   {
     "address": "2 Rosella Av",
@@ -1581,7 +1672,8 @@ const PASSED_IN = [
     "agency": "Buxton",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1047000
   },
   {
     "address": "13B Merlyn Av",
@@ -1598,7 +1690,8 @@ const PASSED_IN = [
     "agency": "Ray White Clayton",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 900000
   },
   {
     "address": "42 Spring Valley Dr",
@@ -1615,7 +1708,8 @@ const PASSED_IN = [
     "agency": "Ausky Group",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 981500
   },
   {
     "address": "2/290 Reynard St",
@@ -1632,7 +1726,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 635000
   },
   {
     "address": "22 Tonkin Av",
@@ -1649,7 +1744,8 @@ const PASSED_IN = [
     "agency": "Ray White Northcote",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1340000
   },
   {
     "address": "3/2 Manly Ct",
@@ -1666,7 +1762,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 736500
   },
   {
     "address": "132 Highlander Dr",
@@ -1683,7 +1780,8 @@ const PASSED_IN = [
     "agency": "SKAD Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 760000
   },
   {
     "address": "17 Creekbridge St",
@@ -1700,7 +1798,8 @@ const PASSED_IN = [
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 775000
   },
   {
     "address": "21 Wattletree St",
@@ -1717,7 +1816,8 @@ const PASSED_IN = [
     "agency": "Bombay Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 775000
   },
   {
     "address": "40 Lithic Rd",
@@ -1734,7 +1834,8 @@ const PASSED_IN = [
     "agency": "Reliance Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 775000
   },
   {
     "address": "56 Domain Way",
@@ -1751,7 +1852,8 @@ const PASSED_IN = [
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 760000
   },
   {
     "address": "60 Bonnyview Rd",
@@ -1768,7 +1870,8 @@ const PASSED_IN = [
     "agency": "Ray White Craigieburn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 775000
   },
   {
     "address": "92 Golf View Dr",
@@ -1785,7 +1888,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 775000
   },
   {
     "address": "2 Durang Ct",
@@ -1802,7 +1906,8 @@ const PASSED_IN = [
     "agency": "Fletchers",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1185000
   },
   {
     "address": "7 Bridie St",
@@ -1819,7 +1924,8 @@ const PASSED_IN = [
     "agency": "Ray White West Realty",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 790000
   },
   {
     "address": "312 Spring Rd",
@@ -1836,7 +1942,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1100000
   },
   {
     "address": "226/9 Wharf St",
@@ -1853,7 +1960,8 @@ const PASSED_IN = [
     "agency": "Aventra Realty",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 640000
   },
   {
     "address": "69 Timber Ridg",
@@ -1870,7 +1978,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1399000
   },
   {
     "address": "1/227 Blackburn Rd",
@@ -1887,7 +1996,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 581500
   },
   {
     "address": "49 Bowen Rd",
@@ -1904,7 +2014,8 @@ const PASSED_IN = [
     "agency": "McGrath Doncaster",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1605000
   },
   {
     "address": "9 Albury Av",
@@ -1921,7 +2032,8 @@ const PASSED_IN = [
     "agency": "Bombay Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 660000
   },
   {
     "address": "13 Woodridge Cr",
@@ -1938,7 +2050,8 @@ const PASSED_IN = [
     "agency": "Ray White Mernda",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 870000
   },
   {
     "address": "12A Kendall St",
@@ -1955,7 +2068,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig | Chisholm & Gamon Elwood",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1907500
   },
   {
     "address": "1 Richhaven Pl",
@@ -1972,7 +2086,8 @@ const PASSED_IN = [
     "agency": "Ray White Mill Park",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 557500
   },
   {
     "address": "16 Sundial Pde",
@@ -1989,7 +2104,8 @@ const PASSED_IN = [
     "agency": "Ray White Bundoora",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 722500
   },
   {
     "address": "102/324 Pascoe Vale Rd",
@@ -2006,7 +2122,8 @@ const PASSED_IN = [
     "agency": "McDonald Upton",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 571000
   },
   {
     "address": "2/6 Ogilvie St",
@@ -2023,7 +2140,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 571000
   },
   {
     "address": "20 Tweedside St",
@@ -2040,7 +2158,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1527500
   },
   {
     "address": "88 Primrose St",
@@ -2057,7 +2176,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1527500
   },
   {
     "address": "127 Barkly St",
@@ -2074,7 +2194,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2275000
   },
   {
     "address": "216 Clauscen St",
@@ -2091,7 +2212,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2275000
   },
   {
     "address": "2/55 Dover St",
@@ -2108,7 +2230,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 546000
   },
   {
     "address": "33 Elmhurst Rd",
@@ -2125,7 +2248,8 @@ const PASSED_IN = [
     "agency": "Mcgrath",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 870000
   },
   {
     "address": "56 Booyan Cr",
@@ -2142,7 +2266,8 @@ const PASSED_IN = [
     "agency": "Ray White Eltham",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 972500
   },
   {
     "address": "26 Naxos Rd",
@@ -2159,7 +2284,8 @@ const PASSED_IN = [
     "agency": "Ray White Gladstone Park",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 894000
   },
   {
     "address": "30 Avisha Way",
@@ -2176,7 +2302,8 @@ const PASSED_IN = [
     "agency": "Luxe Property",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 894000
   },
   {
     "address": "26 Burt Cr",
@@ -2193,7 +2320,8 @@ const PASSED_IN = [
     "agency": "Buxton",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1375000
   },
   {
     "address": "1/3 Muir St",
@@ -2210,7 +2338,8 @@ const PASSED_IN = [
     "agency": "Marshall White & Co",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1980000
   },
   {
     "address": "20 Bell St",
@@ -2227,7 +2356,8 @@ const PASSED_IN = [
     "agency": "Besser & Co EA",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1500000
   },
   {
     "address": "3/64 Kooyongkoot Rd",
@@ -2244,7 +2374,8 @@ const PASSED_IN = [
     "agency": "Fletchers",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 640125
   },
   {
     "address": "36 Kinkora Rd",
@@ -2261,7 +2392,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1980000
   },
   {
     "address": "13 Pleasant Rd",
@@ -2278,7 +2410,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2905000
   },
   {
     "address": "75-77 Haig St",
@@ -2295,7 +2428,8 @@ const PASSED_IN = [
     "agency": "Miles",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1270000
   },
   {
     "address": "2/140 Highett Rd",
@@ -2312,7 +2446,8 @@ const PASSED_IN = [
     "agency": "Professionals St Albans",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 675000
   },
   {
     "address": "6A Rose St",
@@ -2329,7 +2464,8 @@ const PASSED_IN = [
     "agency": "Buxton",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 865000
   },
   {
     "address": "8A Danson St",
@@ -2346,7 +2482,8 @@ const PASSED_IN = [
     "agency": "Buxton",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 865000
   },
   {
     "address": "50 Jade Way",
@@ -2363,7 +2500,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 615000
   },
   {
     "address": "6 Wales Ct",
@@ -2380,7 +2518,8 @@ const PASSED_IN = [
     "agency": "Harcourts - Werribee",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 841000
   },
   {
     "address": "12 Don Av",
@@ -2397,7 +2536,8 @@ const PASSED_IN = [
     "agency": "Ray White Tarneit",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 642000
   },
   {
     "address": "34 Jellicoe St",
@@ -2414,7 +2554,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2200000
   },
   {
     "address": "7/10 Tate St",
@@ -2431,7 +2572,8 @@ const PASSED_IN = [
     "agency": "OBrien Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 725000
   },
   {
     "address": "9 Flora Gr",
@@ -2448,7 +2590,8 @@ const PASSED_IN = [
     "agency": "Miles",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2450000
   },
   {
     "address": "30 Magnesium Rd",
@@ -2465,7 +2608,8 @@ const PASSED_IN = [
     "agency": "Ray White South Morang",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 669000
   },
   {
     "address": "34 Magnesium Rd",
@@ -2482,7 +2626,8 @@ const PASSED_IN = [
     "agency": "Bombay Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 661000
   },
   {
     "address": "27 Arabin St",
@@ -2499,7 +2644,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1210000
   },
   {
     "address": "204 Rachelle Rd",
@@ -2516,7 +2662,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1300000
   },
   {
     "address": "5 Collett St",
@@ -2533,7 +2680,8 @@ const PASSED_IN = [
     "agency": "Belle Property Ascot Vale",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1000000
   },
   {
     "address": "1/89 Sackville St",
@@ -2550,7 +2698,8 @@ const PASSED_IN = [
     "agency": "Marshall White & Co",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2042500
   },
   {
     "address": "3 Windsor St",
@@ -2567,7 +2716,8 @@ const PASSED_IN = [
     "agency": "Marshall White - Boroondara",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1449000
   },
   {
     "address": "4/31-35 Foley St",
@@ -2584,7 +2734,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1302500
   },
   {
     "address": "2/19 Hartwood St",
@@ -2601,7 +2752,8 @@ const PASSED_IN = [
     "agency": "Professionals Balwyn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2200000
   },
   {
     "address": "30 Westbrook St",
@@ -2618,7 +2770,8 @@ const PASSED_IN = [
     "agency": "Fletchers",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1950000
   },
   {
     "address": "7 Goldhurst St",
@@ -2635,7 +2788,8 @@ const PASSED_IN = [
     "agency": "Harcourts Malvern East",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1180000
   },
   {
     "address": "8 Highfield Way",
@@ -2652,7 +2806,8 @@ const PASSED_IN = [
     "agency": "Ray White Sunbury",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 650500
   },
   {
     "address": "4 Harvey St",
@@ -2669,7 +2824,8 @@ const PASSED_IN = [
     "agency": "Marshall White & Co",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 3000000
   },
   {
     "address": "70 Argyll St",
@@ -2686,7 +2842,8 @@ const PASSED_IN = [
     "agency": "Marshall White",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2000000
   },
   {
     "address": "71A Repton Rd",
@@ -2703,7 +2860,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1831888
   },
   {
     "address": "109 Plane Av",
@@ -2720,7 +2878,8 @@ const PASSED_IN = [
     "agency": "Nexa Real Estate",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 580000
   },
   {
     "address": "8B Mckinnon Rd",
@@ -2737,7 +2896,8 @@ const PASSED_IN = [
     "agency": "OBrien Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 885000
   },
   {
     "address": "505/610 St Kilda Rd",
@@ -2754,7 +2914,8 @@ const PASSED_IN = [
     "agency": "Gary Peer & Associates",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 338194
   },
   {
     "address": "12 Falcon Dr",
@@ -2771,7 +2932,8 @@ const PASSED_IN = [
     "agency": "Greystone Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 520000
   },
   {
     "address": "2/223 Page St",
@@ -2788,7 +2950,8 @@ const PASSED_IN = [
     "agency": "Marshall White",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 835000
   },
   {
     "address": "69 Wright St",
@@ -2805,7 +2968,8 @@ const PASSED_IN = [
     "agency": "Marshall White & Co",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 2465000
   },
   {
     "address": "2 Irene Cr",
@@ -2822,7 +2986,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1168500
   },
   {
     "address": "2/18 Beaufort St",
@@ -2839,7 +3004,8 @@ const PASSED_IN = [
     "agency": "Fletchers",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 665500
   },
   {
     "address": "10 Melrose St",
@@ -2856,7 +3022,8 @@ const PASSED_IN = [
     "agency": "Fletchers",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1911500
   },
   {
     "address": "1A Hudson St",
@@ -2873,7 +3040,8 @@ const PASSED_IN = [
     "agency": "Silvana Pannia Property",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 675000
   },
   {
     "address": "71 Ormond Rd",
@@ -2890,7 +3058,8 @@ const PASSED_IN = [
     "agency": "Belle Property St Kilda",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1475000
   },
   {
     "address": "73 Scott St",
@@ -2907,7 +3076,8 @@ const PASSED_IN = [
     "agency": "Silvana Pannia Property",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1600000
   },
   {
     "address": "9A Matilda Rd",
@@ -2924,7 +3094,8 @@ const PASSED_IN = [
     "agency": "Buxton",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 963000
   },
   {
     "address": "2/7 Melville Ct",
@@ -2941,7 +3112,8 @@ const PASSED_IN = [
     "agency": "Ray White Wantirna",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1600000
   },
   {
     "address": "83 Fountain Dr",
@@ -2958,7 +3130,8 @@ const PASSED_IN = [
     "agency": "Harcourts Narre Warren",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 757250
   },
   {
     "address": "1/21 Jackson St",
@@ -2975,7 +3148,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1200000
   },
   {
     "address": "110A Hotham Rd",
@@ -2992,7 +3166,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 847750
   },
   {
     "address": "160 Lightwood Rd",
@@ -3009,7 +3184,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 882500
   },
   {
     "address": "24 Shirley St",
@@ -3026,7 +3202,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 843250
   },
   {
     "address": "3/415 Abbotsford St",
@@ -3043,7 +3220,8 @@ const PASSED_IN = [
     "agency": "Belle Property Carlton & Melbourne",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1152500
   },
   {
     "address": "6/16 Walsh St",
@@ -3060,7 +3238,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 597500
   },
   {
     "address": "176 Gatehouse St",
@@ -3077,7 +3256,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1800000
   },
   {
     "address": "5 Wilna St",
@@ -3094,7 +3274,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1115000
   },
   {
     "address": "76A Devon Rd",
@@ -3111,7 +3292,8 @@ const PASSED_IN = [
     "agency": "Ray White Glenroy",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1115000
   },
   {
     "address": "118 Melville Rd",
@@ -3128,7 +3310,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1027500
   },
   {
     "address": "19 Martaban Cr",
@@ -3145,7 +3328,8 @@ const PASSED_IN = [
     "agency": "Established Property",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 715250
   },
   {
     "address": "33 Madeline St",
@@ -3162,7 +3346,8 @@ const PASSED_IN = [
     "agency": "Ray White",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1200000
   },
   {
     "address": "136 Paterson St",
@@ -3179,7 +3364,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1900000
   },
   {
     "address": "1/199 Purinuan Rd",
@@ -3196,7 +3382,8 @@ const PASSED_IN = [
     "agency": "Harcourts Rata & Co",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 800000
   },
   {
     "address": "167 Spring St",
@@ -3213,7 +3400,8 @@ const PASSED_IN = [
     "agency": "RT Edgar Northside",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 800000
   },
   {
     "address": "3/199 Purinuan Rd",
@@ -3230,7 +3418,8 @@ const PASSED_IN = [
     "agency": "Harcourts Rata & Co",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 800000
   },
   {
     "address": "65 Merrilands Rd",
@@ -3247,7 +3436,8 @@ const PASSED_IN = [
     "agency": "Nelson Alexander",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1180000
   },
   {
     "address": "11/17 Kent St",
@@ -3264,7 +3454,8 @@ const PASSED_IN = [
     "agency": "RT Edgar",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 687000
   },
   {
     "address": "1 Arlington St",
@@ -3281,7 +3472,8 @@ const PASSED_IN = [
     "agency": "OBrien Real Estate Blackburn",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 982500
   },
   {
     "address": "72A Spring St",
@@ -3298,7 +3490,8 @@ const PASSED_IN = [
     "agency": "Hodges",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1200000
   },
   {
     "address": "103/167 Gladstone St",
@@ -3315,7 +3508,8 @@ const PASSED_IN = [
     "agency": "OurAgent Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 443000
   },
   {
     "address": "40 Everlasting Blvd",
@@ -3332,7 +3526,8 @@ const PASSED_IN = [
     "agency": "Ray White South Morang",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 477500
   },
   {
     "address": "32A Hardy St",
@@ -3349,7 +3544,8 @@ const PASSED_IN = [
     "agency": "Marshall White",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1470000
   },
   {
     "address": "69 Moore St",
@@ -3366,7 +3562,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1470000
   },
   {
     "address": "37 Lee Av",
@@ -3383,7 +3580,8 @@ const PASSED_IN = [
     "agency": "Stockdale & Leggo Dandenong",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 958500
   },
   {
     "address": "1 Cairn Cl",
@@ -3400,7 +3598,8 @@ const PASSED_IN = [
     "agency": "Westside Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 720000
   },
   {
     "address": "14 Winifred St",
@@ -3417,7 +3616,8 @@ const PASSED_IN = [
     "agency": "Westside Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 755000
   },
   {
     "address": "3/20 Norman St",
@@ -3434,7 +3634,8 @@ const PASSED_IN = [
     "agency": "Westside Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 600000
   },
   {
     "address": "11/5 Herbert St",
@@ -3451,7 +3652,8 @@ const PASSED_IN = [
     "agency": "Gary Peer & Associates",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 630000
   },
   {
     "address": "104 Hilma St",
@@ -3468,7 +3670,8 @@ const PASSED_IN = [
     "agency": "Ray White",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 750000
   },
   {
     "address": "4/16 Bona Vista Av",
@@ -3485,7 +3688,8 @@ const PASSED_IN = [
     "agency": "Heavyside",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 815000
   },
   {
     "address": "1 Breadalbane Ct",
@@ -3502,7 +3706,8 @@ const PASSED_IN = [
     "agency": "Leo Real Estate",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 816750
   },
   {
     "address": "10 Pastoral Pl",
@@ -3519,7 +3724,8 @@ const PASSED_IN = [
     "agency": "Greystone Real Estate",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 745000
   },
   {
     "address": "3 Boberrit Wynd",
@@ -3536,7 +3742,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 810000
   },
   {
     "address": "76 Watervale Blvd",
@@ -3553,7 +3760,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1001000
   },
   {
     "address": "8 Joyce Gr",
@@ -3570,7 +3778,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1001000
   },
   {
     "address": "11 Australia Dr",
@@ -3587,7 +3796,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1042500
   },
   {
     "address": "109 Foote St",
@@ -3604,7 +3814,8 @@ const PASSED_IN = [
     "agency": "VICPROP - MANNINGHAM",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1430000
   },
   {
     "address": "194 Victoria Dr",
@@ -3621,7 +3832,8 @@ const PASSED_IN = [
     "agency": "Harcourts Rata & Co",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 850000
   },
   {
     "address": "1/55 Pender St",
@@ -3638,7 +3850,8 @@ const PASSED_IN = [
     "agency": "Jellis Craig",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 680000
   },
   {
     "address": "350 Victoria Rd",
@@ -3655,7 +3868,8 @@ const PASSED_IN = [
     "agency": "Woodards",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1818750
   },
   {
     "address": "43 Ethel St",
@@ -3672,7 +3886,8 @@ const PASSED_IN = [
     "agency": "Walshe & Whitelock",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1451000
   },
   {
     "address": "14 Betinick Rd",
@@ -3689,7 +3904,8 @@ const PASSED_IN = [
     "agency": "The Eleet - Wyndham City",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 585000
   },
   {
     "address": "5 Sissinghurst St",
@@ -3706,7 +3922,8 @@ const PASSED_IN = [
     "agency": "Harcourts Point Cook",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 585000
   },
   {
     "address": "240 Hawthorn Rd",
@@ -3723,7 +3940,8 @@ const PASSED_IN = [
     "agency": "Ray White Judd White Group",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1400000
   },
   {
     "address": "19 Amersham Dr",
@@ -3740,7 +3958,8 @@ const PASSED_IN = [
     "agency": "Barry Plant",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1370000
   },
   {
     "address": "22 Wellington St",
@@ -3757,7 +3976,8 @@ const PASSED_IN = [
     "agency": "Jas Stephens - Yarraville",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1010000
   },
   {
     "address": "1/499 Spencer St",
@@ -3774,7 +3994,8 @@ const PASSED_IN = [
     "agency": "Lucas Mills Real Estate",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 624250
   },
   {
     "address": "5/32 Shadforth St",
@@ -3791,7 +4012,8 @@ const PASSED_IN = [
     "agency": "HPG ESTATE AGENTS - AIRPORT WEST",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 645000
   },
   {
     "address": "5/59-61 Aitken St",
@@ -3808,7 +4030,8 @@ const PASSED_IN = [
     "agency": "Jas Stephens - Yarraville",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1135000
   },
   {
     "address": "83 Parker St",
@@ -3825,7 +4048,8 @@ const PASSED_IN = [
     "agency": "Ray White Williamstown",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1485000
   },
   {
     "address": "8/17-19 The Avenue",
@@ -3842,7 +4066,8 @@ const PASSED_IN = [
     "agency": "Belle Property Armadale",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 638000
   },
   {
     "address": "26 Bursa Dr",
@@ -3859,7 +4084,8 @@ const PASSED_IN = [
     "agency": "Ray White Point Cook",
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 642000
   },
   {
     "address": "58 Bayview Rd",
@@ -3876,6 +4102,7 @@ const PASSED_IN = [
     "agency": "Village Real Estate",
     "method": "Passed in Vendor Bid",
     "saleDate": "12/06/2026",
-    "week": "2026-06-13"
+    "week": "2026-06-13",
+    "priceEst": 1000000
   }
 ];

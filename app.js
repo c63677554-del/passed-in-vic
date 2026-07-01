@@ -13,6 +13,7 @@ function weekLabel(iso) {
 }
 const isVendor = (m) => /vendor/i.test(m || "");
 const resultChip = (m) => (isVendor(m) ? "Vendor bid" : "At auction");
+const fmtPrice = (n) => (n == null ? null : n >= 1e6 ? "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m" : "$" + Math.round(n / 1e3) + "k");
 const subline = (p) => [p.suburb, "VIC", p.postcode].filter(Boolean).join(" ");
 const googleUrl = (p) =>
   "https://www.google.com/search?q=" + encodeURIComponent([p.address, p.suburb, "VIC", p.postcode].filter(Boolean).join(" "));
@@ -42,8 +43,10 @@ function addBasemap() {
 const forWeek = () => PASSED_IN.filter((p) => p.week === week && p.lat != null && p.lng != null);
 const TYPES = ["House", "Townhouse", "Apartment", "Unit"];
 let activeTypes = new Set(); // empty = show every type
+let maxPrice = null; // null = any; else show only est. price <= maxPrice
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
-const forView = () => forWeek().filter(typeOk); // current week + active type filter
+const priceOk = (p) => maxPrice == null || (p.priceEst != null && p.priceEst <= maxPrice);
+const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p)); // week + type + price
 function visible() {
   const sz = map.getSize();
   if (!sz || sz.x < 10 || sz.y < 10) return forView(); // map hidden (mobile list view) -> show all in view set
@@ -60,7 +63,7 @@ function markerPopup(p) {
     <span class="badge">Passed In</span>
     <div class="b" style="margin-top:6px">${p.address}</div>
     <div class="s">${subline(p)}</div>
-    <div class="m">${line}${sub ? "<br>" + sub : ""}</div>
+    <div class="m">${line}${p.priceEst != null ? "<br>Est. " + fmtPrice(p.priceEst) + " <span style='color:#6b7280'>(suburb median)</span>" : ""}${sub ? "<br>" + sub : ""}</div>
     <a href="${googleUrl(p)}" target="_blank" rel="noopener noreferrer">Search Property</a>
   </div>`;
 }
@@ -81,6 +84,7 @@ function cardHTML(p) {
     <span class="badge">Passed In</span>
     <div class="addr">${p.address}</div>
     <div class="sub">${subline(p)}</div>
+    ${p.priceEst != null ? `<div class="price">Est. ${fmtPrice(p.priceEst)} <span class="est">suburb median</span></div>` : ""}
     <div class="meta">
       ${p.type ? `<span class="chip">${p.type}</span>` : ""}
       ${p.beds != null ? `<span class="chip">${p.beds} bed</span>` : ""}
@@ -158,6 +162,17 @@ function refreshChips() {
   });
 }
 
+// ---------- max-price filter ----------
+const PRICE_BRACKETS = [
+  { label: "Any", val: "" }, { label: "$500k", val: 500000 }, { label: "$750k", val: 750000 },
+  { label: "$1m", val: 1000000 }, { label: "$1.25m", val: 1250000 }, { label: "$1.5m", val: 1500000 },
+  { label: "$2m", val: 2000000 }, { label: "$2.5m", val: 2500000 }, { label: "$3m", val: 3000000 },
+];
+function buildPriceFilter() {
+  el("maxPrice").innerHTML = PRICE_BRACKETS.map((b) => `<option value="${b.val}">${b.label === "Any" ? "Any price" : "Up to " + b.label}</option>`).join("");
+  el("maxPrice").onchange = (e) => { maxPrice = e.target.value ? +e.target.value : null; renderMarkers(); updateList(); };
+}
+
 // ---------- init ----------
 function init() {
   map = L.map("map", { zoomControl: true, preferCanvas: true }).setView([-37.81, 144.96], 11);
@@ -165,6 +180,7 @@ function init() {
   layer = L.layerGroup().addTo(map);
 
   buildTypeChips();
+  buildPriceFilter();
   el("week").innerHTML = WEEKS.map((w) => `<option value="${w.value}">${w.label}</option>`).join("");
   el("week").onchange = (e) => setWeek(e.target.value);
   el("toMap").onclick = showMap;

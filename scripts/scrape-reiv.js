@@ -18,17 +18,38 @@ const strip = s => (s || '').replace(/<!--.*?-->/g, '').replace(/<[^>]+>/g, '').
 const get = async u => { const r = await fetch(u, { headers: UA }); if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); };
 const cell = (row, c) => { const m = row.match(new RegExp('<td class="' + c + '[^"]*">([\\s\\S]*?)</td>')); return m ? strip(m[1]) : ''; };
 function extractPostcode(html) { const i = html.search(/insights for/i); if (i < 0) return null; const seg = strip(html.slice(i, i + 260)); const m = seg.match(/insights for[^\d]{0,40}(\d{4})/i); return m ? m[1] : null; }
+// ---- Estimated price guide: REIV suburb median by property type + bedrooms ----
+function money(s) { if (!s || s === '-') return null; const m = String(s).replace(/,/g, '').match(/\$?([\d.]+)\s*(mil|m|k)?/i); if (!m) return null; let n = parseFloat(m[1]); const u = (m[2] || '').toLowerCase(); if (u === 'mil' || u === 'm') n *= 1e6; else if (u === 'k') n *= 1e3; return Math.round(n); }
+function parseMedians(html) {
+  // NB: use a space-preserving strip (the global strip() drops tags with no space,
+  // which would run adjacent median figures together and break the row parser).
+  const t = html.replace(/<!--.*?-->/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+  const bedRows = txt => { const rows = {}; for (const r of txt.matchAll(/(\d+)\s+(\$[\d,]+|-)\s+(\$[\d,]+|-)/g)) { const b = +r[1], sub = money(r[2]); if (sub) rows[b] = sub; } return rows; };
+  const sales = [...t.matchAll(/Median sale price\s+(\$[\d.]+\s*(?:mil|m|k)?)[\s\S]{0,300}?Bedrooms\s+.+?\s+Metro comparison\s+((?:\d+\s+(?:\$[\d,]+|-)\s+(?:\$[\d,]+|-)\s*){1,6})/gi)];
+  const sect = i => sales[i] ? { headline: money(sales[i][1]), byBed: bedRows(sales[i][2]) } : null;
+  return { house: sect(0), unit: sect(1) }; // REIV lists houses first, units second
+}
+function estPrice(med, type, beds) {
+  if (!med) return null;
+  const isUnit = /unit|apartment|flat|townhouse|villa/i.test(type || '');
+  const order = isUnit ? [med.unit, med.house] : [med.house, med.unit];
+  for (const s of order) { if (!s) continue; if (beds && s.byBed[beds]) return s.byBed[beds]; if (s.headline) return s.headline; }
+  return null;
+}
 function parse(html) {
   const t = html.match(/<table[^>]*>([\s\S]*?)<\/table>/); if (!t) return [];
   const pc = extractPostcode(html);
+  const med = parseMedians(html);
   const out = [];
   for (const row of (t[1].match(/<tr[\s\S]*?<\/tr>/g) || [])) {
     if (/<th/.test(row)) continue;
     const method = cell(row, 'method'); if (!/passed in/i.test(method)) continue;
     const full = cell(row, 'address'), i = full.lastIndexOf(',');
+    const beds = parseInt(cell(row, 'bedrooms'), 10) || null;
+    const type = cell(row, 'type') || null;
     out.push({ address: i > 0 ? full.slice(0, i).trim() : full, suburb: i > 0 ? full.slice(i + 1).trim() : '', postcode: pc,
-      beds: parseInt(cell(row, 'bedrooms'), 10) || null, type: cell(row, 'type') || null,
-      method, saleDate: cell(row, 'sale_date'), agency: cell(row, 'agent') || null });
+      beds, type, method, saleDate: cell(row, 'sale_date'), agency: cell(row, 'agent') || null,
+      priceEst: estPrice(med, type, beds) });
   }
   return out;
 }
@@ -77,7 +98,7 @@ async function geocode(q) {
     if (!g) g = await geocode(`${p.suburb} VIC ${p.postcode || ''}, Australia`);
     if (++gc % 25 === 0) console.log('  geocoded', gc, '/', recent.length);
     if (!g) continue;
-    out.push({ address: p.address, suburb: p.suburb, postcode: p.postcode, lat: g.lat, lng: g.lng, type: p.type, beds: p.beds, baths: null, cars: null, price: null, vendor: null, agency: p.agency, method: p.method, saleDate: p.saleDate, week: weekSaturday(p.saleDate) });
+    out.push({ address: p.address, suburb: p.suburb, postcode: p.postcode, lat: g.lat, lng: g.lng, type: p.type, beds: p.beds, baths: null, cars: null, price: null, vendor: null, priceEst: p.priceEst, agency: p.agency, method: p.method, saleDate: p.saleDate, week: weekSaturday(p.saleDate) });
   }
   // Accumulate: merge this run into any existing data.js so the week dropdown
   // grows over time (dedup by address|suburb|week; keeps all past weeks).
@@ -85,8 +106,9 @@ async function geocode(q) {
   let existing = [];
   try { const txt = fs.readFileSync(dataPath, 'utf8'); const a = txt.indexOf('['), b = txt.lastIndexOf(']'); if (a >= 0 && b > a) existing = JSON.parse(txt.slice(a, b + 1)); } catch {}
   const key = p => (p.address + '|' + p.suburb + '|' + p.week).toLowerCase();
-  const merged = existing.slice(); const seenKeys = new Set(existing.map(key));
-  for (const p of out) { const k = key(p); if (!seenKeys.has(k)) { seenKeys.add(k); merged.push(p); } }
+  const byKey = new Map(existing.map(p => [key(p), p]));
+  for (const p of out) byKey.set(key(p), p); // fresh run overwrites (adds priceEst etc.); keeps un-rescraped past weeks
+  const merged = [...byKey.values()];
   merged.sort((a, b) => (b.week || '').localeCompare(a.week || '') || (a.suburb || '').localeCompare(b.suburb || '') || a.address.localeCompare(b.address));
   const weeks = [...new Set(merged.map(o => o.week))].sort().reverse();
   const hdr = '// REAL passed-in auction results scraped from REIV per-suburb pages (reiv.com.au),\n// geocoded via ' + GEOCODER + ' (cached). Accumulates weekly. ' + merged.length + ' properties across ' + weeks.length + ' week(s): ' + weeks.join(', ') + '.\n// Regenerate: node scripts/scrape-reiv.js --days=' + DAYS + '\n';
