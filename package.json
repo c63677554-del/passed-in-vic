@@ -8,8 +8,10 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "serve": "node server.js",
-    "scrape": "node scripts/scrape-reiv.js --days=30",
+    "scrape": "node scripts/scrape-reiv.js --days=30 --min-rows=15",
     "enrich": "node scripts/enrich-prices.js",
-    "build:data": "node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js"
+    "build:data": "node scripts/scrape-reiv.js --days=30 --min-rows=15 && node scripts/enrich-prices.js && node scripts/validate-data.js",
+    "test": "node --test scripts/lib.test.js",
+    "validate": "node scripts/validate-data.js"
   }
 }

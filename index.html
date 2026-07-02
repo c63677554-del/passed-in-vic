@@ -3,19 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Passd — Melbourne auction pass-ins</title>
+  <title>Passd — Melbourne auction pass-ins, mapped weekly</title>
   <link rel="icon" href="./logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./logo.svg" />
-  <meta name="description" content="A live map and list of residential properties that passed in at auction across Melbourne and Victoria — refreshed weekly from REIV, with agent price guides." />
+  <meta name="description" content="Every Melbourne & Victoria home that passed in at auction, mapped and refreshed weekly. Price guides, live listing links, suburb search, filters and a shareable shortlist." />
   <meta name="theme-color" content="#e4002b" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Passd — Melbourne auction pass-ins" />
-  <meta property="og:description" content="Every residential property that passed in at auction across Melbourne/VIC, on a map with price guides. Refreshed weekly." />
+  <meta property="og:title" content="Passd — Melbourne auction pass-ins, mapped weekly" />
+  <meta property="og:description" content="Every home that passed in at auction across Melbourne/VIC, on a map with price guides and listing links. Refreshed every Sunday night." />
   <meta property="og:url" content="https://c63677554-del.github.io/passed-in-vic/" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Passd — Melbourne auction pass-ins" />
-  <meta name="twitter:description" content="Every residential property that passed in at auction across Melbourne/VIC, on a map with price guides." />
+  <meta name="twitter:title" content="Passd — Melbourne auction pass-ins, mapped weekly" />
+  <meta name="twitter:description" content="Every home that passed in at auction across Melbourne/VIC, on a map with price guides and listing links. Refreshed every Sunday night." />
+  <link rel="preconnect" href="https://unpkg.com" crossorigin />
+  <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -27,22 +30,35 @@
           <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#fff"/>
         </svg>
         <span class="word">passd</span>
-        <span class="tag">Melbourne auction pass-ins</span>
       </a>
-      <div class="toggle" role="tablist">
+      <div class="search">
+        <svg class="mag" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.8-3.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="q" type="text" placeholder="Search suburb, postcode or address" autocomplete="off" spellcheck="false"
+               role="combobox" aria-expanded="false" aria-controls="qr" aria-autocomplete="list" aria-label="Search suburb, postcode or address" />
+        <div id="qr" class="qr" role="listbox" aria-label="Search results" hidden></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="hgrp">
+        <span id="count" class="count" aria-live="polite"></span>
+        <select id="week" aria-label="Auction week"></select>
+      </div>
+      <div class="toggle" role="tablist" aria-label="View">
         <button id="toList" class="on" type="button">List</button>
         <button id="toMap" type="button">Map</button>
       </div>
-      <div class="spacer"></div>
-      <span id="count" class="count" aria-live="polite"></span>
-      <select id="week" aria-label="Auction week"></select>
     </header>
 
     <div class="filterbar">
-      <span class="filterlabel">Type</span>
       <div id="typeFilter" class="types" role="group" aria-label="Filter by property type"></div>
-      <span class="filterlabel">Max price</span>
+      <span class="fsep" aria-hidden="true"></span>
+      <div id="bedsFilter" class="types" role="group" aria-label="Minimum bedrooms"></div>
+      <span class="fsep" aria-hidden="true"></span>
       <select id="maxPrice" class="pricesel" aria-label="Maximum price"></select>
+      <select id="sortBy" class="pricesel" aria-label="Sort by"></select>
+      <button id="savedBtn" class="tchip heartchip" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21s-7.5-4.7-10-9.3C.6 8.6 2.3 4.9 5.9 4.3c2-.3 3.9.6 5 2.2a5.6 5.6 0 0 1 5-2.2c3.7.6 5.4 4.3 4 7.4-2.6 4.6-10 9.3-10 9.3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        <span>Saved</span><span id="savedCount" class="savedn" hidden></span>
+      </button>
     </div>
 
     <div class="body">
@@ -55,13 +71,39 @@
     <footer class="foot">
       <b id="fresh">Updated —</b>
       <span class="sep">·</span>
+      <button id="aboutBtn" class="linkbtn" type="button">About &amp; data</button>
+      <span class="sep">·</span>
       <span>Data <a href="https://reiv.com.au" target="_blank" rel="noopener noreferrer">REIV</a>, guides <a href="https://soho.com.au" target="_blank" rel="noopener noreferrer">soho</a>, map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
       <span class="foot-spacer"></span>
       <span class="disc">Price guides are indicative &amp; change — confirm with the agent. Not financial advice.</span>
     </footer>
   </div>
 
+  <dialog id="about" aria-labelledby="aboutTitle">
+    <div class="dlg-head">
+      <h2 id="aboutTitle">About Passd</h2>
+      <button class="dlg-x" id="aboutClose" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <p><b>Passd</b> maps every residential property reported as <b>passed in</b> at auction across Melbourne and Victoria, week by week.</p>
+    <h3>Why passed-in homes?</h3>
+    <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days — a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
+    <h3>Where the data comes from</h3>
+    <ul>
+      <li><b>Auction results</b> — REIV's public suburb-by-suburb results. REIV surfaces roughly the last two weekends; Passd accumulates up to ~12 weeks as it refreshes.</li>
+      <li><b>Price guides &amp; listing links</b> — matched from the live listing (soho.com.au) where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are “contact agent”.</li>
+      <li><b>Map</b> — OpenStreetMap.</li>
+    </ul>
+    <h3>Freshness</h3>
+    <p>Data refreshes automatically every Sunday night after the weekend's auctions — the footer shows the last update. Saves live only in this browser; use <i>Copy link</i> on a home to share it.</p>
+    <p class="dlg-disc">Price guides are indicative and change without notice — always confirm with the agent. Nothing here is financial or property advice.</p>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="./data.js"></script>
   <script src="./app.js"></script>
 </body>

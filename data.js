@@ -1,7 +1,7 @@
-// REAL passed-in results from REIV (reiv.com.au) with current agent price guides (soho.com.au).
-// 228 properties; 60 with a price guide; weeks: 2026-06-27, 2026-06-13.
+// REAL passed-in results from REIV (reiv.com.au) with current agent price guides + listing links (soho.com.au).
+// 228 properties; 57 with a price guide; weeks: 2026-06-27, 2026-06-13.
 // Regenerate: node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js
-const DATA_GENERATED = "2026-07-01";
+const DATA_GENERATED = "2026-07-02";
 const PASSED_IN = [
   {
     "address": "6 Iramoo Ct",
@@ -20,7 +20,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 680000,
-    "listHigh": 720000
+    "listHigh": 720000,
+    "listUrl": "https://soho.com.au/properties/auction/6-iramoo-court-albanvale-vic-3021-australia"
   },
   {
     "address": "101 Maxweld St",
@@ -39,7 +40,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 700000,
-    "listHigh": 700000
+    "listHigh": 700000,
+    "listUrl": "https://soho.com.au/properties/auction/101-maxweld-street-ardeer-vic-3022-australia"
   },
   {
     "address": "2 Blanche St",
@@ -58,7 +60,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "13A Moorhouse St",
@@ -77,7 +80,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "40 Kooyong Rd",
@@ -96,7 +100,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "57 Winton Rd",
@@ -115,7 +120,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 2390000,
-    "listHigh": 2390000
+    "listHigh": 2390000,
+    "listUrl": "https://soho.com.au/properties/auction/57-winton-road-ashburton-vic-3147-australia"
   },
   {
     "address": "1 Lacy St",
@@ -134,7 +140,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8 Highvista Gr",
@@ -153,7 +160,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "32A Nott St",
@@ -172,7 +180,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "G02/340 Whitehorse Rd",
@@ -191,7 +200,8 @@ const PASSED_IN = [
     "saleDate": "24/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/37 Aylmer St",
@@ -210,7 +220,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 1390000,
-    "listHigh": 1390000
+    "listHigh": 1390000,
+    "listUrl": "https://soho.com.au/properties/auction/2-37-aylmer-street-balwyn-north-vic-3104-australia"
   },
   {
     "address": "36 Sylvander St",
@@ -229,7 +240,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2 Kossecks Pl",
@@ -248,7 +260,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/2 Elmhurst Rd",
@@ -267,7 +280,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2A Dewrang Cr",
@@ -286,7 +300,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/8 Richmond St",
@@ -305,7 +320,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "19 Derby Pde",
@@ -324,7 +340,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "9 Treloar Cr",
@@ -343,7 +360,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3 Gatehouse Pl",
@@ -362,7 +380,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8 Parliament St",
@@ -381,7 +400,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "54 Gerbert St",
@@ -400,7 +420,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "20 Clare St",
@@ -419,7 +440,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "268 Albion St",
@@ -438,7 +460,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1 Darryl St",
@@ -457,7 +480,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "18 Templestowe Rd",
@@ -476,7 +500,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 895000,
-    "listHigh": 895000
+    "listHigh": 895000,
+    "listUrl": "https://soho.com.au/properties/auction/18-templestowe-road-bulleen-vic-3105-australia"
   },
   {
     "address": "2 Lauder Dr",
@@ -495,7 +520,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "20 Zenith Rise",
@@ -514,7 +540,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8/83 Janefield Dr",
@@ -533,7 +560,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "85 Settlement Rd",
@@ -552,7 +580,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 720000,
-    "listHigh": 792000
+    "listHigh": 792000,
+    "listUrl": "https://soho.com.au/properties/auction/85-settlement-road-bundoora-vic-3083-australia"
   },
   {
     "address": "13 Niewand Av",
@@ -571,7 +600,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "17/1 Conservatory Dr",
@@ -590,7 +620,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "188 Holland Rd",
@@ -608,8 +639,9 @@ const PASSED_IN = [
     "method": "Passed in Vendor Bid",
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
-    "listLow": 1,
-    "listHigh": 1
+    "listLow": null,
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "15 Kerr Cr",
@@ -628,7 +660,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "7/16 Shepparson Av",
@@ -647,7 +680,8 @@ const PASSED_IN = [
     "saleDate": "24/06/2026",
     "week": "2026-06-27",
     "listLow": 430000,
-    "listHigh": 430000
+    "listHigh": 430000,
+    "listUrl": "https://soho.com.au/properties/auction/7-16-shepparson-avenue-carnegie-vic-3163-australia"
   },
   {
     "address": "8 Buvelot Cr",
@@ -666,7 +700,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8/17-19 Newlyn St",
@@ -685,7 +720,8 @@ const PASSED_IN = [
     "saleDate": "27/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "4/20 Fosbery Av",
@@ -704,7 +740,8 @@ const PASSED_IN = [
     "saleDate": "27/06/2026",
     "week": "2026-06-27",
     "listLow": 1095000,
-    "listHigh": 1095000
+    "listHigh": 1095000,
+    "listUrl": "https://soho.com.au/properties/auction/4-20-fosbery-avenue-caulfield-north-vic-3161-australia"
   },
   {
     "address": "31A&31B Mawarra Cr",
@@ -723,7 +760,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "33 Eunice Dr",
@@ -742,7 +780,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 1019000,
-    "listHigh": 1019000
+    "listHigh": 1019000,
+    "listUrl": "https://soho.com.au/properties/auction/33-eunice-drive-cheltenham-vic-3192-australia"
   },
   {
     "address": "67 Diamond Pde",
@@ -761,7 +800,8 @@ const PASSED_IN = [
     "saleDate": "23/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/25 Liverpool St",
@@ -780,7 +820,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 757000,
-    "listHigh": 757000
+    "listHigh": 757000,
+    "listUrl": "https://soho.com.au/properties/auction/3-25-liverpool-street-coburg-vic-3058-australia"
   },
   {
     "address": "42 Higinbotham St",
@@ -799,7 +840,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "60 Ronald St",
@@ -818,7 +860,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "11 Sparkford Rd",
@@ -837,7 +880,8 @@ const PASSED_IN = [
     "saleDate": "23/06/2026",
     "week": "2026-06-27",
     "listLow": 667000,
-    "listHigh": 667000
+    "listHigh": 667000,
+    "listUrl": "https://soho.com.au/properties/auction/11-sparkford-road-craigieburn-vic-3064-australia"
   },
   {
     "address": "26 Kernan Ct",
@@ -856,7 +900,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 629000,
-    "listHigh": 629000
+    "listHigh": 629000,
+    "listUrl": "https://soho.com.au/properties/auction/26-kernan-court-craigieburn-vic-3064-australia"
   },
   {
     "address": "32 Sumar Dr",
@@ -875,7 +920,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "363 Craigieburn Rd",
@@ -894,7 +940,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "4 Delaware Rd",
@@ -913,7 +960,8 @@ const PASSED_IN = [
     "saleDate": "27/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "5 Lapilli Way",
@@ -932,7 +980,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "50 Scenery Dr",
@@ -951,7 +1000,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 739000,
-    "listHigh": 739000
+    "listHigh": 739000,
+    "listUrl": "https://soho.com.au/properties/auction/50-scenery-drive-craigieburn-vic-3064-australia"
   },
   {
     "address": "6/29 Ardsley Cirt",
@@ -970,7 +1020,8 @@ const PASSED_IN = [
     "saleDate": "23/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8 Falmer Pl",
@@ -989,7 +1040,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8 Leed St",
@@ -1008,7 +1060,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 700000,
-    "listHigh": 700000
+    "listHigh": 700000,
+    "listUrl": "https://soho.com.au/properties/auction/8-leed-street-dandenong-vic-3175-australia"
   },
   {
     "address": "3 Christine Ct",
@@ -1027,7 +1080,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 1449000,
-    "listHigh": 1449000
+    "listHigh": 1449000,
+    "listUrl": "https://soho.com.au/properties/auction/3-christine-court-doncaster-vic-3108-australia"
   },
   {
     "address": "4 Glenfern Av",
@@ -1046,7 +1100,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "73 Church Rd",
@@ -1065,7 +1120,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 1760000,
-    "listHigh": 1850000
+    "listHigh": 1850000,
+    "listUrl": "https://soho.com.au/properties/auction/73-church-road-doncaster-vic-3108-australia"
   },
   {
     "address": "4/5 Winifred St",
@@ -1084,7 +1140,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "20 Wimba Av",
@@ -1103,7 +1160,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "58 Cobden St",
@@ -1122,7 +1180,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "69 Tennyson St",
@@ -1141,7 +1200,8 @@ const PASSED_IN = [
     "saleDate": "26/06/2026",
     "week": "2026-06-27",
     "listLow": 2200000,
-    "listHigh": 2400000
+    "listHigh": 2400000,
+    "listUrl": "https://soho.com.au/properties/auction/69-tennyson-street-kew-vic-3101-australia"
   },
   {
     "address": "18 Clifton St",
@@ -1160,7 +1220,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "38 King St",
@@ -1179,7 +1240,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 2450000,
-    "listHigh": 2450000
+    "listHigh": 2450000,
+    "listUrl": "https://soho.com.au/properties/auction/38-king-street-balwyn-vic-3103-australia"
   },
   {
     "address": "1 Wynyard Cr",
@@ -1198,7 +1260,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "143 Doncaster Rd",
@@ -1217,7 +1280,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "16 Glenthorn Av",
@@ -1236,7 +1300,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/33-35 Nicholson St",
@@ -1255,7 +1320,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "6 Somers St",
@@ -1274,7 +1340,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/16 Schulz St",
@@ -1293,7 +1360,8 @@ const PASSED_IN = [
     "saleDate": "10/06/2026",
     "week": "2026-06-13",
     "listLow": 1059000,
-    "listHigh": 1059000
+    "listHigh": 1059000,
+    "listUrl": "https://soho.com.au/properties/auction/2-16-schulz-street-bentleigh-east-vic-3165-australia"
   },
   {
     "address": "2/90 Deakin St",
@@ -1312,7 +1380,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/8 Chauvel St",
@@ -1331,7 +1400,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "53B Kennedy St",
@@ -1350,7 +1420,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "49 Stanley Gr",
@@ -1369,7 +1440,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "16 Konark Rd",
@@ -1388,7 +1460,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 570000,
-    "listHigh": 595000
+    "listHigh": 595000,
+    "listUrl": "https://soho.com.au/properties/auction/16-konark-road-bonnie-brook-vic-3335-australia"
   },
   {
     "address": "3 Lusitano Rd",
@@ -1407,7 +1480,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 460000,
-    "listHigh": 460000
+    "listHigh": 460000,
+    "listUrl": "https://soho.com.au/properties/auction/3-lusitano-road-bonnie-brook-vic-3335-australia"
   },
   {
     "address": "5/13-15 Barcelona St",
@@ -1426,7 +1500,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "21 Linda Av",
@@ -1444,8 +1519,9 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": 1,
-    "listHigh": 1
+    "listLow": null,
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "4/21 Tyne St",
@@ -1464,7 +1540,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "5/1-3 Landcox St",
@@ -1483,7 +1560,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "9 Robinson St",
@@ -1502,7 +1580,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 2295000,
-    "listHigh": 2295000
+    "listHigh": 2295000,
+    "listUrl": "https://soho.com.au/properties/auction/9-robinson-street-brighton-east-vic-3187-australia"
   },
   {
     "address": "16 Laura St",
@@ -1521,7 +1600,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1085000,
-    "listHigh": 1085000
+    "listHigh": 1085000,
+    "listUrl": "https://soho.com.au/properties/auction/16-laura-street-brunswick-vic-3056-australia"
   },
   {
     "address": "192 Thompsons Rd",
@@ -1540,7 +1620,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/38 Flannery Av",
@@ -1559,7 +1640,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "18 Hutchinson St",
@@ -1578,7 +1660,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "147 Fordham Av",
@@ -1597,7 +1680,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "35 Canterbury Rd",
@@ -1616,7 +1700,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/150 Grange Rd",
@@ -1635,7 +1720,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 749000,
-    "listHigh": 749000
+    "listHigh": 749000,
+    "listUrl": "https://soho.com.au/properties/auction/3-150-grange-road-carnegie-vic-3163-australia"
   },
   {
     "address": "6/7 Toolambool Rd",
@@ -1654,7 +1740,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 745000,
-    "listHigh": 745000
+    "listHigh": 745000,
+    "listUrl": "https://soho.com.au/properties/auction/6-7-toolambool-road-carnegie-vic-3163-australia"
   },
   {
     "address": "146 Lyrebird Dr",
@@ -1673,7 +1760,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "32 Shearwater Dr",
@@ -1692,7 +1780,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "10B Miriam St",
@@ -1711,7 +1800,8 @@ const PASSED_IN = [
     "saleDate": "10/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "213/7 Dudley St",
@@ -1730,7 +1820,8 @@ const PASSED_IN = [
     "saleDate": "10/06/2026",
     "week": "2026-06-13",
     "listLow": 255000,
-    "listHigh": 255000
+    "listHigh": 255000,
+    "listUrl": "https://soho.com.au/properties/auction/213-7-dudley-street-caulfield-east-vic-3145-australia"
   },
   {
     "address": "2/25 Booker St",
@@ -1749,7 +1840,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1000000,
-    "listHigh": 1100000
+    "listHigh": 1100000,
+    "listUrl": "https://soho.com.au/properties/auction/2-25-booker-street-cheltenham-vic-3192-australia"
   },
   {
     "address": "2 Rosella Av",
@@ -1768,7 +1860,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "13B Merlyn Av",
@@ -1787,7 +1880,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "42 Spring Valley Dr",
@@ -1806,7 +1900,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/290 Reynard St",
@@ -1825,7 +1920,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "22 Tonkin Av",
@@ -1844,7 +1940,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/2 Manly Ct",
@@ -1863,7 +1960,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "132 Highlander Dr",
@@ -1882,7 +1980,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "17 Creekbridge St",
@@ -1901,7 +2000,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 697000,
-    "listHigh": 697000
+    "listHigh": 697000,
+    "listUrl": "https://soho.com.au/properties/auction/17-creekbridge-street-craigieburn-vic-3064-australia"
   },
   {
     "address": "21 Wattletree St",
@@ -1919,8 +2019,9 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": 780,
-    "listHigh": 780
+    "listLow": null,
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "40 Lithic Rd",
@@ -1939,7 +2040,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "56 Domain Way",
@@ -1958,7 +2060,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 676000,
-    "listHigh": 676000
+    "listHigh": 676000,
+    "listUrl": "https://soho.com.au/properties/auction/56-domain-way-craigieburn-vic-3064-australia"
   },
   {
     "address": "60 Bonnyview Rd",
@@ -1977,7 +2080,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 789000,
-    "listHigh": 789000
+    "listHigh": 789000,
+    "listUrl": "https://soho.com.au/properties/auction/60-bonnyview-road-craigieburn-vic-3064-australia"
   },
   {
     "address": "92 Golf View Dr",
@@ -1996,7 +2100,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2 Durang Ct",
@@ -2015,7 +2120,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 950000,
-    "listHigh": 950000
+    "listHigh": 950000,
+    "listUrl": "https://soho.com.au/properties/auction/2-durang-court-croydon-north-vic-3136-australia"
   },
   {
     "address": "7 Bridie St",
@@ -2034,7 +2140,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "312 Spring Rd",
@@ -2053,7 +2160,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "226/9 Wharf St",
@@ -2072,7 +2180,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "69 Timber Ridg",
@@ -2091,7 +2200,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/227 Blackburn Rd",
@@ -2110,7 +2220,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "49 Bowen Rd",
@@ -2129,7 +2240,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "9 Albury Av",
@@ -2148,7 +2260,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "13 Woodridge Cr",
@@ -2167,7 +2280,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 720000,
-    "listHigh": 720000
+    "listHigh": 720000,
+    "listUrl": "https://soho.com.au/properties/auction/13-woodridge-crescent-doreen-vic-3754-australia"
   },
   {
     "address": "12A Kendall St",
@@ -2186,7 +2300,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1 Richhaven Pl",
@@ -2205,7 +2320,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "16 Sundial Pde",
@@ -2224,7 +2340,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "102/324 Pascoe Vale Rd",
@@ -2243,7 +2360,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/6 Ogilvie St",
@@ -2262,7 +2380,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "20 Tweedside St",
@@ -2281,7 +2400,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "88 Primrose St",
@@ -2300,7 +2420,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "127 Barkly St",
@@ -2319,7 +2440,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "216 Clauscen St",
@@ -2338,7 +2460,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/55 Dover St",
@@ -2357,7 +2480,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "33 Elmhurst Rd",
@@ -2376,7 +2500,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "56 Booyan Cr",
@@ -2395,7 +2520,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "26 Naxos Rd",
@@ -2414,7 +2540,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "30 Avisha Way",
@@ -2433,7 +2560,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "26 Burt Cr",
@@ -2452,7 +2580,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/3 Muir St",
@@ -2471,7 +2600,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 2350000,
-    "listHigh": 2350000
+    "listHigh": 2350000,
+    "listUrl": "https://soho.com.au/properties/auction/1-3-muir-street-hawthorn-vic-3122-australia"
   },
   {
     "address": "20 Bell St",
@@ -2490,7 +2620,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/64 Kooyongkoot Rd",
@@ -2509,7 +2640,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "36 Kinkora Rd",
@@ -2528,7 +2660,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "13 Pleasant Rd",
@@ -2547,7 +2680,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "75-77 Haig St",
@@ -2566,7 +2700,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/140 Highett Rd",
@@ -2585,7 +2720,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 550000,
-    "listHigh": 600000
+    "listHigh": 600000,
+    "listUrl": "https://soho.com.au/properties/auction/2-140-highett-road-highett-vic-3190-australia"
   },
   {
     "address": "6A Rose St",
@@ -2604,7 +2740,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8A Danson St",
@@ -2623,7 +2760,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "50 Jade Way",
@@ -2642,7 +2780,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "6 Wales Ct",
@@ -2661,7 +2800,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "12 Don Av",
@@ -2680,7 +2820,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "34 Jellicoe St",
@@ -2699,7 +2840,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "7/10 Tate St",
@@ -2718,7 +2860,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "9 Flora Gr",
@@ -2737,7 +2880,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "30 Magnesium Rd",
@@ -2756,7 +2900,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "34 Magnesium Rd",
@@ -2775,7 +2920,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "27 Arabin St",
@@ -2794,7 +2940,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "204 Rachelle Rd",
@@ -2813,7 +2960,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "5 Collett St",
@@ -2832,7 +2980,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/89 Sackville St",
@@ -2851,7 +3000,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1800000,
-    "listHigh": 1900000
+    "listHigh": 1900000,
+    "listUrl": "https://soho.com.au/properties/auction/1-89-sackville-street-kew-vic-3101-australia"
   },
   {
     "address": "3 Windsor St",
@@ -2870,7 +3020,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1819000,
-    "listHigh": 1819000
+    "listHigh": 1819000,
+    "listUrl": "https://soho.com.au/properties/auction/3-windsor-street-kew-vic-3101-australia"
   },
   {
     "address": "4/31-35 Foley St",
@@ -2889,7 +3040,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/19 Hartwood St",
@@ -2908,7 +3060,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "30 Westbrook St",
@@ -2927,7 +3080,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 2300000,
-    "listHigh": 2500000
+    "listHigh": 2500000,
+    "listUrl": "https://soho.com.au/properties/auction/30-westbrook-street-kew-east-vic-3102-australia"
   },
   {
     "address": "7 Goldhurst St",
@@ -2946,7 +3100,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8 Highfield Way",
@@ -2965,7 +3120,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1500000,
-    "listHigh": 1500000
+    "listHigh": 1500000,
+    "listUrl": "https://soho.com.au/properties/auction/8-highfield-way-kurunjang-vic-3337-australia"
   },
   {
     "address": "4 Harvey St",
@@ -2984,7 +3140,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 3695000,
-    "listHigh": 3695000
+    "listHigh": 3695000,
+    "listUrl": "https://soho.com.au/properties/auction/4-harvey-street-malvern-vic-3144-australia"
   },
   {
     "address": "70 Argyll St",
@@ -3003,7 +3160,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "71A Repton Rd",
@@ -3022,7 +3180,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "109 Plane Av",
@@ -3041,7 +3200,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 515000,
-    "listHigh": 535000
+    "listHigh": 535000,
+    "listUrl": "https://soho.com.au/properties/auction/109-plane-avenue-mambourin-vic-3024-australia"
   },
   {
     "address": "8B Mckinnon Rd",
@@ -3060,7 +3220,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "505/610 St Kilda Rd",
@@ -3079,7 +3240,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "12 Falcon Dr",
@@ -3098,7 +3260,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 489000,
-    "listHigh": 509000
+    "listHigh": 509000,
+    "listUrl": "https://soho.com.au/properties/auction/12-falcon-drive-melton-vic-3337-australia"
   },
   {
     "address": "2/223 Page St",
@@ -3117,7 +3280,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "69 Wright St",
@@ -3136,7 +3300,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 2650000,
-    "listHigh": 2650000
+    "listHigh": 2650000,
+    "listUrl": "https://soho.com.au/properties/auction/69-wright-street-middle-park-vic-3206-australia"
   },
   {
     "address": "2 Irene Cr",
@@ -3155,7 +3320,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/18 Beaufort St",
@@ -3174,7 +3340,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "10 Melrose St",
@@ -3193,7 +3360,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1A Hudson St",
@@ -3212,7 +3380,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "71 Ormond Rd",
@@ -3231,7 +3400,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "73 Scott St",
@@ -3250,7 +3420,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "9A Matilda Rd",
@@ -3269,7 +3440,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "2/7 Melville Ct",
@@ -3288,7 +3460,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "83 Fountain Dr",
@@ -3307,7 +3480,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/21 Jackson St",
@@ -3326,7 +3500,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "110A Hotham Rd",
@@ -3345,7 +3520,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "160 Lightwood Rd",
@@ -3364,7 +3540,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "24 Shirley St",
@@ -3383,7 +3560,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/415 Abbotsford St",
@@ -3402,7 +3580,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "6/16 Walsh St",
@@ -3421,7 +3600,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "176 Gatehouse St",
@@ -3440,7 +3620,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "5 Wilna St",
@@ -3459,7 +3640,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "76A Devon Rd",
@@ -3478,7 +3660,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 840000,
-    "listHigh": 840000
+    "listHigh": 840000,
+    "listUrl": "https://soho.com.au/properties/auction/76a-devon-road-pascoe-vale-vic-3044-australia"
   },
   {
     "address": "118 Melville Rd",
@@ -3497,7 +3680,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "19 Martaban Cr",
@@ -3516,7 +3700,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "33 Madeline St",
@@ -3535,7 +3720,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "136 Paterson St",
@@ -3554,7 +3740,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/199 Purinuan Rd",
@@ -3573,7 +3760,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "167 Spring St",
@@ -3592,7 +3780,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/199 Purinuan Rd",
@@ -3611,7 +3800,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "65 Merrilands Rd",
@@ -3630,7 +3820,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "11/17 Kent St",
@@ -3649,7 +3840,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 735000,
-    "listHigh": 735000
+    "listHigh": 735000,
+    "listUrl": "https://soho.com.au/properties/auction/11-17-kent-street-richmond-vic-3121-australia"
   },
   {
     "address": "1 Arlington St",
@@ -3668,7 +3860,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "72A Spring St",
@@ -3687,7 +3880,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "103/167 Gladstone St",
@@ -3706,7 +3900,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "40 Everlasting Blvd",
@@ -3725,7 +3920,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "32A Hardy St",
@@ -3744,7 +3940,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1350000,
-    "listHigh": 1350000
+    "listHigh": 1350000,
+    "listUrl": "https://soho.com.au/properties/auction/32a-hardy-street-south-yarra-vic-3141-australia"
   },
   {
     "address": "69 Moore St",
@@ -3763,7 +3960,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "37 Lee Av",
@@ -3782,7 +3980,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1 Cairn Cl",
@@ -3801,7 +4000,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "14 Winifred St",
@@ -3820,7 +4020,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "3/20 Norman St",
@@ -3839,7 +4040,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 530000,
-    "listHigh": 530000
+    "listHigh": 530000,
+    "listUrl": "https://soho.com.au/properties/auction/3-20-norman-street-st-albans-vic-3021-australia"
   },
   {
     "address": "11/5 Herbert St",
@@ -3858,7 +4060,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 711000,
-    "listHigh": 711000
+    "listHigh": 711000,
+    "listUrl": "https://soho.com.au/properties/auction/11-5-herbert-street-st-kilda-vic-3182-australia"
   },
   {
     "address": "104 Hilma St",
@@ -3877,7 +4080,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 899000,
-    "listHigh": 899000
+    "listHigh": 899000,
+    "listUrl": "https://soho.com.au/properties/auction/104-hilma-street-sunshine-west-vic-3020-australia"
   },
   {
     "address": "4/16 Bona Vista Av",
@@ -3896,7 +4100,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1 Breadalbane Ct",
@@ -3915,7 +4120,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 950000,
-    "listHigh": 980000
+    "listHigh": 980000,
+    "listUrl": "https://soho.com.au/properties/auction/1-breadalbane-court-sydenham-vic-3037-australia"
   },
   {
     "address": "10 Pastoral Pl",
@@ -3934,7 +4140,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 749000,
-    "listHigh": 789000
+    "listHigh": 789000,
+    "listUrl": "https://soho.com.au/properties/auction/10-pastoral-place-sydenham-vic-3037-australia"
   },
   {
     "address": "3 Boberrit Wynd",
@@ -3953,7 +4160,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "76 Watervale Blvd",
@@ -3972,7 +4180,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "8 Joyce Gr",
@@ -3991,7 +4200,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "11 Australia Dr",
@@ -4010,7 +4220,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "109 Foote St",
@@ -4029,7 +4240,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "194 Victoria Dr",
@@ -4048,7 +4260,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "1/55 Pender St",
@@ -4067,7 +4280,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "350 Victoria Rd",
@@ -4086,7 +4300,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1055000,
-    "listHigh": 1055000
+    "listHigh": 1055000,
+    "listUrl": "https://soho.com.au/properties/auction/350-victoria-road-thornbury-vic-3071-australia"
   },
   {
     "address": "43 Ethel St",
@@ -4105,7 +4320,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "14 Betinick Rd",
@@ -4124,7 +4340,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 639000,
-    "listHigh": 649000
+    "listHigh": 649000,
+    "listUrl": "https://soho.com.au/properties/auction/14-betinick-road-truganina-vic-3029-australia"
   },
   {
     "address": "5 Sissinghurst St",
@@ -4143,7 +4360,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 530000,
-    "listHigh": 530000
+    "listHigh": 530000,
+    "listUrl": "https://soho.com.au/properties/auction/5-sissinghurst-street-truganina-vic-3029-australia"
   },
   {
     "address": "240 Hawthorn Rd",
@@ -4161,8 +4379,9 @@ const PASSED_IN = [
     "method": "Passed in at Auction",
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
-    "listLow": 1380000,
-    "listHigh": 1480000
+    "listLow": 1450000,
+    "listHigh": 1480000,
+    "listUrl": "https://soho.com.au/properties/auction/240-hawthorn-road-vermont-south-vic-3133-australia"
   },
   {
     "address": "19 Amersham Dr",
@@ -4181,7 +4400,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "22 Wellington St",
@@ -4200,7 +4420,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 800000,
-    "listHigh": 800000
+    "listHigh": 800000,
+    "listUrl": "https://soho.com.au/properties/auction/22-wellington-street-west-footscray-vic-3012-australia"
   },
   {
     "address": "1/499 Spencer St",
@@ -4219,7 +4440,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "5/32 Shadforth St",
@@ -4238,7 +4460,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "5/59-61 Aitken St",
@@ -4257,7 +4480,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "83 Parker St",
@@ -4276,7 +4500,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1750000,
-    "listHigh": 1850000
+    "listHigh": 1850000,
+    "listUrl": "https://soho.com.au/properties/auction/83-parker-street-williamstown-vic-3016-australia"
   },
   {
     "address": "8/17-19 The Avenue",
@@ -4295,7 +4520,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "26 Bursa Dr",
@@ -4314,7 +4540,8 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": null,
-    "listHigh": null
+    "listHigh": null,
+    "listUrl": null
   },
   {
     "address": "58 Bayview Rd",
@@ -4333,6 +4560,7 @@ const PASSED_IN = [
     "saleDate": "12/06/2026",
     "week": "2026-06-13",
     "listLow": 1125000,
-    "listHigh": 1125000
+    "listHigh": 1125000,
+    "listUrl": "https://soho.com.au/properties/auction/58-bayview-road-yarraville-vic-3013-australia"
   }
 ];
