@@ -96,7 +96,9 @@ function addBasemap() {
 // ---------- data slices ----------
 const forWeek = () => PASSED_IN.filter((p) => (week === "all" || p.week === week) && p.lat != null && p.lng != null);
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
-const priceOk = (p) => maxPrice == null || (p.listLow != null && p.listLow <= maxPrice);
+// "Price on request" homes always pass the price filter — an unknown guide could
+// be in budget, so showing beats hiding.
+const priceOk = (p) => maxPrice == null || p.listLow == null || p.listLow <= maxPrice;
 const bedsOk = (p) => minBeds == null || (p.beds != null && p.beds >= minBeds);
 const savedOk = (p) => !savedOnly || saved.has(p.id);
 const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p) && bedsOk(p) && savedOk(p));
@@ -369,15 +371,36 @@ function searchMatches(q) {
     : [];
   const subs = SUBURBS.filter((s) => s.suburb.toLowerCase().startsWith(ql) || (s.postcode || "").startsWith(ql));
   const subs2 = subs.length ? subs : SUBURBS.filter((s) => s.suburb.toLowerCase().includes(ql));
-  return props.concat(subs2.slice(0, 8 - props.length).map((s) => ({ kind: "sub", s })));
+  const items = props.concat(subs2.slice(0, 7 - props.length).map((s) => ({ kind: "sub", s })));
+  // Always offer a map-wide location search — works even where nothing passed in.
+  if (ql.length >= 3) items.push({ kind: "geo", q: q.trim() });
+  return items;
+}
+async function geoLocate(q) {
+  toast("Finding " + q + "…");
+  try {
+    const r = await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=au&viewbox=140.5,-39.9,150.5,-33.8&bounded=1&q=" + encodeURIComponent(q));
+    const j = await r.json();
+    if (!j || !j[0]) { toast("Couldn't find “" + q + "” in Victoria"); return; }
+    const g = j[0];
+    if (window.matchMedia("(max-width: 900px)").matches) showMap();
+    if (g.boundingbox) {
+      const [s, n, w, e] = g.boundingbox.map(Number); // nominatim: [south, north, west, east]
+      map.fitBounds([[s, w], [n, e]], { padding: [40, 40], maxZoom: 15 });
+    } else map.setView([+g.lat, +g.lon], 14);
+    setTimeout(() => { if (!visible().length) toast("No passed-in homes here right now"); }, 800);
+  } catch { toast("Location search unavailable — try again"); }
 }
 const forWeekAll = () => PASSED_IN.filter((p) => p.lat != null && p.lng != null);
 function renderSearch() {
   const qr = el("qr");
   if (!qItems.length) { qr.hidden = true; el("q").setAttribute("aria-expanded", "false"); return; }
-  qr.innerHTML = qItems.map((it, i) => it.kind === "prop"
-    ? `<button type="button" class="qi${i === qActive ? " on" : ""}" id="qi-${i}" role="option" aria-selected="${i === qActive}" data-i="${i}"><b>${esc(it.p.address)}</b><span>${esc(it.p.suburb)} · passed in ${esc(fmtDay(it.p.saleDate) || "")}</span></button>`
-    : `<button type="button" class="qi${i === qActive ? " on" : ""}" id="qi-${i}" role="option" aria-selected="${i === qActive}" data-i="${i}"><b>${esc(it.s.suburb)}</b><span>VIC ${esc(it.s.postcode || "")} · ${it.s.n} passed in</span></button>`).join("");
+  qr.innerHTML = qItems.map((it, i) => {
+    const a = `type="button" class="qi${it.kind === "geo" ? " geo" : ""}${i === qActive ? " on" : ""}" id="qi-${i}" role="option" aria-selected="${i === qActive}" data-i="${i}"`;
+    if (it.kind === "prop") return `<button ${a}><b>${esc(it.p.address)}</b><span>${esc(it.p.suburb)} · passed in ${esc(fmtDay(it.p.saleDate) || "")}</span></button>`;
+    if (it.kind === "geo") return `<button ${a}><b>Search the map for “${esc(it.q)}”</b><span>Jump to any VIC location — even with no pass-ins</span></button>`;
+    return `<button ${a}><b>${esc(it.s.suburb)}</b><span>VIC ${esc(it.s.postcode || "")} · ${it.s.n} passed in</span></button>`;
+  }).join("");
   qr.hidden = false; el("q").setAttribute("aria-expanded", "true");
   el("q").setAttribute("aria-activedescendant", qActive >= 0 ? "qi-" + qActive : "");
 }
@@ -385,7 +408,10 @@ function chooseSearch(i) {
   const it = qItems[i]; if (!it) return;
   const qr = el("qr"); qr.hidden = true; qItems = []; qActive = -1;
   el("q").setAttribute("aria-expanded", "false");
-  if (it.kind === "sub") {
+  if (it.kind === "geo") {
+    el("q").value = it.q;
+    geoLocate(it.q);
+  } else if (it.kind === "sub") {
     el("q").value = it.s.suburb;
     const pad = 0.004;
     map.fitBounds([[it.s.latMin - pad, it.s.lngMin - pad], [it.s.latMax + pad, it.s.lngMax + pad]], { padding: [50, 50], maxZoom: 15 });
