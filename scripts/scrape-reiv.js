@@ -101,5 +101,6 @@ async function geocode(q) {
   const p2 = n => String(n).padStart(2, '0'); const nd = new Date(); const gen = nd.getFullYear() + '-' + p2(nd.getMonth() + 1) + '-' + p2(nd.getDate());
   const hdr = '// REAL passed-in auction results scraped from REIV per-suburb pages (reiv.com.au),\n// geocoded via ' + GEOCODER + ' (cached). Accumulates weekly, retains ' + RETAIN_DAYS + ' days. ' + merged.length + ' properties across ' + weeks.length + ' week(s): ' + weeks.join(', ') + '.\n// Regenerate: node scripts/scrape-reiv.js --days=' + DAYS + ' && node scripts/enrich-prices.js\n';
   fs.writeFileSync(dataPath, hdr + 'const DATA_GENERATED = ' + JSON.stringify(gen) + ';\nconst PASSED_IN = ' + JSON.stringify(merged, null, 2) + ';\n');
-  console.log('WROTE data.js:', merged.length, 'total across', weeks.length, 'week(s) (' + (merged.length - existing.length >= 0 ? '+' : '') + (merged.length - existing.length) + ' vs previous)');
+  fs.writeFileSync(path.join(ROOT, 'data.json'), JSON.stringify({ generated: gen, properties: merged })); // consumed by the mobile apps
+  console.log('WROTE data.js + data.json:', merged.length, 'total across', weeks.length, 'week(s) (' + (merged.length - existing.length >= 0 ? '+' : '') + (merged.length - existing.length) + ' vs previous)');
 })();

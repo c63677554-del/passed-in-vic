@@ -51,5 +51,6 @@ async function guideFor(d) {
   const hdr = '// REAL passed-in results from REIV (reiv.com.au) with current agent price guides + listing links (soho.com.au).\n// ' + data.length + ' properties; ' + priceCount + ' with a price guide; weeks: ' + weeks.join(', ') + '.\n// Regenerate: node scripts/scrape-reiv.js --days=30 && node scripts/enrich-prices.js\n';
   const p2 = n => String(n).padStart(2, '0'); const nd = new Date(); const gen = nd.getFullYear() + '-' + p2(nd.getMonth() + 1) + '-' + p2(nd.getDate());
   fs.writeFileSync(DATA, hdr + 'const DATA_GENERATED = ' + JSON.stringify(gen) + ';\n' + 'const PASSED_IN = ' + JSON.stringify(data, null, 2) + ';\n');
-  console.log('WROTE data.js:', priceCount, 'priced across', weeks.length, 'weeks');
+  fs.writeFileSync(path.join(ROOT, 'data.json'), JSON.stringify({ generated: gen, properties: data })); // consumed by the mobile apps
+  console.log('WROTE data.js + data.json:', priceCount, 'priced across', weeks.length, 'weeks');
 })();
