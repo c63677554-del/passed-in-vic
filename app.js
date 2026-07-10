@@ -70,8 +70,17 @@ function fitCity() {
   const pts = forWeek().map((p) => [p.lat, p.lng]);
   if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 });
 }
-let city = store.get("passd.city", "Melbourne"); // "all" or a CITIES entry
-const cityOk = (p) => city === "all" || (p.city || "Melbourne") === city;
+let city = store.get("passd.city", "Melbourne"); // "all", a CITIES entry, or "regional:STATE"
+const METRO_CITY = { VIC: "Melbourne", NSW: "Sydney", QLD: "Brisbane", SA: "Adelaide", ACT: "Canberra" };
+const inMetro = (p) => {
+  const box = METRO_BOUNDS[METRO_CITY[p.state || "VIC"]];
+  return !box || (p.lat >= box[0][0] && p.lat <= box[1][0] && p.lng >= box[0][1] && p.lng <= box[1][1]);
+};
+const cityOk = (p) => {
+  if (city === "all") return true;
+  if (city.startsWith("regional:")) return (p.state || "VIC") === city.slice(9) && !inMetro(p);
+  return (p.city || "Melbourne") === city;
+};
 let activeTypes = new Set();           // empty = all types
 let maxPrice = null;                   // number | null
 let minBeds = null;                    // number | null
@@ -86,7 +95,7 @@ function readURL() {
   const t = h.get("t"); if (t) activeTypes = new Set(t.split(".").filter((x) => TYPES.includes(x)));
   const p = +h.get("p"); if (p) maxPrice = p;
   const b = +h.get("b"); if (b) minBeds = b;
-  const ct = h.get("ct"); if (ct && (ct === "all" || CITIES.includes(ct))) city = ct;
+  const ct = h.get("ct"); if (ct && (ct === "all" || CITIES.includes(ct) || ct.startsWith("regional:"))) city = ct;
   if (h.get("sv") === "1") savedOnly = true;
   const s = h.get("s"); if (["priceAsc", "priceDesc", "beds", "az"].includes(s)) sortBy = s;
   return { sel: h.get("sel"), c: h.get("c") };
@@ -304,9 +313,14 @@ function refresh() { renderMarkers(); updateList(); writeURL(); }
 function buildCitySelect() {
   const sel = el("city");
   if (!sel) return;
-  if (city !== "all" && !CITIES.includes(city)) city = "Melbourne";
+  if (city !== "all" && !CITIES.includes(city) && !city.startsWith("regional:")) city = "Melbourne";
+  // Regional options are data-driven: they appear only for states that currently
+  // have pass-ins outside the metro box (e.g. Cairns arrives via the QLD feed).
+  const regStates = [...new Set(DATA.filter((p) => p.lat != null && !inMetro(p)).map((p) => p.state || "VIC"))].sort();
   sel.innerHTML = [`<option value="all">All cities</option>`]
-    .concat(CITIES.map((c) => `<option value="${c}">${c}</option>`)).join("");
+    .concat(CITIES.map((c) => `<option value="${c}">${c}</option>`))
+    .concat(regStates.map((s) => `<option value="regional:${s}">Regional ${s}</option>`)).join("");
+  if (city.startsWith("regional:") && !regStates.includes(city.slice(9))) city = "Melbourne";
   sel.value = city;
   sel.onchange = (e) => {
     city = e.target.value;

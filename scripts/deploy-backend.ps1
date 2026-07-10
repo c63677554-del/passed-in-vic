@@ -43,7 +43,7 @@ npx supabase functions deploy create-checkout --project-ref $ref
 npx supabase functions deploy portal --project-ref $ref
 
 Write-Host "== Setting function secrets =="
-$site = "https://c63677554-del.github.io/passed-in-vic/"
+$site = "https://passd.au/"
 if ($cfg.STRIPE_SECRET_KEY -and $cfg.STRIPE_WEBHOOK_SECRET -and $cfg.STRIPE_PRICE_MONTHLY -and $cfg.STRIPE_PRICE_ANNUAL) {
   npx supabase secrets set --project-ref $ref "SITE_URL=$site" "ALLOW_PREVIEW_GRANTS=false" "STRIPE_SECRET_KEY=$($cfg.STRIPE_SECRET_KEY)" "STRIPE_WEBHOOK_SECRET=$($cfg.STRIPE_WEBHOOK_SECRET)" "STRIPE_PRICE_MONTHLY=$($cfg.STRIPE_PRICE_MONTHLY)" "STRIPE_PRICE_ANNUAL=$($cfg.STRIPE_PRICE_ANNUAL)"
   Write-Host "Stripe: LIVE (preview grants disabled)"
