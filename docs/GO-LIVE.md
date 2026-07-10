@@ -42,9 +42,17 @@ four `STRIPE_*` lines to the env file, rerun `.\scripts\deploy-backend.ps1`.
 Preview grants switch off; the trial button now goes through Stripe Checkout.
 
 ## Notes & limits
-- **Auth emails**: Supabase's built-in sender is rate-limited (a few per hour) —
-  fine for testing and first users. Before promoting the site, plug in custom
-  SMTP (Supabase → Auth → SMTP; Resend's free tier works) for reliable delivery.
+- **Sign-in is email + password** (since 10 Jul 2026): auto-confirm is enabled via
+  the Management API, so signup and sign-in send **no emails at all** — the free
+  tier's few-per-hour email rate limit only touches the rare "forgot password" flow.
+  For reliable reset emails at scale, add custom SMTP later (Supabase → Auth → SMTP;
+  Resend's free tier works).
+- **Google one-tap sign-in (optional, ~10 min)**: Google Cloud Console → create an
+  OAuth client (Web application) with authorised redirect URI
+  `https://fpxlerpmbsqdwlrgnxsq.supabase.co/auth/v1/callback` → paste the client ID
+  + secret into Supabase dashboard → Authentication → Providers → Google → then set
+  `enableGoogle: true` in `config.js` and push. The button is already in the UI, hidden
+  until that flag flips.
 - **Existing shared links** keep working — they land on the landing page, which
   is the funnel working as intended.
 - **Mobile apps** (parked repo `passd-mobile`): when revived, point them at

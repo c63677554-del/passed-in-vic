@@ -29,29 +29,60 @@ const PassdGate = (() => {
     return r.json();
   }
 
-  // ---------- auth ----------
-  let pendingEmail = "";
-  async function sendLink() {
-    const email = ($("authEmail").value || "").trim().toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toastMsg("Enter a valid email"); return; }
-    pendingEmail = email;
-    $("authSend").disabled = true; $("authSend").textContent = "Sending…";
-    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
-    $("authSend").disabled = false; $("authSend").textContent = "Email me a sign-in link";
-    if (error) { toastMsg(error.message || "Couldn't send — try again"); return; }
-    show("authStep1", false); show("authStep2", true);
-    $("authEmailShown").textContent = email;
-    $("authOtp").focus();
+  // ---------- auth (email + password; autoconfirm on, so no emails needed) ----------
+  let authMode = "signin";
+  function authErr(msg, id) { const e = $(id || "authError"); if (!e) return; e.hidden = !msg; e.textContent = msg || ""; }
+  function setAuthMode(m) {
+    authMode = m;
+    ["tabSignIn", "tabSignUp"].forEach((t) => {
+      const on = (t === "tabSignIn") === (m === "signin");
+      $(t).classList.toggle("on", on); $(t).setAttribute("aria-selected", String(on));
+    });
+    $("authSubmit").textContent = m === "signin" ? "Sign in" : "Create account";
+    $("authPassword").setAttribute("autocomplete", m === "signin" ? "current-password" : "new-password");
+    authErr(null);
   }
-  async function verifyOtp() {
-    const token = ($("authOtp").value || "").trim();
-    if (token.length < 6) { toastMsg("Enter the 6-digit code from the email"); return; }
-    $("authVerify").disabled = true;
-    const { error } = await sb.auth.verifyOtp({ email: pendingEmail, token, type: "email" });
-    $("authVerify").disabled = false;
-    if (error) { toastMsg("Code didn't match — check the newest email"); return; }
-    closeModal("authModal");
-    location.reload();
+  async function submitAuth() {
+    const email = ($("authEmail").value || "").trim().toLowerCase();
+    const pw = $("authPassword").value || "";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return authErr("Enter a valid email address.");
+    if (pw.length < 8) return authErr("Password needs at least 8 characters.");
+    const btn = $("authSubmit"); const was = btn.textContent;
+    btn.disabled = true; btn.textContent = authMode === "signin" ? "Signing in…" : "Creating your account…";
+    try {
+      if (authMode === "signup") {
+        const { error } = await sb.auth.signUp({ email, password: pw });
+        if (error) {
+          if (/already registered/i.test(error.message)) { setAuthMode("signin"); authErr("That email already has an account — sign in instead."); }
+          else authErr(error.message);
+        } // success -> SIGNED_IN listener reloads into the app
+      } else {
+        const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+        if (error) authErr(/invalid/i.test(error.message) ? "Wrong email or password. New here? Tap Create account." : error.message);
+      }
+    } catch { authErr("Couldn't reach the server — try again."); }
+    btn.disabled = false; btn.textContent = was;
+  }
+  async function forgotPw() {
+    const email = ($("authEmail").value || "").trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return authErr("Type your email above first, then tap Forgot password.");
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+    authErr(error ? error.message : "Reset link sent — check your email (sending is rate-limited, so it can take a few minutes).");
+  }
+  async function saveNewPassword() {
+    const pw = $("recoverPassword").value || "";
+    if (pw.length < 8) return authErr("Password needs at least 8 characters.", "recoverError");
+    const { error } = await sb.auth.updateUser({ password: pw });
+    if (error) return authErr(error.message, "recoverError");
+    closeModal("recoverModal");
+    toastMsg("Password updated — you're signed in");
+    setTimeout(() => location.reload(), 700);
+  }
+  async function googleSignIn() {
+    try {
+      const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname } });
+      if (error) authErr("Google sign-in isn't enabled yet — use email and password.");
+    } catch { authErr("Google sign-in isn't enabled yet — use email and password."); }
   }
 
   // ---------- subscribe ----------
@@ -92,7 +123,11 @@ const PassdGate = (() => {
       });
       const body = await r.json();
       if (body.url) location.href = body.url;
-      else if (body.preview) toastMsg(body.devGrant ? "Preview trial — billing portal appears once Stripe is live" : "No billing on file yet");
+      else if (body.preview) {
+        const menu = $("acctMenu"); if (menu) menu.hidden = true;
+        if (state.tier !== "pro") { openModal("subModal"); toastMsg("Nothing to manage yet — start your free trial first"); }
+        else toastMsg(body.devGrant ? "Preview trial — billing opens once a real subscription exists" : "No billing on file yet");
+      }
       else toastMsg(body.error || "Couldn't open billing");
     } catch { toastMsg("Couldn't reach the server"); }
   }
@@ -133,20 +168,31 @@ const PassdGate = (() => {
         state.session ? openModal("subModal") : openModal("authModal");
       }));
     on("teaserCta", () => openModal("subModal"));
-    on("authSend", sendLink);
-    on("authVerify", verifyOtp);
+    on("tabSignIn", () => setAuthMode("signin"));
+    on("tabSignUp", () => setAuthMode("signup"));
+    on("authSubmit", submitAuth);
+    on("authForgot", forgotPw);
+    on("googleBtn", googleSignIn);
+    on("recoverSubmit", saveNewPassword);
     on("subCta", startCheckout);
     on("acctBtn", () => { const m = $("acctMenu"); m.hidden = !m.hidden; });
     on("acctPortal", openPortal);
     on("acctSignOut", async () => { await sb.auth.signOut(); location.reload(); });
+    document.addEventListener("click", (e) => { // close account menu on outside taps
+      const m = $("acctMenu");
+      if (m && !m.hidden && !e.target.closest("#acctWrap")) m.hidden = true;
+    });
     document.querySelectorAll("[data-close-modal]").forEach((el) =>
       el.addEventListener("click", () => closeModal(el.dataset.closeModal)));
     document.querySelectorAll("#subModal .plan").forEach((b) =>
       b.addEventListener("click", () => { plan = b.dataset.plan; renderPlans(); }));
-    const otp = $("authOtp");
-    if (otp) otp.addEventListener("keydown", (e) => { if (e.key === "Enter") verifyOtp(); });
-    const em = $("authEmail");
-    if (em) em.addEventListener("keydown", (e) => { if (e.key === "Enter") sendLink(); });
+    ["authEmail", "authPassword"].forEach((id) => {
+      const el2 = $(id);
+      if (el2) el2.addEventListener("keydown", (e) => { if (e.key === "Enter") submitAuth(); });
+    });
+    const rp = $("recoverPassword");
+    if (rp) rp.addEventListener("keydown", (e) => { if (e.key === "Enter") saveNewPassword(); });
+    if ((window.PASSD_CONFIG || {}).enableGoogle) show("googleBtn", true);
     renderPlans();
   }
 
@@ -156,9 +202,12 @@ const PassdGate = (() => {
       return { tier: "legacy", properties: typeof PASSED_IN !== "undefined" ? PASSED_IN : [], generated: typeof DATA_GENERATED !== "undefined" ? DATA_GENERATED : null };
     }
     wire();
-    // When the emailed link is opened (this tab or any other), the session
-    // lands in shared storage — reload this tab into the signed-in app.
-    sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_IN" && !state.session) location.reload(); });
+    // Sign-ins land here from any path (password, reset link, another tab —
+    // sessions sync via shared storage): reload this tab into the signed-in app.
+    sb.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") { closeModal("authModal"); openModal("recoverModal"); return; }
+      if (event === "SIGNED_IN" && !state.session && !location.hash.includes("type=recovery")) location.reload();
+    });
     const { data } = await sb.auth.getSession();
     state.session = data?.session || null;
 

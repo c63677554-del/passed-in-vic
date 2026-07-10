@@ -77,6 +77,7 @@ Write-Host "== Writing config.js (flips the site to gated mode) =="
 window.PASSD_CONFIG = {
   supabaseUrl: "$url",
   supabaseKey: "$anon",
+  enableGoogle: false, // flip after configuring the Google provider (docs/GO-LIVE.md)
 };
 "@ | Set-Content -Path (Join-Path $repo "config.js") -Encoding utf8
 

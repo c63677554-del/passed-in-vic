@@ -13,7 +13,9 @@
 html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 html, body { margin: 0; height: 100%; }
 body { color: var(--ink); background: var(--bg); }
-#app { display: grid; grid-template-rows: auto auto 1fr auto; height: 100%; }
+/* Flex column, not fixed-row grid: children vary by mode (teaser banner appears
+   for free-tier users) and the map/list body must always take the remainder. */
+#app { display: flex; flex-direction: column; height: 100%; }
 
 /* Header */
 .header { display: flex; align-items: center; gap: 12px; padding: 9px 16px; background: var(--card); border-bottom: 1px solid var(--line); z-index: 1100; }
@@ -57,7 +59,7 @@ body { color: var(--ink); background: var(--bg); }
 .pricesel:hover { border-color: #cdd3db; }
 
 /* Body: list | map */
-.body { position: relative; min-height: 0; display: grid; grid-template-columns: minmax(340px, 400px) 1fr; }
+.body { position: relative; flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(340px, 400px) 1fr; }
 .list { overflow-y: auto; background: var(--bg); border-right: 1px solid var(--line); padding: 12px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; }
 .map { position: relative; }
 #map { position: absolute; inset: 0; background: #e7edf2; }
@@ -221,6 +223,13 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
 .plan-price { display: block; font-size: 18px; font-weight: 800; letter-spacing: -.01em; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .plan-price small { font-size: 11.5px; font-weight: 700; color: var(--muted); }
 .plan-per { display: block; font-size: 10.5px; font-weight: 600; color: var(--red-600); margin-top: 2px; }
+.authtabs { display: flex; gap: 5px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px; margin-bottom: 12px; }
+.authtab { flex: 1; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--muted); background: none; border: 0; border-radius: 9px; min-height: 38px; cursor: pointer; transition-property: background-color, color; transition-duration: 140ms; }
+.authtab.on { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
+.autherr { background: var(--red-050); color: var(--red-600); font-size: 12.5px; font-weight: 600; border-radius: 9px; padding: 9px 12px; margin-bottom: 10px; line-height: 1.45; text-wrap: pretty; }
+.authaux { display: flex; justify-content: center; margin-top: 10px; }
+.pm-google { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 46px; margin-top: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 14px; font-weight: 700; color: #334155; cursor: pointer; transition-property: border-color, transform; transition-duration: 140ms; }
+.pm-google:active { transform: scale(.985); }
 
 /* Mobile: map/list toggle + stacked header */
 .toggle { display: none; border: 1px solid var(--line); border-radius: var(--r-chip); overflow: hidden; flex: none; }
