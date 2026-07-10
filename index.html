@@ -39,9 +39,9 @@
         <li><b>Price guides &amp; live listings</b> — the agent's guide on the pin, one tap to the listing</li>
         <li><b>Your shortlist</b> — save homes, filter to your budget, share any home with your partner</li>
       </ul>
-      <div class="land-price">
-        <div class="land-plan"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></div>
-        <div class="land-plan"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></div>
+      <div class="land-price" role="radiogroup" aria-label="Choose a plan">
+        <button type="button" class="land-plan on" data-plan="annual" role="radio" aria-checked="true"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></button>
+        <button type="button" class="land-plan" data-plan="monthly" role="radio" aria-checked="false"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></button>
       </div>
       <button id="landCta" class="land-cta" type="button">Start 7-day free trial</button>
       <p class="land-fine">Free for 7 days, cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
@@ -161,9 +161,11 @@
       </div>
       <div id="authStep2" hidden>
         <h2>Check your email</h2>
-        <p class="pm-sub">We sent a link and a 6-digit code to <b id="authEmailShown"></b>. Click the link, or enter the code:</p>
-        <input id="authOtp" class="pm-input otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" />
-        <button id="authVerify" class="pm-cta" type="button">Verify code</button>
+        <p class="pm-sub">We sent a sign-in link to <b id="authEmailShown"></b>. Tap it on this device — this page signs in automatically the moment you do.</p>
+        <p class="pm-fine">Nothing arriving? Check spam, or close this and try again in a couple of minutes (sending is rate-limited).</p>
+        <!-- OTP entry returns when custom SMTP + code-bearing templates are configured (docs/GO-LIVE.md) -->
+        <input id="authOtp" class="pm-input otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" hidden />
+        <button id="authVerify" class="pm-cta" type="button" hidden>Verify code</button>
       </div>
     </div>
   </div>

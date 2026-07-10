@@ -168,8 +168,9 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
 .land-points li { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 11px 15px; font-size: 13.5px; color: #334155; line-height: 1.5; }
 .land-points b { color: var(--ink); }
 .land-price { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
-.land-plan { flex: 1; max-width: 200px; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; }
-.land-plan:first-child { border-color: var(--red); box-shadow: 0 0 0 3px rgba(228,0,43,.10); }
+.land-plan { flex: 1; max-width: 200px; background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; font: inherit; text-align: center; cursor: pointer; transition-property: border-color, box-shadow, transform; transition-duration: 140ms; transition-timing-function: ease-out; }
+.land-plan:active { transform: scale(.98); }
+.land-plan.on { border-color: var(--red); box-shadow: 0 0 0 3px rgba(228,0,43,.10); }
 .land-plan b { display: block; font-size: 17px; font-variant-numeric: tabular-nums; }
 .land-plan span { display: block; font-size: 11px; color: var(--red-600); font-weight: 600; margin-top: 2px; }
 .land-cta { display: block; width: 100%; max-width: 420px; margin: 0 auto; background: var(--red); color: #fff; border: 0; border-radius: 13px; min-height: 50px; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 18px rgba(228,0,43,.33); transition-property: background-color, transform; transition-duration: 140ms; }

@@ -116,11 +116,22 @@ const PassdGate = (() => {
     if (state.weeksAvailable > 1) { const n = $("teaserWeeks"); if (n) n.textContent = state.weeksAvailable; }
   }
 
+  function renderLandPlans() {
+    document.querySelectorAll("#landing .land-plan").forEach((b) => {
+      b.classList.toggle("on", b.dataset.plan === plan);
+      b.setAttribute("aria-checked", String(b.dataset.plan === plan));
+    });
+  }
   function wire() {
     const on = (id, h) => { const e = $(id); if (e) e.addEventListener("click", h); };
     on("signInBtn", () => openModal("authModal"));
     on("landSignIn", () => openModal("authModal"));
     on("landCta", () => { state.session ? openModal("subModal") : openModal("authModal"); });
+    document.querySelectorAll("#landing .land-plan").forEach((b) =>
+      b.addEventListener("click", () => {
+        plan = b.dataset.plan; renderLandPlans(); renderPlans();
+        state.session ? openModal("subModal") : openModal("authModal");
+      }));
     on("teaserCta", () => openModal("subModal"));
     on("authSend", sendLink);
     on("authVerify", verifyOtp);
@@ -145,6 +156,9 @@ const PassdGate = (() => {
       return { tier: "legacy", properties: typeof PASSED_IN !== "undefined" ? PASSED_IN : [], generated: typeof DATA_GENERATED !== "undefined" ? DATA_GENERATED : null };
     }
     wire();
+    // When the emailed link is opened (this tab or any other), the session
+    // lands in shared storage — reload this tab into the signed-in app.
+    sb.auth.onAuthStateChange((event) => { if (event === "SIGNED_IN" && !state.session) location.reload(); });
     const { data } = await sb.auth.getSession();
     state.session = data?.session || null;
 
