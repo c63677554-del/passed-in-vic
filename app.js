@@ -29,6 +29,8 @@ const isVendor = (m) => /vendor/i.test(m || "");
 const resultChip = (m) => (isVendor(m) ? "Vendor bid" : "At auction");
 const fmtPrice = (n) => (n == null ? null : n >= 1e6 ? "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m" : "$" + Math.round(n / 1e3) + "k");
 const fmtGuide = (p) => (p.listLow == null ? null : p.listHigh > p.listLow ? fmtPrice(p.listLow) + " – " + fmtPrice(p.listHigh) : fmtPrice(p.listLow));
+// Best available price signal: agent guide first, else the reported passed-in bid.
+const pricedValue = (p) => p.listLow ?? p.bid ?? null;
 const subline = (p) => [p.suburb, p.state || "VIC", p.postcode].filter(Boolean).join(" ");
 const googleUrl = (p) => "https://www.google.com/search?q=" + encodeURIComponent([p.address, p.suburb, p.state || "VIC", p.postcode].filter(Boolean).join(" "));
 const listingUrl = (p) => p.listUrl || googleUrl(p);
@@ -66,25 +68,36 @@ const METRO_BOUNDS = {
 };
 function fitCity() {
   if (!map) return;
+  if (city.startsWith("area:") && AREAS[city.slice(5)]) { map.fitBounds(AREAS[city.slice(5)].box, { padding: [20, 20] }); return; }
   if (city !== "all" && METRO_BOUNDS[city]) { map.fitBounds(METRO_BOUNDS[city], { padding: [20, 20] }); return; }
   const pts = forWeek().map((p) => [p.lat, p.lng]);
   if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 });
 }
 let city = store.get("passd.city", "Melbourne"); // "all", a CITIES entry, or "regional:STATE"
 const METRO_CITY = { VIC: "Melbourne", NSW: "Sydney", QLD: "Brisbane", SA: "Adelaide", ACT: "Canberra" };
+// Named regional areas (shown in the dropdown only when they have homes).
+const AREAS = {
+  "Cairns": { state: "QLD", box: [[-17.10, 145.55], [-16.60, 145.90]] },
+  "Gold Coast": { state: "QLD", box: [[-28.25, 153.15], [-27.65, 153.60]] },
+  "Sunshine Coast": { state: "QLD", box: [[-26.90, 152.85], [-26.30, 153.25]] },
+  "Geelong": { state: "VIC", box: [[-38.35, 144.20], [-38.00, 144.65]] },
+  "Newcastle": { state: "NSW", box: [[-33.10, 151.50], [-32.75, 151.90]] },
+  "Wollongong": { state: "NSW", box: [[-34.65, 150.70], [-34.25, 151.05]] },
+};
+const inBox = (p, box) => p.lat >= box[0][0] && p.lat <= box[1][0] && p.lng >= box[0][1] && p.lng <= box[1][1];
 const inMetro = (p) => {
   const box = METRO_BOUNDS[METRO_CITY[p.state || "VIC"]];
   return !box || (p.lat >= box[0][0] && p.lat <= box[1][0] && p.lng >= box[0][1] && p.lng <= box[1][1]);
 };
 const cityOk = (p) => {
   if (city === "all") return true;
+  if (city.startsWith("area:")) { const a = AREAS[city.slice(5)]; return !!a && (p.state || "VIC") === a.state && inBox(p, a.box); }
   if (city.startsWith("regional:")) return (p.state || "VIC") === city.slice(9) && !inMetro(p);
   return (p.city || "Melbourne") === city;
 };
 let activeTypes = new Set();           // empty = all types
 let maxPrice = null;                   // number | null
 let minBeds = null;                    // number | null
-let savedOnly = false;
 let sortBy = "new";                    // new | priceAsc | priceDesc | beds | az
 let restoredView = false;              // deep link carried a map position
 
@@ -95,8 +108,7 @@ function readURL() {
   const t = h.get("t"); if (t) activeTypes = new Set(t.split(".").filter((x) => TYPES.includes(x)));
   const p = +h.get("p"); if (p) maxPrice = p;
   const b = +h.get("b"); if (b) minBeds = b;
-  const ct = h.get("ct"); if (ct && (ct === "all" || CITIES.includes(ct) || ct.startsWith("regional:"))) city = ct;
-  if (h.get("sv") === "1") savedOnly = true;
+  const ct = h.get("ct"); if (ct && (ct === "all" || CITIES.includes(ct) || ct.startsWith("regional:") || ct.startsWith("area:"))) city = ct;
   const s = h.get("s"); if (["priceAsc", "priceDesc", "beds", "az"].includes(s)) sortBy = s;
   return { sel: h.get("sel"), c: h.get("c") };
 }
@@ -110,7 +122,6 @@ function writeURL() {
     if (maxPrice != null) h.set("p", maxPrice);
     if (minBeds != null) h.set("b", minBeds);
     if (city !== "Melbourne") h.set("ct", city);
-    if (savedOnly) h.set("sv", "1");
     if (sortBy !== "new") h.set("s", sortBy);
     if (selectedId) h.set("sel", selectedId);
     if (map) { const c = map.getCenter(); h.set("c", c.lat.toFixed(5) + "," + c.lng.toFixed(5) + "," + map.getZoom()); }
@@ -124,6 +135,18 @@ const TILES = [
   { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", opt: { maxZoom: 19, attribution: "Tiles &copy; Esri" } },
 ];
 function addBasemap() {
+  // Minimal vector basemap (OpenFreeMap Positron via MapLibre GL) — clean,
+  // REA-like, free and keyless. Raster chain remains as the fallback when the
+  // GL libraries fail to load or the CDN is unreachable.
+  if (window.maplibregl && L.maplibreGL) {
+    try {
+      L.maplibreGL({
+        style: "https://tiles.openfreemap.org/styles/positron",
+        attribution: '&copy; <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      return;
+    } catch { /* fall through to raster */ }
+  }
   let i = 0, loaded = false, errs = 0, base = null;
   (function add() {
     base = L.tileLayer(TILES[i].url, TILES[i].opt).addTo(map);
@@ -137,10 +160,9 @@ const forWeek = () => DATA.filter((p) => (week === "all" || p.week === week) && 
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
 // "Price on request" homes always pass the price filter — an unknown guide could
 // be in budget, so showing beats hiding.
-const priceOk = (p) => maxPrice == null || p.listLow == null || p.listLow <= maxPrice;
+const priceOk = (p) => maxPrice == null || pricedValue(p) == null || pricedValue(p) <= maxPrice;
 const bedsOk = (p) => minBeds == null || (p.beds != null && p.beds >= minBeds);
-const savedOk = (p) => !savedOnly || saved.has(p.id);
-const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p) && bedsOk(p) && savedOk(p));
+const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p) && bedsOk(p));
 function visible() {
   const sz = map.getSize();
   if (!sz || sz.x < 10 || sz.y < 10) return forView(); // map pane hidden (mobile list view)
@@ -151,7 +173,7 @@ function visible() {
 // ---------- markers: REA-style price pills + clusters ----------
 function pinHTML(p) {
   const cls = "pin" + (p.id === selectedId ? " sel" : seenIds.has(p.id) ? " seen" : "");
-  const label = p.listLow != null ? fmtPrice(p.listLow) + (p.listHigh > p.listLow ? "+" : "") : p.beds != null ? p.beds + " bd" : p.type || "•";
+  const label = p.listLow != null ? fmtPrice(p.listLow) + (p.listHigh > p.listLow ? "+" : "") : p.bid != null ? fmtPrice(p.bid) : p.beds != null ? p.beds + " bd" : p.type || "•";
   const hh = saved.has(p.id) ? `<span class="ph">${HEART(true)}</span>` : "";
   return `<div class="${cls}" data-pin="${p.id}">${hh}${esc(label)}</div>`;
 }
@@ -162,6 +184,8 @@ function markerPopup(p) {
   const on = saved.has(p.id);
   const guide = p.listLow != null
     ? `<span class="ppg">${fmtGuide(p)}</span> <span class="gmut">price guide</span>`
+    : p.bid != null
+    ? `<span class="ppg">${fmtPrice(p.bid)}</span> <span class="gmut">passed-in bid</span>`
     : `<span class="gmut">Price on request — contact agent</span>`;
   const meta = [p.type, p.beds != null ? p.beds + " bed" : null, resultChip(p.method)].filter(Boolean).join(" · ");
   const when = [fmtDay(p.saleDate) ? "Passed in " + fmtDay(p.saleDate) : null, p.agency].filter(Boolean).join(" · ");
@@ -204,9 +228,9 @@ const SORTS = [
 ];
 function cmp(a, b) {
   switch (sortBy) {
-    case "priceAsc": return (a.listLow ?? Infinity) - (b.listLow ?? Infinity) || (a.suburb || "").localeCompare(b.suburb || "");
-    case "priceDesc": return (b.listLow ?? -Infinity) - (a.listLow ?? -Infinity) || (a.suburb || "").localeCompare(b.suburb || "");
-    case "beds": return (b.beds ?? -1) - (a.beds ?? -1) || (a.listLow ?? Infinity) - (b.listLow ?? Infinity);
+    case "priceAsc": return (pricedValue(a) ?? Infinity) - (pricedValue(b) ?? Infinity) || (a.suburb || "").localeCompare(b.suburb || "");
+    case "priceDesc": return (pricedValue(b) ?? -Infinity) - (pricedValue(a) ?? -Infinity) || (a.suburb || "").localeCompare(b.suburb || "");
+    case "beds": return (b.beds ?? -1) - (a.beds ?? -1) || (pricedValue(a) ?? Infinity) - (pricedValue(b) ?? Infinity);
     case "az": return (a.suburb || "").localeCompare(b.suburb || "") || a.address.localeCompare(b.address);
     default: return (b.week || "").localeCompare(a.week || "") || (a.suburb || "").localeCompare(b.suburb || "") || a.address.localeCompare(b.address);
   }
@@ -216,7 +240,7 @@ function cardHTML(p) {
   return `<article class="card${p.id === selectedId ? " sel" : ""}" data-id="${p.id}" role="button" tabindex="0" aria-label="Passed in: ${esc(p.address)}, ${esc(p.suburb)}">
     <button class="heart${on ? " on" : ""}" type="button" data-save="${p.id}" aria-pressed="${on}" aria-label="${on ? "Remove from" : "Add to"} saved">${HEART(on)}</button>
     <div class="row1"><span class="badge">Passed in</span><span class="datechip">${esc(fmtDay(p.saleDate) || "")}</span>${seenIds.has(p.id) ? '<span class="seenchip">Viewed</span>' : ""}</div>
-    <div class="price">${p.listLow != null ? `${fmtGuide(p)} <span class="est">price guide</span>` : `<span class="ca">Contact agent for price</span>`}</div>
+    <div class="price">${p.listLow != null ? `${fmtGuide(p)} <span class="est">price guide</span>` : p.bid != null ? `${fmtPrice(p.bid)} <span class="est">passed-in bid</span>` : `<span class="ca">Contact agent for price</span>`}</div>
     <div class="addr">${esc(p.address)}</div>
     <div class="sub">${esc(subline(p))}</div>
     <div class="meta">
@@ -236,16 +260,47 @@ function updateList() {
   el("count").innerHTML = `<b>${vis.length}</b>${vis.length !== total ? ` of ${total}` : ""} passed in`;
   let html;
   if (vis.length) html = vis.map(cardHTML).join("");
-  else if (savedOnly && saved.size === 0) html = `<div class="empty">Nothing saved yet.<br>Tap the <b>♡</b> on any home you want to track, then find it here.</div>`;
   else html = `<div class="empty">No passed-in homes match here.<br>Zoom out, pan the map, or <button class="linkbtn" type="button" data-reset>clear the filters</button>.</div>`;
   el("list").innerHTML = html;
   updateSavedChip();
 }
 function updateSavedChip() {
   const n = saved.size, sc = el("savedCount");
-  sc.hidden = n === 0; sc.textContent = n;
-  el("savedBtn").classList.toggle("on", savedOnly);
-  el("savedBtn").setAttribute("aria-pressed", String(savedOnly));
+  if (sc) { sc.hidden = n === 0; sc.textContent = n; }
+}
+// ---------- saved panel (header) ----------
+function renderSavedPanel() {
+  const box = el("savedList");
+  if (!box) return;
+  const items = DATA.filter((p) => saved.has(p.id)).sort((a, b) => (b.week || "").localeCompare(a.week || ""));
+  box.innerHTML = items.length
+    ? items.map(cardHTML).join("")
+    : `<div class="empty">Nothing saved yet.<br>Tap the <b>♡</b> on any home to build your shortlist.</div>`;
+}
+function openSavedPanel() {
+  renderSavedPanel();
+  const m = el("savedModal");
+  m.hidden = false; requestAnimationFrame(() => m.classList.add("open"));
+}
+function closeSavedPanel() {
+  const m = el("savedModal");
+  m.classList.remove("open"); setTimeout(() => (m.hidden = true), 180);
+}
+// ---------- adaptive pricing UI ----------
+// If the current city/week has effectively no price signals, price controls are
+// dead weight — hide the max-price filter and drop the price sorts.
+function updatePricingUI() {
+  const priced = forWeek().filter((p) => pricedValue(p) != null).length;
+  const usable = priced >= 5;
+  const mp = el("maxPrice");
+  if (mp) { mp.hidden = !usable; if (!usable && maxPrice != null) { maxPrice = null; mp.value = ""; } }
+  const sb = el("sortBy");
+  if (sb) {
+    const opts = SORTS.filter((s) => usable || (s.v !== "priceAsc" && s.v !== "priceDesc"));
+    if (!opts.some((s) => s.v === sortBy)) sortBy = "new";
+    sb.innerHTML = opts.map((s) => `<option value="${s.v}">${s.label}</option>`).join("");
+    sb.value = sortBy;
+  }
 }
 
 // ---------- selection / two-way sync ----------
@@ -283,8 +338,10 @@ function toggleSave(id) {
   refreshPin(id);
   const m = byId[id];
   if (m && m.isPopupOpen && m.isPopupOpen()) m.setPopupContent(markerPopup(DATA.find((x) => x.id === id)));
-  if (savedOnly) refresh(); else updateSavedChip();
-  toast(on ? "Saved — find it under ♥ Saved" : "Removed from saved");
+  updateSavedChip();
+  const panel = el("savedModal");
+  if (panel && !panel.hidden) renderSavedPanel();
+  toast(on ? "Saved — find it under ♥ in the header" : "Removed from saved");
 }
 async function shareLink(id) {
   select(id, "share-noop"); // ensures sel in URL; no map motion for unknown 'from'
@@ -307,20 +364,23 @@ function toast(msg) {
 }
 
 // ---------- refresh pipeline ----------
-function refresh() { renderMarkers(); updateList(); writeURL(); }
+function refresh() { renderMarkers(); updateList(); updatePricingUI(); writeURL(); }
 
 // ---------- week + view controls ----------
 function buildCitySelect() {
   const sel = el("city");
   if (!sel) return;
-  if (city !== "all" && !CITIES.includes(city) && !city.startsWith("regional:")) city = "Melbourne";
-  // Regional options are data-driven: they appear only for states that currently
-  // have pass-ins outside the metro box (e.g. Cairns arrives via the QLD feed).
+  if (city !== "all" && !CITIES.includes(city) && !city.startsWith("regional:") && !city.startsWith("area:")) city = "Melbourne";
+  // Named areas + regional catch-alls are data-driven: shown only when they
+  // currently have homes (e.g. Cairns arrives via the QLD feed).
+  const areaNames = Object.keys(AREAS).filter((n) => DATA.some((p) => p.lat != null && (p.state || "VIC") === AREAS[n].state && inBox(p, AREAS[n].box))).sort();
   const regStates = [...new Set(DATA.filter((p) => p.lat != null && !inMetro(p)).map((p) => p.state || "VIC"))].sort();
   sel.innerHTML = [`<option value="all">All cities</option>`]
     .concat(CITIES.map((c) => `<option value="${c}">${c}</option>`))
+    .concat(areaNames.map((n) => `<option value="area:${n}">${n}</option>`))
     .concat(regStates.map((s) => `<option value="regional:${s}">Regional ${s}</option>`)).join("");
   if (city.startsWith("regional:") && !regStates.includes(city.slice(9))) city = "Melbourne";
+  if (city.startsWith("area:") && !areaNames.includes(city.slice(5))) city = "Melbourne";
   sel.value = city;
   sel.onchange = (e) => {
     city = e.target.value;
@@ -411,7 +471,7 @@ function buildSort() {
   el("sortBy").onchange = (e) => { sortBy = e.target.value; updateList(); writeURL(); };
 }
 function resetFilters() {
-  activeTypes.clear(); maxPrice = null; minBeds = null; savedOnly = false;
+  activeTypes.clear(); maxPrice = null; minBeds = null;
   refreshTypeChips(); refreshBedsChips();
   el("maxPrice").value = ""; refresh();
 }
@@ -529,7 +589,9 @@ async function init() {
   setDataset(boot.properties, boot.generated);
   const deep = readURL();
 
-  map = L.map("map", { zoomControl: true }).setView([-37.81, 144.96], 11);
+  // maxZoom on the map itself: the GL basemap declares none, and markercluster
+  // refuses to attach without one ("Map has no maxZoom specified").
+  map = L.map("map", { zoomControl: true, maxZoom: 19, minZoom: 3 }).setView([-37.81, 144.96], 11);
   addBasemap();
   cluster = (L.markerClusterGroup
     ? L.markerClusterGroup({
@@ -542,12 +604,21 @@ async function init() {
   buildCitySelect(); buildWeekSelect(); buildTypeChips(); buildBedsChips(); buildPriceFilter(); buildSort(); buildSearch(); buildAbout();
   el("toMap").onclick = showMap;
   el("toList").onclick = showList;
-  el("savedBtn").onclick = () => {
-    savedOnly = !savedOnly;
-    if (savedOnly && week !== "all") setWeek("all", false); // saves span weeks
-    refresh();
-    if (savedOnly) { const pts = forView().map((p) => [p.lat, p.lng]); if (pts.length) map.fitBounds(pts, { padding: [60, 60], maxZoom: 14 }); }
-  };
+  el("savedBtn").onclick = openSavedPanel;
+  el("savedClose").onclick = closeSavedPanel;
+  document.querySelector("#savedModal .pm-scrim").addEventListener("click", closeSavedPanel);
+  el("savedList").addEventListener("click", (e) => {
+    if (e.target.closest("[data-save]") || e.target.closest("[data-listing]") || e.target.closest("a")) return;
+    const c = e.target.closest(".card");
+    if (!c) return;
+    const p = DATA.find((x) => x.id === c.dataset.id);
+    if (!p) return;
+    closeSavedPanel();
+    switchCityFor(p);
+    if (week !== "all" && p.week !== week) { week = "all"; el("week").value = "all"; refresh(); }
+    const go = () => select(p.id, "list");
+    if (window.matchMedia("(max-width: 900px)").matches) { showMap(); setTimeout(go, 140); } else go();
+  });
 
   const list = el("list");
   list.addEventListener("click", (e) => {

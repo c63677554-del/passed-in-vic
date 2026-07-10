@@ -47,6 +47,9 @@ body { color: var(--ink); background: var(--bg); }
 
 /* Filter bar */
 .filterbar { display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: var(--card); border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: thin; }
+/* Chips/selects must never flex-shrink into each other when space is tight —
+   the bar scrolls horizontally instead (this was the "jammed filters" bug). */
+.filterbar > *, .filterbar .types > * { flex: none; }
 .fsep { width: 1px; align-self: stretch; margin: 2px 2px; background: var(--line); flex: none; }
 .types { display: flex; gap: 6px; }
 .tchip { font: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap; cursor: pointer; color: #334155; background: var(--card); border: 1px solid var(--line); padding: 0 13px; min-height: 34px; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--r-chip); transition-property: background-color, border-color, color, box-shadow, transform; transition-duration: 140ms; transition-timing-function: ease-out; }
@@ -204,6 +207,8 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
 .pm-card { position: relative; background: var(--card); border-radius: 18px; box-shadow: var(--shadow-lg); padding: 24px 24px 22px; width: 100%; max-width: 400px; opacity: 0; transform: translateY(10px) scale(.98); transition-property: opacity, transform; transition-duration: 180ms; transition-timing-function: ease-out; }
 .pmodal.open .pm-card { opacity: 1; transform: translateY(0) scale(1); }
 .pm-x { position: absolute; top: 12px; right: 12px; }
+.pm-card.wide { max-width: 560px; }
+.savedlist { display: flex; flex-direction: column; gap: 10px; max-height: 62vh; overflow-y: auto; margin-top: 4px; padding: 2px; scrollbar-width: thin; }
 .pm-card h2 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.01em; }
 .pm-sub { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 0 0 14px; text-wrap: pretty; }
 .pm-input { display: block; width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 11px; padding: 12px 14px; margin-bottom: 10px; }

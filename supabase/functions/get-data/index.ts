@@ -46,6 +46,6 @@ Deno.serve(async (req: Request) => {
   const latest = weeks[0];
   const teaser = payload.properties
     .filter((p) => p.week === latest)
-    .map((p) => ({ ...p, listLow: null, listHigh: null, listUrl: null }));
+    .map((p) => ({ ...p, listLow: null, listHigh: null, listUrl: null, bid: null }));
   return json({ tier: userId ? "free" : "anon", generated: payload.generated, latestWeek: latest, weeksAvailable: weeks.length, properties: teaser });
 });

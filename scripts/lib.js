@@ -119,6 +119,8 @@ function mapDomainListing(l, auctionDateIso, city) {
     saleDate, week: weekSaturday(saleDate),
     city, state: (l.state || '').toUpperCase() || null,
     listUrl: url,
+    // Domain sometimes reports the final (passed-in/vendor) bid — a real price signal.
+    bid: typeof l.price === 'number' && l.price > 50000 ? l.price : null,
   };
 }
 

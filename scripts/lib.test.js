@@ -117,6 +117,9 @@ test('mapDomainListing keeps pass-ins only and maps to our row shape', () => {
   assert.equal(p.type, 'Apartment');
   assert.equal(p.method, 'Passed in');
   assert.equal(p.agency, 'Test Agency');
+  assert.equal(p.bid, null); // no price reported -> no bid
+  assert.equal(mapDomainListing({ ...l, price: 790000 }, '2026-07-04T00:00:00', 'Sydney').bid, 790000);
+  assert.equal(mapDomainListing({ ...l, price: 1 }, '2026-07-04T00:00:00', 'Sydney').bid, null); // placeholder junk
   assert.equal(mapDomainListing({ ...l, result: 'AUSD' }, '2026-07-04T00:00:00', 'Sydney'), null); // sold -> dropped
   assert.equal(mapDomainListing({ ...l, result: 'AUVB' }, '2026-07-04T00:00:00', 'Sydney').method, 'Passed in - vendor bid');
   assert.equal(mapDomainListing({ ...l, geoLocation: null }, '2026-07-04T00:00:00', 'Sydney'), null); // no geo -> dropped
