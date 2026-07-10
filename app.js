@@ -143,6 +143,7 @@ function addBasemap() {
       L.maplibreGL({
         style: "https://tiles.openfreemap.org/styles/positron",
         attribution: '&copy; <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        fadeDuration: 0, // skip label cross-fade work while panning
       }).addTo(map);
       return;
     } catch { /* fall through to raster */ }
@@ -258,8 +259,10 @@ function updateList() {
   const vis = visible().sort(cmp);
   const total = forView().length;
   el("count").innerHTML = `<b>${vis.length}</b>${vis.length !== total ? ` of ${total}` : ""} passed in`;
+  const MAX_CARDS = 120; // rendering hundreds of cards per pan is the lag source
   let html;
-  if (vis.length) html = vis.map(cardHTML).join("");
+  if (vis.length > MAX_CARDS) html = vis.slice(0, MAX_CARDS).map(cardHTML).join("") + `<div class="morecards">Showing ${MAX_CARDS} of ${vis.length} — zoom the map or add filters to narrow down.</div>`;
+  else if (vis.length) html = vis.map(cardHTML).join("");
   else html = `<div class="empty">No passed-in homes match here.<br>Zoom out, pan the map, or <button class="linkbtn" type="button" data-reset>clear the filters</button>.</div>`;
   el("list").innerHTML = html;
   updateSavedChip();
@@ -661,6 +664,9 @@ async function init() {
   if (deep.sel && DATA.some((p) => p.id === deep.sel && forView().some((v) => v.id === deep.sel))) {
     setTimeout(() => select(deep.sel, "search"), 350);
   }
-  map.on("moveend", () => { updateList(); writeURL(); });
+  // Debounced: re-rendering the card list on every pan frame is the main lag
+  // source — settle for 160ms of stillness before rebuilding.
+  let moveT = null;
+  map.on("moveend", () => { clearTimeout(moveT); moveT = setTimeout(() => { updateList(); writeURL(); }, 160); });
 }
 document.addEventListener("DOMContentLoaded", init);

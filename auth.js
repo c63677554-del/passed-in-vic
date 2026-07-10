@@ -31,7 +31,7 @@ const PassdGate = (() => {
 
   // ---------- auth (email + password; autoconfirm on, so no emails needed) ----------
   let authMode = "signin";
-  function authErr(msg, id) { const e = $(id || "authError"); if (!e) return; e.hidden = !msg; e.textContent = msg || ""; }
+  function authErr(msg, id, ok) { const e = $(id || "authError"); if (!e) return; e.hidden = !msg; e.textContent = msg || ""; e.classList.toggle("ok", !!ok); }
   function setAuthMode(m) {
     authMode = m;
     ["tabSignIn", "tabSignUp"].forEach((t) => {
@@ -66,8 +66,17 @@ const PassdGate = (() => {
   async function forgotPw() {
     const email = ($("authEmail").value || "").trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return authErr("Type your email above first, then tap Forgot password.");
+    const btn = $("authForgot");
+    btn.disabled = true; btn.textContent = "Sending…";
     const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
-    authErr(error ? error.message : "Reset link sent — check your email (sending is rate-limited, so it can take a few minutes).");
+    if (error) {
+      authErr(/rate/i.test(error.message) ? "Too many emails just now — try again in a few minutes." : error.message);
+      btn.disabled = false; btn.textContent = "Forgot password?";
+    } else {
+      authErr("Reset link sent to " + email + " — tap it and you'll be asked to set a new password.", null, true);
+      btn.textContent = "Sent ✓";
+      setTimeout(() => { btn.disabled = false; btn.textContent = "Forgot password?"; }, 30000);
+    }
   }
   async function saveNewPassword() {
     const pw = $("recoverPassword").value || "";

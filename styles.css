@@ -26,8 +26,8 @@ body { color: var(--ink); background: var(--bg); }
 .hgrp { display: contents; }
 .count { font-size: 13px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .count b { color: var(--ink); font-weight: 700; }
-.header select { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: var(--r-ctrl); padding: 8px 10px; min-height: 38px; max-width: 210px; cursor: pointer; transition-property: border-color, box-shadow; transition-duration: 140ms; transition-timing-function: ease-out; }
-.header select:hover { border-color: #cdd3db; }
+.header select { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background-color: var(--card); border: 1px solid var(--line); border-radius: var(--r-ctrl); padding: 8px 30px 8px 12px; min-height: 38px; max-width: 210px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 11px center; transition-property: border-color, box-shadow; transition-duration: 140ms; transition-timing-function: ease-out; }
+.header select:hover { border-color: #c3cad4; }
 
 /* Search */
 .search { position: relative; flex: 0 1 380px; min-width: 170px; display: flex; align-items: center; }
@@ -46,20 +46,24 @@ body { color: var(--ink); background: var(--bg); }
 .qi.geo b { color: var(--red-600); }
 
 /* Filter bar */
-.filterbar { display: flex; align-items: center; gap: 8px; padding: 9px 16px; background: var(--card); border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: thin; }
+.filterbar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; background: var(--card); border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.filterbar::-webkit-scrollbar { display: none; }
 /* Chips/selects must never flex-shrink into each other when space is tight —
    the bar scrolls horizontally instead (this was the "jammed filters" bug). */
 .filterbar > *, .filterbar .types > * { flex: none; }
-.fsep { width: 1px; align-self: stretch; margin: 2px 2px; background: var(--line); flex: none; }
-.types { display: flex; gap: 6px; }
-.tchip { font: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap; cursor: pointer; color: #334155; background: var(--card); border: 1px solid var(--line); padding: 0 13px; min-height: 34px; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--r-chip); transition-property: background-color, border-color, color, box-shadow, transform; transition-duration: 140ms; transition-timing-function: ease-out; }
-.tchip:hover { border-color: #cdd3db; background: #fbfcfd; }
+.fsep { display: none; }
+.types { display: flex; gap: 7px; }
+.types + .types { margin-left: 10px; }
+.tchip { font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; cursor: pointer; color: #3f4a5a; background: var(--card); border: 1px solid var(--line); padding: 0 15px; min-height: 37px; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--r-chip); transition-property: background-color, border-color, color, box-shadow, transform; transition-duration: 140ms; transition-timing-function: ease-out; }
+.tchip:hover { border-color: #c3cad4; background: #fafbfc; }
 .tchip:active { transform: scale(.97); }
-.tchip.on { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 1px 2px rgba(228,0,43,.35); }
+.tchip.on { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 1px 3px rgba(228,0,43,.30); }
 .heartchip .savedn { background: #fff; color: var(--red-600); font-size: 10.5px; font-weight: 800; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums; }
 .heartchip:not(.on) .savedn { background: var(--red-050); }
-.pricesel { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: var(--r-chip); padding: 0 13px; min-height: 34px; cursor: pointer; transition-property: border-color; transition-duration: 140ms; }
-.pricesel:hover { border-color: #cdd3db; }
+/* Selects styled as chips: native arrow replaced with a consistent chevron. */
+.pricesel { font: inherit; font-size: 13px; font-weight: 600; color: #3f4a5a; background-color: var(--card); border: 1px solid var(--line); border-radius: var(--r-chip); padding: 0 32px 0 15px; min-height: 37px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; transition-property: border-color; transition-duration: 140ms; }
+.pricesel:hover { border-color: #c3cad4; }
+.filterbar .types + .pricesel, .filterbar .pricesel + .pricesel { margin-left: 10px; }
 
 /* Body: list | map */
 .body { position: relative; flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(340px, 400px) 1fr; }
@@ -106,6 +110,7 @@ body { color: var(--ink); background: var(--bg); }
 .card a.search { color: var(--red); font-weight: 700; text-decoration: none; font-size: 12px; white-space: nowrap; }
 .card a.search:hover { color: var(--red-600); text-decoration: underline; text-underline-offset: 2px; }
 .empty { color: var(--muted); font-size: 14px; text-align: center; padding: 44px 18px; line-height: 1.6; text-wrap: pretty; }
+.morecards { color: var(--muted); font-size: 12.5px; text-align: center; padding: 14px 12px 18px; line-height: 1.5; text-wrap: pretty; }
 .linkbtn { font: inherit; font-size: inherit; color: var(--red); background: none; border: 0; padding: 0; cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
 .linkbtn:hover { color: var(--red-600); }
 
@@ -232,6 +237,7 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
 .authtab { flex: 1; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--muted); background: none; border: 0; border-radius: 9px; min-height: 38px; cursor: pointer; transition-property: background-color, color; transition-duration: 140ms; }
 .authtab.on { background: var(--card); color: var(--ink); box-shadow: var(--shadow-sm); }
 .autherr { background: var(--red-050); color: var(--red-600); font-size: 12.5px; font-weight: 600; border-radius: 9px; padding: 9px 12px; margin-bottom: 10px; line-height: 1.45; text-wrap: pretty; }
+.autherr.ok { background: #ecfdf3; color: #157347; }
 .authaux { display: flex; justify-content: center; margin-top: 10px; }
 .pm-google { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 46px; margin-top: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; font: inherit; font-size: 14px; font-weight: 700; color: #334155; cursor: pointer; transition-property: border-color, transform; transition-duration: 140ms; }
 .pm-google:active { transform: scale(.985); }
