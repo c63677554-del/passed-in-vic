@@ -12,6 +12,9 @@ git pull --rebase --autostash 2>&1 | Add-Content $log
 node scripts/scrape-reiv.js --days=30 --min-rows=15 2>&1 | Add-Content $log
 if ($LASTEXITCODE -ne 0) { "ABORT: scrape exited $LASTEXITCODE" | Add-Content $log; exit $LASTEXITCODE }
 
+node scripts/scrape-domain.js --min-rows=30 2>&1 | Add-Content $log
+if ($LASTEXITCODE -ne 0) { "ABORT: domain scrape exited $LASTEXITCODE" | Add-Content $log; exit $LASTEXITCODE }
+
 node scripts/enrich-prices.js 2>&1 | Add-Content $log
 if ($LASTEXITCODE -ne 0) { "ABORT: enrich exited $LASTEXITCODE" | Add-Content $log; exit $LASTEXITCODE }
 

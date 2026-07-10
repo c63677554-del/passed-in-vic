@@ -2,7 +2,7 @@
 // structural problems so the weekly pipeline fails loudly instead of publishing junk.
 'use strict';
 const fs = require('fs'), path = require('path');
-const { inVic, readDataArray, parseDate, weekSaturday } = require('./lib');
+const { inState, readDataArray, parseDate, weekSaturday } = require('./lib');
 
 const txt = fs.readFileSync(path.join(__dirname, '..', 'data.js'), 'utf8');
 const gen = (txt.match(/const DATA_GENERATED = "(\d{4}-\d{2}-\d{2})"/) || [])[1];
@@ -20,11 +20,11 @@ for (const p of arr) {
   if (!p.address || !p.suburb) errs.push('missing address/suburb: ' + JSON.stringify(p).slice(0, 100));
   if (!/^\d{4}-\d{2}-\d{2}$/.test(p.week || '')) errs.push('bad week: ' + tag);
   else if (p.saleDate && weekSaturday(p.saleDate) !== p.week) errs.push('week does not match saleDate: ' + tag);
-  if (!inVic(p.lat, p.lng)) errs.push('geocode outside Victoria: ' + tag + ' @ ' + p.lat + ',' + p.lng);
+  if (!inState(p.state || 'VIC', p.lat, p.lng)) errs.push('geocode outside ' + (p.state || 'VIC') + ': ' + tag + ' @ ' + p.lat + ',' + p.lng);
   if (!/passed in/i.test(p.method || '')) errs.push('non-passed-in row leaked in: ' + tag);
   if (p.listLow != null && p.listHigh != null && p.listHigh < p.listLow) errs.push('listHigh < listLow: ' + tag);
   if (p.listLow != null && (p.listLow < 50000 || p.listLow > 30000000)) warns.push('implausible guide $' + p.listLow + ': ' + tag);
-  if (p.listUrl && !/^https:\/\/soho\.com\.au\//.test(p.listUrl)) errs.push('unexpected listUrl origin: ' + tag);
+  if (p.listUrl && !/^https:\/\/(soho\.com\.au|www\.domain\.com\.au)\//.test(p.listUrl)) errs.push('unexpected listUrl origin: ' + tag);
   if (p.saleDate && !parseDate(p.saleDate)) errs.push('unparseable saleDate: ' + tag);
 }
 

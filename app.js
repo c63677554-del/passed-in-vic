@@ -29,8 +29,8 @@ const isVendor = (m) => /vendor/i.test(m || "");
 const resultChip = (m) => (isVendor(m) ? "Vendor bid" : "At auction");
 const fmtPrice = (n) => (n == null ? null : n >= 1e6 ? "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m" : "$" + Math.round(n / 1e3) + "k");
 const fmtGuide = (p) => (p.listLow == null ? null : p.listHigh > p.listLow ? fmtPrice(p.listLow) + " – " + fmtPrice(p.listHigh) : fmtPrice(p.listLow));
-const subline = (p) => [p.suburb, "VIC", p.postcode].filter(Boolean).join(" ");
-const googleUrl = (p) => "https://www.google.com/search?q=" + encodeURIComponent([p.address, p.suburb, "VIC", p.postcode].filter(Boolean).join(" "));
+const subline = (p) => [p.suburb, p.state || "VIC", p.postcode].filter(Boolean).join(" ");
+const googleUrl = (p) => "https://www.google.com/search?q=" + encodeURIComponent([p.address, p.suburb, p.state || "VIC", p.postcode].filter(Boolean).join(" "));
 const listingUrl = (p) => p.listUrl || googleUrl(p);
 const HEART = (on) => `<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path d="M12 21s-7.5-4.7-10-9.3C.6 8.6 2.3 4.9 5.9 4.3c2-.3 3.9.6 5 2.2a5.6 5.6 0 0 1 5-2.2c3.7.6 5.4 4.3 4 7.4-2.6 4.6-10 9.3-10 9.3z" fill="${on ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>`;
 const LINKIC = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M10 13.5a4.7 4.7 0 0 0 7 .4l2.6-2.6a4.7 4.7 0 0 0-6.6-6.6l-1.5 1.5M14 10.5a4.7 4.7 0 0 0-7-.4l-2.6 2.6a4.7 4.7 0 0 0 6.6 6.6l1.5-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
@@ -53,6 +53,9 @@ const seenIds = new Set(store.get("passd.seen", []));
 
 let map, cluster, byId = {}, selectedId = null;
 let week = null;                       // iso Saturday or "all"; defaulted in setDataset()
+const CITIES = ["Melbourne", "Sydney", "Brisbane", "Adelaide", "Canberra"];
+let city = store.get("passd.city", "Melbourne"); // "all" or a CITIES entry
+const cityOk = (p) => city === "all" || (p.city || "Melbourne") === city;
 let activeTypes = new Set();           // empty = all types
 let maxPrice = null;                   // number | null
 let minBeds = null;                    // number | null
@@ -67,6 +70,7 @@ function readURL() {
   const t = h.get("t"); if (t) activeTypes = new Set(t.split(".").filter((x) => TYPES.includes(x)));
   const p = +h.get("p"); if (p) maxPrice = p;
   const b = +h.get("b"); if (b) minBeds = b;
+  const ct = h.get("ct"); if (ct && (ct === "all" || CITIES.includes(ct))) city = ct;
   if (h.get("sv") === "1") savedOnly = true;
   const s = h.get("s"); if (["priceAsc", "priceDesc", "beds", "az"].includes(s)) sortBy = s;
   return { sel: h.get("sel"), c: h.get("c") };
@@ -80,6 +84,7 @@ function writeURL() {
     if (activeTypes.size) h.set("t", [...activeTypes].join("."));
     if (maxPrice != null) h.set("p", maxPrice);
     if (minBeds != null) h.set("b", minBeds);
+    if (city !== "Melbourne") h.set("ct", city);
     if (savedOnly) h.set("sv", "1");
     if (sortBy !== "new") h.set("s", sortBy);
     if (selectedId) h.set("sel", selectedId);
@@ -103,7 +108,7 @@ function addBasemap() {
 }
 
 // ---------- data slices ----------
-const forWeek = () => DATA.filter((p) => (week === "all" || p.week === week) && p.lat != null && p.lng != null);
+const forWeek = () => DATA.filter((p) => (week === "all" || p.week === week) && cityOk(p) && p.lat != null && p.lng != null);
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
 // "Price on request" homes always pass the price filter — an unknown guide could
 // be in budget, so showing beats hiding.
@@ -280,6 +285,30 @@ function toast(msg) {
 function refresh() { renderMarkers(); updateList(); writeURL(); }
 
 // ---------- week + view controls ----------
+function buildCitySelect() {
+  const sel = el("city");
+  if (!sel) return;
+  if (city !== "all" && !CITIES.includes(city)) city = "Melbourne";
+  sel.innerHTML = [`<option value="all">All cities</option>`]
+    .concat(CITIES.map((c) => `<option value="${c}">${c}</option>`)).join("");
+  sel.value = city;
+  sel.onchange = (e) => {
+    city = e.target.value;
+    store.set("passd.city", city);
+    if (selectedId && !forView().some((p) => p.id === selectedId)) selectedId = null;
+    refresh();
+    const pts = forWeek().map((p) => [p.lat, p.lng]);
+    if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 });
+  };
+}
+function switchCityFor(p) { // search picked something outside the current city filter
+  const target = p.city || "Melbourne";
+  if (city !== "all" && target !== city) {
+    city = target; store.set("passd.city", city);
+    const sel = el("city"); if (sel) sel.value = city;
+    refresh();
+  }
+}
 function buildWeekSelect() {
   const opts = [`<option value="all">All recent weeks</option>`]
     .concat(WEEKS.map((w) => `<option value="${w}">${weekLabel(w)}</option>`));
@@ -366,7 +395,7 @@ function buildSuburbs() {
     if (p.lat == null || !p.suburb) continue;
     const k = p.suburb.toLowerCase() + "|" + (p.postcode || "");
     let e = m.get(k);
-    if (!e) m.set(k, (e = { suburb: p.suburb, postcode: p.postcode, n: 0, latMin: 90, latMax: -90, lngMin: 180, lngMax: -180 }));
+    if (!e) m.set(k, (e = { suburb: p.suburb, postcode: p.postcode, city: p.city || "Melbourne", n: 0, latMin: 90, latMax: -90, lngMin: 180, lngMax: -180 }));
     e.n++;
     e.latMin = Math.min(e.latMin, p.lat); e.latMax = Math.max(e.latMax, p.lat);
     e.lngMin = Math.min(e.lngMin, p.lng); e.lngMax = Math.max(e.lngMax, p.lng);
@@ -424,11 +453,13 @@ function chooseSearch(i) {
     geoLocate(it.q);
   } else if (it.kind === "sub") {
     el("q").value = it.s.suburb;
+    switchCityFor({ city: it.s.city });
     const pad = 0.004;
     map.fitBounds([[it.s.latMin - pad, it.s.lngMin - pad], [it.s.latMax + pad, it.s.lngMax + pad]], { padding: [50, 50], maxZoom: 15 });
     if (window.matchMedia("(max-width: 900px)").matches) showMap();
   } else {
     el("q").value = it.p.address + ", " + it.p.suburb;
+    switchCityFor(it.p);
     if (week !== "all" && it.p.week !== week) setWeek("all", false);
     if (!forView().some((x) => x.id === it.p.id)) { // filters would hide the searched home
       activeTypes.clear(); maxPrice = null; minBeds = null; savedOnly = false;
@@ -479,7 +510,7 @@ async function init() {
       })
     : L.layerGroup()).addTo(map);
 
-  buildWeekSelect(); buildTypeChips(); buildBedsChips(); buildPriceFilter(); buildSort(); buildSearch(); buildAbout();
+  buildCitySelect(); buildWeekSelect(); buildTypeChips(); buildBedsChips(); buildPriceFilter(); buildSort(); buildSearch(); buildAbout();
   el("toMap").onclick = showMap;
   el("toList").onclick = showList;
   el("savedBtn").onclick = () => {

@@ -37,10 +37,13 @@ async function guideFor(d) {
   let done = 0, priced = 0;
   await pool(work, CONC, async d => {
     delete d.priceEst;
+    const hasDomainUrl = !!(d.listUrl && /domain\.com\.au/i.test(d.listUrl));
     const g = await guideFor(d);
     d.listLow = g ? g.low : null;
     d.listHigh = g ? g.high : null;
-    d.listUrl = g ? g.url : null;
+    // Domain-sourced listing links are authoritative — never clobber them with
+    // soho matches (or nulls); soho only fills the gap for REIV-sourced rows.
+    if (!hasDomainUrl) d.listUrl = g ? g.url : null;
     if (g) priced++;
     if (++done % 40 === 0) console.log('  ', done, '/', work.length, '(' + priced + ' priced)');
   });

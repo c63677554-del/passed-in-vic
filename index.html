@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Passd — Melbourne auction pass-ins, mapped weekly</title>
+  <title>Passd — Australia's auction pass-ins, mapped weekly</title>
   <link rel="icon" href="./logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./logo.svg" />
   <meta name="description" content="Every Melbourne & Victoria home that passed in at auction, mapped and refreshed weekly. Price guides, live listing links, suburb search, filters and a shareable shortlist." />
@@ -32,10 +32,10 @@
         </svg>
         <span class="land-word">passd</span>
       </div>
-      <h1>Every passed-in home in Melbourne. One map.</h1>
-      <p class="land-sub">When a home passes in at auction, the vendor's reserve wasn't met — and most convert to private sale within days, open to offers. Passd maps every one of them, refreshed every Sunday night.</p>
+      <h1>Every passed-in home in Australia's auction cities. One map.</h1>
+      <p class="land-sub">When a home passes in at auction, the vendor's reserve wasn't met — and most convert to private sale within days, open to offers. Passd maps every one of them across Melbourne, Sydney, Brisbane, Adelaide and Canberra, refreshed every Sunday night.</p>
       <ul class="land-points">
-        <li><b>Fresh every week</b> — every REIV-reported pass-in across Melbourne &amp; VIC, mapped by Monday</li>
+        <li><b>Fresh every week</b> — every reported pass-in (REIV + Domain results) across five cities, mapped by Monday</li>
         <li><b>Price guides &amp; live listings</b> — the agent's guide on the pin, one tap to the listing</li>
         <li><b>Your shortlist</b> — save homes, filter to your budget, share any home with your partner</li>
       </ul>
@@ -67,6 +67,7 @@
       <div class="spacer"></div>
       <div class="hgrp">
         <span id="count" class="count" aria-live="polite"></span>
+        <select id="city" aria-label="City"></select>
         <select id="week" aria-label="Auction week"></select>
       </div>
       <div class="toggle" role="tablist" aria-label="View">
@@ -118,7 +119,7 @@
       <span class="sep">·</span>
       <button id="aboutBtn" class="linkbtn" type="button">About &amp; data</button>
       <span class="sep">·</span>
-      <span>Data <a href="https://reiv.com.au" target="_blank" rel="noopener noreferrer">REIV</a>, guides <a href="https://soho.com.au" target="_blank" rel="noopener noreferrer">soho</a>, map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
+      <span>Data <a href="https://reiv.com.au" target="_blank" rel="noopener noreferrer">REIV</a> &amp; <a href="https://www.domain.com.au/auction-results/" target="_blank" rel="noopener noreferrer">Domain</a>, guides <a href="https://soho.com.au" target="_blank" rel="noopener noreferrer">soho</a>, map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
       <span class="foot-spacer"></span>
       <span class="disc">Price guides are indicative &amp; change — confirm with the agent. Not financial advice.</span>
     </footer>
@@ -136,7 +137,7 @@
     <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days — a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
     <h3>Where the data comes from</h3>
     <ul>
-      <li><b>Auction results</b> — REIV's public suburb-by-suburb results. REIV surfaces roughly the last two weekends; Passd accumulates up to ~12 weeks as it refreshes.</li>
+      <li><b>Auction results</b> — REIV's public suburb-by-suburb results (Melbourne/VIC) and Domain's public weekend auction results (Sydney, Brisbane, Adelaide, Canberra). Passd accumulates up to ~12 weeks as it refreshes.</li>
       <li><b>Price guides &amp; listing links</b> — matched from the live listing (soho.com.au) where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are “contact agent” and always stay visible in price filters, since an unknown guide could be in budget.</li>
       <li><b>Map</b> — OpenStreetMap.</li>
     </ul>

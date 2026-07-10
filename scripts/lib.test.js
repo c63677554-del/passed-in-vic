@@ -2,7 +2,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { parseSuburbPage, extractPostcode, weekSaturday, daysAgo, priceOf, parsePriceRange, expand, slug, inVic, readDataArray } = require('./lib');
+const { parseSuburbPage, extractPostcode, weekSaturday, daysAgo, priceOf, parsePriceRange, expand, slug, inVic, inState, domainSaleDate, mapDomainListing, readDataArray } = require('./lib');
 
 // A miniature REIV suburb page matching the real markup contract.
 const FIXTURE = `
@@ -91,6 +91,35 @@ test('inVic bounds check', () => {
   assert.ok(inVic(-37.81, 144.96));   // Melbourne CBD
   assert.ok(!inVic(-33.87, 151.21));  // Sydney
   assert.ok(!inVic(null, 144.96));
+});
+
+test('inState checks per-state bounds', () => {
+  assert.ok(inState('NSW', -33.87, 151.21));  // Sydney
+  assert.ok(!inState('VIC', -33.87, 151.21)); // Sydney is not in VIC
+  assert.ok(inState('QLD', -27.47, 153.03));  // Brisbane
+  assert.ok(inState('ACT', -35.28, 149.13));  // Canberra
+  assert.ok(!inState('ACT', -33.87, 151.21));
+});
+
+test('domainSaleDate converts ISO auction date to d/MM/yyyy', () => {
+  assert.equal(domainSaleDate('2026-07-04T00:00:00'), '4/07/2026');
+  assert.equal(domainSaleDate(null), null);
+});
+
+test('mapDomainListing keeps pass-ins only and maps to our row shape', () => {
+  const l = { unitNumber: '2', streetNumber: '10', streetName: 'Sample', streetType: 'St', suburb: 'Testville', postcode: '2000', state: 'Nsw', geoLocation: { latitude: -33.9, longitude: 151.2 }, propertyType: 'ApartmentUnitFlat', bedrooms: 2, bathrooms: 1, carspaces: 1, result: 'AUPI', agencyName: ' Test Agency ', domainPropertyDetailsUrl: 'https://www.domain.com.au/x' };
+  const p = mapDomainListing(l, '2026-07-04T00:00:00', 'Sydney');
+  assert.equal(p.address, '2/10 Sample St');
+  assert.equal(p.week, '2026-07-04');
+  assert.equal(p.saleDate, '4/07/2026');
+  assert.equal(p.state, 'NSW');
+  assert.equal(p.city, 'Sydney');
+  assert.equal(p.type, 'Apartment');
+  assert.equal(p.method, 'Passed in');
+  assert.equal(p.agency, 'Test Agency');
+  assert.equal(mapDomainListing({ ...l, result: 'AUSD' }, '2026-07-04T00:00:00', 'Sydney'), null); // sold -> dropped
+  assert.equal(mapDomainListing({ ...l, result: 'AUVB' }, '2026-07-04T00:00:00', 'Sydney').method, 'Passed in - vendor bid');
+  assert.equal(mapDomainListing({ ...l, geoLocation: null }, '2026-07-04T00:00:00', 'Sydney'), null); // no geo -> dropped
 });
 
 test('readDataArray extracts the array from data.js source text', () => {

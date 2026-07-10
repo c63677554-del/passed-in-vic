@@ -68,9 +68,59 @@ async function pool(items, n, fn) {
   return res;
 }
 
-// Victoria bounding box (with slack) — geocode + data sanity checks.
-const VIC_BOUNDS = { latMin: -39.9, latMax: -33.8, lngMin: 140.5, lngMax: 150.5 };
-const inVic = (lat, lng) => lat != null && lng != null && lat >= VIC_BOUNDS.latMin && lat <= VIC_BOUNDS.latMax && lng >= VIC_BOUNDS.lngMin && lng <= VIC_BOUNDS.lngMax;
+// State bounding boxes (with slack) — geocode + data sanity checks.
+const STATE_BOUNDS = {
+  VIC: { latMin: -39.9, latMax: -33.8, lngMin: 140.5, lngMax: 150.5 },
+  NSW: { latMin: -37.6, latMax: -28.0, lngMin: 140.5, lngMax: 154.0 },
+  QLD: { latMin: -29.5, latMax: -9.0, lngMin: 137.5, lngMax: 154.0 },
+  SA:  { latMin: -38.5, latMax: -25.5, lngMin: 128.5, lngMax: 141.5 },
+  ACT: { latMin: -36.0, latMax: -35.0, lngMin: 148.6, lngMax: 149.5 },
+};
+const VIC_BOUNDS = STATE_BOUNDS.VIC;
+function inState(state, lat, lng) {
+  const b = STATE_BOUNDS[(state || 'VIC').toUpperCase()];
+  return !!b && lat != null && lng != null && lat >= b.latMin && lat <= b.latMax && lng >= b.lngMin && lng <= b.lngMax;
+}
+const inVic = (lat, lng) => inState('VIC', lat, lng);
+
+// ---------- Domain auction-results (domain.com.au) ----------
+// Result codes: AUSD sold, AUSP sold prior, AUSA sold after, AUPI passed in,
+// AUVB passed in on vendor bid, AUWD withdrawn, AUPP postponed.
+const DOMAIN_PASSED_CODES = new Set(['AUPI', 'AUVB']);
+const domainType = (t) => {
+  const s = String(t || '');
+  if (/town/i.test(s)) return 'Townhouse';
+  if (/apartment|flat/i.test(s)) return 'Apartment';
+  if (/unit/i.test(s)) return 'Unit';
+  if (/house|villa|terrace/i.test(s)) return 'House';
+  return s || null;
+};
+// "2026-07-04T00:00:00" -> "4/07/2026" (matches REIV saleDate format for parseDate/weekSaturday)
+function domainSaleDate(auctionDateIso) {
+  const m = String(auctionDateIso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${+m[3]}/${m[2]}/${m[1]}` : null;
+}
+// One Domain listing -> our property row (null if not a pass-in or missing geo).
+function mapDomainListing(l, auctionDateIso, city) {
+  if (!l || !DOMAIN_PASSED_CODES.has(l.result)) return null;
+  const g = l.geoLocation || {};
+  if (g.latitude == null || g.longitude == null) return null;
+  const address = `${l.unitNumber ? l.unitNumber + '/' : ''}${l.streetNumber || ''} ${l.streetName || ''} ${l.streetType || ''}`.replace(/\s+/g, ' ').trim();
+  if (!address || !l.suburb) return null;
+  const saleDate = domainSaleDate(auctionDateIso);
+  let url = l.domainPropertyDetailsUrl || null;
+  if (url && !/^https?:/i.test(url)) url = 'https://www.domain.com.au' + (url.startsWith('/') ? '' : '/') + url;
+  return {
+    address, suburb: l.suburb, postcode: l.postcode || null,
+    lat: +(+g.latitude).toFixed(6), lng: +(+g.longitude).toFixed(6),
+    type: domainType(l.propertyType), beds: l.bedrooms ?? null, baths: l.bathrooms ?? null, cars: l.carspaces ?? null,
+    price: null, vendor: null, agency: (l.agencyName || '').trim() || null,
+    method: l.result === 'AUVB' ? 'Passed in - vendor bid' : 'Passed in',
+    saleDate, week: weekSaturday(saleDate),
+    city, state: (l.state || '').toUpperCase() || null,
+    listUrl: url,
+  };
+}
 
 // Extract the PASSED_IN array from a data.js source string.
 function readDataArray(txt) {
@@ -79,4 +129,4 @@ function readDataArray(txt) {
   return JSON.parse(txt.slice(a, b + 1));
 }
 
-module.exports = { strip, cell, extractPostcode, parseSuburbPage, parseDate, weekSaturday, daysAgo, expand, slug, priceOf, parsePriceRange, pool, VIC_BOUNDS, inVic, readDataArray };
+module.exports = { strip, cell, extractPostcode, parseSuburbPage, parseDate, weekSaturday, daysAgo, expand, slug, priceOf, parsePriceRange, pool, VIC_BOUNDS, STATE_BOUNDS, inVic, inState, DOMAIN_PASSED_CODES, domainType, domainSaleDate, mapDomainListing, readDataArray };
