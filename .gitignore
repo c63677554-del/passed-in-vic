@@ -18,3 +18,5 @@ web/.env*.local
 *.log
 .vercel
 .claude/
+.passd-backend.env
+supabase/.temp/

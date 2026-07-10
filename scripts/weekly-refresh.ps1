@@ -18,6 +18,10 @@ if ($LASTEXITCODE -ne 0) { "ABORT: enrich exited $LASTEXITCODE" | Add-Content $l
 node scripts/validate-data.js 2>&1 | Add-Content $log
 if ($LASTEXITCODE -ne 0) { "ABORT: validate exited $LASTEXITCODE" | Add-Content $log; exit $LASTEXITCODE }
 
+# once the paywall backend is live, feed it (no-op until .passd-backend.env exists)
+node scripts/upload-data.js 2>&1 | Add-Content $log
+if ($LASTEXITCODE -ne 0) { "ABORT: supabase upload exited $LASTEXITCODE" | Add-Content $log; exit $LASTEXITCODE }
+
 git add data.js scripts/geocache.json 2>&1 | Add-Content $log
 git -c user.name="passd-refresh" -c user.email="passd-refresh@local" commit -m "chore: weekly refresh ($(Get-Date -Format yyyy-MM-dd))" 2>&1 | Add-Content $log
 git push 2>&1 | Add-Content $log

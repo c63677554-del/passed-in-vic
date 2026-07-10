@@ -22,6 +22,33 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+  <!-- Landing (gated mode, signed out). Hidden entirely in legacy mode. -->
+  <section id="landing" hidden>
+    <div class="land">
+      <div class="land-brand">
+        <svg viewBox="0 0 24 24" width="54" height="54" aria-hidden="true">
+          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#e4002b"/>
+          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#fff"/>
+        </svg>
+        <span class="land-word">passd</span>
+      </div>
+      <h1>Every passed-in home in Melbourne. One map.</h1>
+      <p class="land-sub">When a home passes in at auction, the vendor's reserve wasn't met — and most convert to private sale within days, open to offers. Passd maps every one of them, refreshed every Sunday night.</p>
+      <ul class="land-points">
+        <li><b>Fresh every week</b> — every REIV-reported pass-in across Melbourne &amp; VIC, mapped by Monday</li>
+        <li><b>Price guides &amp; live listings</b> — the agent's guide on the pin, one tap to the listing</li>
+        <li><b>Your shortlist</b> — save homes, filter to your budget, share any home with your partner</li>
+      </ul>
+      <div class="land-price">
+        <div class="land-plan"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></div>
+        <div class="land-plan"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></div>
+      </div>
+      <button id="landCta" class="land-cta" type="button">Start 7-day free trial</button>
+      <p class="land-fine">Free for 7 days, cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
+      <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: REIV, guides: soho. Indicative only — not financial advice.</p>
+    </div>
+  </section>
+
   <div id="app">
     <header class="header">
       <a class="brand" href="./" aria-label="Passd — Melbourne auction pass-ins">
@@ -46,7 +73,25 @@
         <button id="toList" class="on" type="button">List</button>
         <button id="toMap" type="button">Map</button>
       </div>
+      <button id="signInBtn" class="tchip" type="button" hidden>Sign in</button>
+      <div id="acctWrap" class="acct" hidden>
+        <button id="acctBtn" class="tchip" type="button" aria-haspopup="menu">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Account
+        </button>
+        <div id="acctMenu" class="acctmenu" role="menu" hidden>
+          <div id="acctEmail" class="acct-email">—</div>
+          <div id="acctStatus" class="acct-status">—</div>
+          <button id="acctPortal" class="acct-item" type="button" role="menuitem">Manage billing</button>
+          <button id="acctSignOut" class="acct-item" type="button" role="menuitem">Sign out</button>
+        </div>
+      </div>
     </header>
+
+    <div id="teaser" class="teaser" hidden>
+      <span>Free preview — latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
+      <button id="teaserCta" class="teaser-btn" type="button">Start 7-day free trial</button>
+    </div>
 
     <div class="filterbar">
       <div id="typeFilter" class="types" role="group" aria-label="Filter by property type"></div>
@@ -101,11 +146,63 @@
     <br /><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></p>
   </dialog>
 
+  <!-- Sign-in modal (magic link + 6-digit code) -->
+  <div id="authModal" class="pmodal" hidden>
+    <div class="pm-scrim" data-close-modal="authModal"></div>
+    <div class="pm-card" role="dialog" aria-modal="true" aria-label="Sign in">
+      <button class="dlg-x pm-x" type="button" data-close-modal="authModal" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+      <div id="authStep1">
+        <h2>Sign in to Passd</h2>
+        <p class="pm-sub">No password needed — we'll email you a sign-in link and code.</p>
+        <input id="authEmail" class="pm-input" type="email" placeholder="you@email.com" autocomplete="email" inputmode="email" />
+        <button id="authSend" class="pm-cta" type="button">Email me a sign-in link</button>
+      </div>
+      <div id="authStep2" hidden>
+        <h2>Check your email</h2>
+        <p class="pm-sub">We sent a link and a 6-digit code to <b id="authEmailShown"></b>. Click the link, or enter the code:</p>
+        <input id="authOtp" class="pm-input otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" />
+        <button id="authVerify" class="pm-cta" type="button">Verify code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subscribe modal (7-day trial, annual anchor) -->
+  <div id="subModal" class="pmodal" hidden>
+    <div class="pm-scrim" data-close-modal="subModal"></div>
+    <div class="pm-card" role="dialog" aria-modal="true" aria-label="Subscribe">
+      <button class="dlg-x pm-x" type="button" data-close-modal="subModal" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+      <h2>Unlock everything</h2>
+      <p class="pm-sub">All weeks, price guides, live listing links, and your saved shortlist.</p>
+      <div class="pm-plans" role="radiogroup" aria-label="Choose a plan">
+        <button type="button" class="plan on" data-plan="annual" role="radio" aria-checked="true">
+          <span class="plan-badge">Best value</span>
+          <span class="plan-name">Annual</span>
+          <span class="plan-price">A$39.99<small>/yr</small></span>
+          <span class="plan-per">= A$3.33/mo · save 33%</span>
+        </button>
+        <button type="button" class="plan" data-plan="monthly" role="radio" aria-checked="false">
+          <span class="plan-name">Monthly</span>
+          <span class="plan-price">A$4.99<small>/mo</small></span>
+          <span class="plan-per">flexible, cancel anytime</span>
+        </button>
+      </div>
+      <button id="subCta" class="pm-cta" type="button">Start 7-day free trial</button>
+      <p id="subTerms" class="pm-fine">Free for 7 days. Cancel anytime.</p>
+    </div>
+  </div>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="./config.js"></script>
   <script src="./data.js"></script>
+  <script src="./auth.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

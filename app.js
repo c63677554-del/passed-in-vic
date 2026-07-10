@@ -3,7 +3,7 @@
 /* Passd — Melbourne auction pass-ins. REA-style two-pane UI: price-pill markers
    with clustering, viewport-synced list, suburb/address search, type/beds/price
    filters, sorting, a localStorage shortlist, and shareable URL state.
-   Data: data.js (PASSED_IN, DATA_GENERATED), refreshed weekly by scripts/. */
+   Data: data.js (DATA, DATA_GENERATED), refreshed weekly by scripts/. */
 
 // ---------- tiny helpers ----------
 const el = (id) => document.getElementById(id);
@@ -36,14 +36,23 @@ const HEART = (on) => `<svg viewBox="0 0 24 24" width="17" height="17" aria-hidd
 const LINKIC = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M10 13.5a4.7 4.7 0 0 0 7 .4l2.6-2.6a4.7 4.7 0 0 0-6.6-6.6l-1.5 1.5M14 10.5a4.7 4.7 0 0 0-7-.4l-2.6 2.6a4.7 4.7 0 0 0 6.6 6.6l1.5-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
 
 // ---------- data + persistent state ----------
-PASSED_IN.forEach((p) => (p.id = hid((p.address + "|" + p.suburb + "|" + p.week).toLowerCase())));
-const WEEKS = [...new Set(PASSED_IN.map((p) => p.week))].sort().reverse();
+// The dataset arrives via PassdGate.ready(): bundled data.js in legacy mode,
+// or the authenticated get-data endpoint (teaser/full) in gated mode.
+let DATA = [], WEEKS = [], GENERATED = null, appTier = "legacy";
+function setDataset(props, gen) {
+  DATA = props || [];
+  GENERATED = gen || null;
+  DATA.forEach((p) => (p.id = hid((p.address + "|" + p.suburb + "|" + p.week).toLowerCase())));
+  WEEKS = [...new Set(DATA.map((p) => p.week))].sort().reverse();
+  SUBURBS = buildSuburbs();
+  if (!week || (week !== "all" && !WEEKS.includes(week))) week = WEEKS[0] || null;
+}
 const TYPES = ["House", "Townhouse", "Apartment", "Unit"];
 const saved = new Set(store.get("passd.saved", []));
 const seenIds = new Set(store.get("passd.seen", []));
 
 let map, cluster, byId = {}, selectedId = null;
-let week = WEEKS[0] || null;           // iso Saturday or "all"
+let week = null;                       // iso Saturday or "all"; defaulted in setDataset()
 let activeTypes = new Set();           // empty = all types
 let maxPrice = null;                   // number | null
 let minBeds = null;                    // number | null
@@ -94,7 +103,7 @@ function addBasemap() {
 }
 
 // ---------- data slices ----------
-const forWeek = () => PASSED_IN.filter((p) => (week === "all" || p.week === week) && p.lat != null && p.lng != null);
+const forWeek = () => DATA.filter((p) => (week === "all" || p.week === week) && p.lat != null && p.lng != null);
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
 // "Price on request" homes always pass the price filter — an unknown guide could
 // be in budget, so showing beats hiding.
@@ -117,7 +126,7 @@ function pinHTML(p) {
   return `<div class="${cls}" data-pin="${p.id}">${hh}${esc(label)}</div>`;
 }
 const pinIcon = (p) => L.divIcon({ className: "pinwrap", html: pinHTML(p), iconSize: [0, 0] });
-function refreshPin(id) { const m = byId[id]; const p = PASSED_IN.find((x) => x.id === id); if (m && p) { m.setIcon(pinIcon(p)); m.setZIndexOffset(id === selectedId ? 1200 : saved.has(id) ? 400 : 0); } }
+function refreshPin(id) { const m = byId[id]; const p = DATA.find((x) => x.id === id); if (m && p) { m.setIcon(pinIcon(p)); m.setZIndexOffset(id === selectedId ? 1200 : saved.has(id) ? 400 : 0); } }
 
 function markerPopup(p) {
   const on = saved.has(p.id);
@@ -214,7 +223,7 @@ function markSeen(id) { if (!seenIds.has(id)) { seenIds.add(id); store.set("pass
 function select(id, from) {
   const prev = selectedId;
   selectedId = id;
-  const p = PASSED_IN.find((x) => x.id === id); if (!p) return;
+  const p = DATA.find((x) => x.id === id); if (!p) return;
   markSeen(id);
   if (prev && byId[prev]) refreshPin(prev);
   refreshPin(id);
@@ -243,7 +252,7 @@ function toggleSave(id) {
   });
   refreshPin(id);
   const m = byId[id];
-  if (m && m.isPopupOpen && m.isPopupOpen()) m.setPopupContent(markerPopup(PASSED_IN.find((x) => x.id === id)));
+  if (m && m.isPopupOpen && m.isPopupOpen()) m.setPopupContent(markerPopup(DATA.find((x) => x.id === id)));
   if (savedOnly) refresh(); else updateSavedChip();
   toast(on ? "Saved — find it under ♥ Saved" : "Removed from saved");
 }
@@ -260,6 +269,7 @@ async function shareLink(id) {
 
 // ---------- toast ----------
 let toastT = null;
+window.toastFn = (m) => toast(m); // shared with auth.js
 function toast(msg) {
   const t = el("toast");
   t.textContent = msg; t.classList.add("show");
@@ -349,9 +359,10 @@ function resetFilters() {
 }
 
 // ---------- search (suburbs, postcodes, addresses) ----------
-const SUBURBS = (() => {
+let SUBURBS = [];
+function buildSuburbs() {
   const m = new Map();
-  for (const p of PASSED_IN) {
+  for (const p of DATA) {
     if (p.lat == null || !p.suburb) continue;
     const k = p.suburb.toLowerCase() + "|" + (p.postcode || "");
     let e = m.get(k);
@@ -361,7 +372,7 @@ const SUBURBS = (() => {
     e.lngMin = Math.min(e.lngMin, p.lng); e.lngMax = Math.max(e.lngMax, p.lng);
   }
   return [...m.values()].sort((a, b) => b.n - a.n);
-})();
+}
 let qItems = [], qActive = -1;
 function searchMatches(q) {
   const ql = q.trim().toLowerCase();
@@ -391,7 +402,7 @@ async function geoLocate(q) {
     setTimeout(() => { if (!visible().length) toast("No passed-in homes here right now"); }, 800);
   } catch { toast("Location search unavailable — try again"); }
 }
-const forWeekAll = () => PASSED_IN.filter((p) => p.lat != null && p.lng != null);
+const forWeekAll = () => DATA.filter((p) => p.lat != null && p.lng != null);
 function renderSearch() {
   const qr = el("qr");
   if (!qItems.length) { qr.hidden = true; el("q").setAttribute("aria-expanded", "false"); return; }
@@ -451,7 +462,11 @@ function buildAbout() {
 }
 
 // ---------- init ----------
-function init() {
+async function init() {
+  const boot = await window.PassdGate.ready();
+  if (!boot) return; // signed out in gated mode: the landing page is showing
+  appTier = boot.tier;
+  setDataset(boot.properties, boot.generated);
   const deep = readURL();
 
   map = L.map("map", { zoomControl: true }).setView([-37.81, 144.96], 11);
@@ -502,8 +517,8 @@ function init() {
   });
 
   const fr = el("fresh");
-  if (fr && typeof DATA_GENERATED !== "undefined")
-    fr.textContent = "Updated " + new Date(DATA_GENERATED + "T00:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" }) + " · refreshes Sun night";
+  if (fr && GENERATED)
+    fr.textContent = "Updated " + new Date(GENERATED + "T00:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" }) + " · refreshes Sun night";
 
   renderMarkers();
   if (deep.c) {
@@ -512,7 +527,7 @@ function init() {
   }
   if (!restoredView) { const pts = forWeek().map((p) => [p.lat, p.lng]); if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 }); }
   updateList();
-  if (deep.sel && PASSED_IN.some((p) => p.id === deep.sel && forView().some((v) => v.id === deep.sel))) {
+  if (deep.sel && DATA.some((p) => p.id === deep.sel && forView().some((v) => v.id === deep.sel))) {
     setTimeout(() => select(deep.sel, "search"), 350);
   }
   map.on("moveend", () => { updateList(); writeURL(); });
