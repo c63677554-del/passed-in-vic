@@ -22,7 +22,7 @@ if ($LASTEXITCODE -ne 0) { "ABORT: validate exited $LASTEXITCODE" | Add-Content 
 node scripts/upload-data.js 2>&1 | Add-Content $log
 if ($LASTEXITCODE -ne 0) { "ABORT: supabase upload exited $LASTEXITCODE" | Add-Content $log; exit $LASTEXITCODE }
 
-git add data.js scripts/geocache.json 2>&1 | Add-Content $log
+git add scripts/geocache.json 2>&1 | Add-Content $log # data.js/data.json are gitignored post-paywall; they feed Supabase via upload-data.js instead
 git -c user.name="passd-refresh" -c user.email="passd-refresh@local" commit -m "chore: weekly refresh ($(Get-Date -Format yyyy-MM-dd))" 2>&1 | Add-Content $log
 git push 2>&1 | Add-Content $log
 "=== $(Get-Date -Format s) done ===" | Add-Content $log

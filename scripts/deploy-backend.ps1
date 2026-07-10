@@ -1,8 +1,8 @@
-# deploy-backend.ps1 — one-command go-live for the Passd paywall backend.
+# deploy-backend.ps1 - one-command go-live for the Passd paywall backend.
 # Prereq (see docs/GO-LIVE.md): .passd-backend.env at the repo root containing
 #   SUPABASE_ACCESS_TOKEN=sbp_...      (Account -> Access Tokens)
 #   SUPABASE_PROJECT_REF=xxxxxxxxxxxx  (new DEDICATED "passd" project's ref)
-# Optional (Stripe live — see docs/SETUP-STRIPE.md):
+# Optional (Stripe live - see docs/SETUP-STRIPE.md):
 #   STRIPE_SECRET_KEY=sk_live_...
 #   STRIPE_WEBHOOK_SECRET=whsec_...
 #   STRIPE_PRICE_MONTHLY=price_...
@@ -16,7 +16,7 @@ Set-Location $repo
 
 # ---- read env ----
 $envFile = Join-Path $repo ".passd-backend.env"
-if (-not (Test-Path $envFile)) { Write-Error "Missing .passd-backend.env — see docs/GO-LIVE.md"; exit 1 }
+if (-not (Test-Path $envFile)) { Write-Error "Missing .passd-backend.env - see docs/GO-LIVE.md"; exit 1 }
 $cfg = @{}
 Get-Content $envFile | ForEach-Object { if ($_ -match '^\s*([A-Z0-9_]+)\s*=\s*(.+?)\s*$') { $cfg[$Matches[1]] = $Matches[2] } }
 @($cfg.Keys) | ForEach-Object { if ($cfg[$_] -match 'REPLACE') { $cfg.Remove($_) } } # unfilled placeholders = absent
@@ -24,11 +24,17 @@ if (-not $cfg.SUPABASE_ACCESS_TOKEN -or -not $cfg.SUPABASE_PROJECT_REF) { Write-
 $env:SUPABASE_ACCESS_TOKEN = $cfg.SUPABASE_ACCESS_TOKEN
 $ref = $cfg.SUPABASE_PROJECT_REF
 
-Write-Host "== Linking project $ref =="
-npx supabase link --project-ref $ref
-
-Write-Host "== Applying database migrations =="
-npx supabase db push
+Write-Host "== Applying database migrations (Management API - no db password needed) =="
+Get-ChildItem "supabase\migrations\*.sql" | Sort-Object Name | ForEach-Object {
+  Write-Host ("   " + $_.Name)
+  # [IO.File] not Get-Content: PS5.1 decorates Get-Content strings with ETS
+  # properties, which ConvertTo-Json serializes as {"value":...} objects.
+  $sql = [System.IO.File]::ReadAllText($_.FullName)
+  $body = @{ query = $sql } | ConvertTo-Json -Depth 3
+  Invoke-RestMethod -Method Post -Uri "https://api.supabase.com/v1/projects/$ref/database/query" `
+    -Headers @{ Authorization = "Bearer $($cfg.SUPABASE_ACCESS_TOKEN)" } `
+    -ContentType "application/json" -Body $body | Out-Null
+}
 
 Write-Host "== Deploying edge functions =="
 npx supabase functions deploy get-data --no-verify-jwt --project-ref $ref
@@ -38,12 +44,12 @@ npx supabase functions deploy portal --project-ref $ref
 
 Write-Host "== Setting function secrets =="
 $site = "https://c63677554-del.github.io/passed-in-vic/"
-if ($cfg.STRIPE_SECRET_KEY -and $cfg.STRIPE_PRICE_MONTHLY -and $cfg.STRIPE_PRICE_ANNUAL) {
+if ($cfg.STRIPE_SECRET_KEY -and $cfg.STRIPE_WEBHOOK_SECRET -and $cfg.STRIPE_PRICE_MONTHLY -and $cfg.STRIPE_PRICE_ANNUAL) {
   npx supabase secrets set --project-ref $ref "SITE_URL=$site" "ALLOW_PREVIEW_GRANTS=false" "STRIPE_SECRET_KEY=$($cfg.STRIPE_SECRET_KEY)" "STRIPE_WEBHOOK_SECRET=$($cfg.STRIPE_WEBHOOK_SECRET)" "STRIPE_PRICE_MONTHLY=$($cfg.STRIPE_PRICE_MONTHLY)" "STRIPE_PRICE_ANNUAL=$($cfg.STRIPE_PRICE_ANNUAL)"
   Write-Host "Stripe: LIVE (preview grants disabled)"
 } else {
   npx supabase secrets set --project-ref $ref "SITE_URL=$site" "ALLOW_PREVIEW_GRANTS=true"
-  Write-Host "Stripe: NOT configured — preview mode (trials granted without payment). Add STRIPE_* to the env file and rerun."
+  Write-Host "Stripe: NOT configured - preview mode (trials granted without payment). Add STRIPE_* to the env file and rerun."
 }
 
 Write-Host "== Fetching project keys =="
@@ -67,7 +73,7 @@ if ($LASTEXITCODE -ne 0) { Write-Error "data upload failed"; exit 1 }
 
 Write-Host "== Writing config.js (flips the site to gated mode) =="
 @"
-// Passd runtime config — GATED MODE (written by scripts/deploy-backend.ps1).
+// Passd runtime config - GATED MODE (written by scripts/deploy-backend.ps1).
 window.PASSD_CONFIG = {
   supabaseUrl: "$url",
   supabaseKey: "$anon",
@@ -76,7 +82,10 @@ window.PASSD_CONFIG = {
 
 Write-Host "== Retiring public data files =="
 # stop shipping the dataset with the site; keep local generation for uploads
-(Get-Content index.html) | Where-Object { $_ -notmatch '<script src="\./data\.js"></script>' } | Set-Content index.html -Encoding utf8
+# ([IO.File], not Get/Set-Content: PS5.1 misdecodes BOM-less UTF-8 and corrupts non-ASCII)
+$ix = [System.IO.File]::ReadAllText("index.html")
+$ix = $ix -replace '\s*<script src="\./data\.js"></script>\r?\n', "`n"
+[System.IO.File]::WriteAllText("index.html", $ix, (New-Object System.Text.UTF8Encoding($false)))
 git rm --cached data.js data.json 2>$null | Out-Null
 Add-Content .gitignore "`ndata.js`ndata.json"
 
