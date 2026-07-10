@@ -1,6 +1,6 @@
 # Passd 🏠📍
 
-**Every Melbourne / Victoria home that passed in at auction — mapped, priced and refreshed weekly.**
+**Every Australian home that passed in at auction — Melbourne, Sydney, Brisbane, Adelaide, Canberra — mapped, priced and refreshed weekly.**
 
 When a home passes in, bidding didn't reach the reserve. Most convert to private sale within
 days, where vendors are far more open to negotiated offers. Passd is built to catch that window.

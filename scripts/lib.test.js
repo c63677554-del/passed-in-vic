@@ -122,6 +122,16 @@ test('mapDomainListing keeps pass-ins only and maps to our row shape', () => {
   assert.equal(mapDomainListing({ ...l, geoLocation: null }, '2026-07-04T00:00:00', 'Sydney'), null); // no geo -> dropped
 });
 
+test('dedupeKey collides REIV and Domain variants of the same home', () => {
+  const { dedupeKey } = require('./lib');
+  const reiv = { address: '12 Smith Ct', suburb: 'Brunswick', week: '2026-07-04' };
+  const domainAbbrev = { address: '12 Smith Ct', suburb: 'Brunswick', week: '2026-07-04' };
+  const domainFull = { address: '12 Smith Court', suburb: 'Brunswick', week: '2026-07-04' };
+  assert.equal(dedupeKey(reiv), dedupeKey(domainAbbrev));
+  assert.equal(dedupeKey(reiv), dedupeKey(domainFull));
+  assert.notEqual(dedupeKey(reiv), dedupeKey({ ...reiv, week: '2026-06-27' })); // re-auction stays distinct
+});
+
 test('readDataArray extracts the array from data.js source text', () => {
   const arr = readDataArray('// header\nconst DATA_GENERATED = "2026-07-01";\nconst PASSED_IN = [{"a":1},{"a":2}];\n');
   assert.equal(arr.length, 2);

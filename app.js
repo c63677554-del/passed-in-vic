@@ -54,6 +54,22 @@ const seenIds = new Set(store.get("passd.seen", []));
 let map, cluster, byId = {}, selectedId = null;
 let week = null;                       // iso Saturday or "all"; defaulted in setDataset()
 const CITIES = ["Melbourne", "Sydney", "Brisbane", "Adelaide", "Canberra"];
+// Metro framing: city feeds are state-wide (e.g. Cairns arrives under the
+// Brisbane feed), so selecting a city orients the map on its metro box —
+// regional homes stay in the list and appear as you zoom/pan out.
+const METRO_BOUNDS = {
+  Melbourne: [[-38.35, 144.45], [-37.45, 145.60]],
+  Sydney: [[-34.15, 150.55], [-33.55, 151.35]],
+  Brisbane: [[-27.75, 152.65], [-27.10, 153.35]],
+  Adelaide: [[-35.25, 138.40], [-34.60, 138.80]],
+  Canberra: [[-35.60, 148.95], [-35.10, 149.30]],
+};
+function fitCity() {
+  if (!map) return;
+  if (city !== "all" && METRO_BOUNDS[city]) { map.fitBounds(METRO_BOUNDS[city], { padding: [20, 20] }); return; }
+  const pts = forWeek().map((p) => [p.lat, p.lng]);
+  if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 });
+}
 let city = store.get("passd.city", "Melbourne"); // "all" or a CITIES entry
 const cityOk = (p) => city === "all" || (p.city || "Melbourne") === city;
 let activeTypes = new Set();           // empty = all types
@@ -297,8 +313,7 @@ function buildCitySelect() {
     store.set("passd.city", city);
     if (selectedId && !forView().some((p) => p.id === selectedId)) selectedId = null;
     refresh();
-    const pts = forWeek().map((p) => [p.lat, p.lng]);
-    if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 });
+    fitCity();
   };
 }
 function switchCityFor(p) { // search picked something outside the current city filter
@@ -321,13 +336,13 @@ function setWeek(w, fit = true) {
   el("week").value = w;
   if (selectedId && !forView().some((p) => p.id === selectedId)) selectedId = null;
   renderMarkers();
-  if (fit) { const pts = forWeek().map((p) => [p.lat, p.lng]); if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 }); }
+  if (fit) fitCity();
   updateList(); writeURL();
 }
 function setActive(id) { ["toMap", "toList"].forEach((x) => el(x).classList.toggle("on", x === id)); }
 function showMap() {
   el("app").classList.add("show-map"); setActive("toMap");
-  setTimeout(() => { map.invalidateSize(); const pts = forWeek().map((p) => [p.lat, p.lng]); if (pts.length && !restoredView) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 }); }, 60);
+  setTimeout(() => { map.invalidateSize(); if (!restoredView) fitCity(); }, 60);
 }
 function showList() { el("app").classList.remove("show-map"); setActive("toList"); updateList(); }
 
@@ -556,7 +571,7 @@ async function init() {
     const [la, ln, z] = deep.c.split(",").map(Number);
     if (Number.isFinite(la) && Number.isFinite(ln) && Number.isFinite(z)) { map.setView([la, ln], z); restoredView = true; }
   }
-  if (!restoredView) { const pts = forWeek().map((p) => [p.lat, p.lng]); if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 13 }); }
+  if (!restoredView) fitCity();
   updateList();
   if (deep.sel && DATA.some((p) => p.id === deep.sel && forView().some((v) => v.id === deep.sel))) {
     setTimeout(() => select(deep.sel, "search"), 350);

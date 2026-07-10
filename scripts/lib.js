@@ -122,6 +122,11 @@ function mapDomainListing(l, auctionDateIso, city) {
   };
 }
 
+// Merge/dedup key: same home reported by REIV ("12 Smith Ct") and Domain
+// ("12 Smith Ct" / "12 Smith Court") must collide, so normalize street types
+// via expand() and slug the result. Week keeps re-auctions distinct.
+const dedupeKey = (p) => slug(expand(String(p.address || ''))) + '|' + slug(String(p.suburb || '')) + '|' + (p.week || '');
+
 // Extract the PASSED_IN array from a data.js source string.
 function readDataArray(txt) {
   const a = txt.indexOf('['), b = txt.lastIndexOf(']');
@@ -129,4 +134,4 @@ function readDataArray(txt) {
   return JSON.parse(txt.slice(a, b + 1));
 }
 
-module.exports = { strip, cell, extractPostcode, parseSuburbPage, parseDate, weekSaturday, daysAgo, expand, slug, priceOf, parsePriceRange, pool, VIC_BOUNDS, STATE_BOUNDS, inVic, inState, DOMAIN_PASSED_CODES, domainType, domainSaleDate, mapDomainListing, readDataArray };
+module.exports = { strip, cell, extractPostcode, parseSuburbPage, parseDate, weekSaturday, daysAgo, expand, slug, priceOf, parsePriceRange, pool, VIC_BOUNDS, STATE_BOUNDS, inVic, inState, DOMAIN_PASSED_CODES, domainType, domainSaleDate, mapDomainListing, dedupeKey, readDataArray };

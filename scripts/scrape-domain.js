@@ -8,7 +8,7 @@
 // the same accumulate-by-(address|suburb|week) used by the REIV scraper.
 'use strict';
 const fs = require('fs'), path = require('path');
-const { mapDomainListing, daysAgo, pool, inState, readDataArray } = require('./lib');
+const { mapDomainListing, daysAgo, pool, inState, dedupeKey, readDataArray } = require('./lib');
 const UA = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36', 'Accept': 'text/html', 'Accept-Language': 'en-AU,en;q=0.9' };
 const ROOT = path.join(__dirname, '..');
 const argv = process.argv.slice(2);
@@ -17,7 +17,11 @@ const DAYS = +arg('days', 30), MIN_ROWS = +arg('min-rows', 0), RETAIN_DAYS = +ar
 const DRY = argv.includes('--dry');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Melbourne is scraped from Domain too (direct listing links + coordinates);
+// running AFTER scrape-reiv.js means Domain fields win on shared homes while
+// REIV-only reports survive as gap-fill. dedupeKey() keeps pins single.
 const CITIES = [
+  { slug: 'melbourne', city: 'Melbourne', state: 'VIC' },
   { slug: 'sydney', city: 'Sydney', state: 'NSW' },
   { slug: 'brisbane', city: 'Brisbane', state: 'QLD' },
   { slug: 'adelaide', city: 'Adelaide', state: 'SA' },
@@ -57,9 +61,8 @@ async function scrapeCity(c) {
   const dataPath = path.join(ROOT, 'data.js');
   let existing = [];
   try { existing = readDataArray(fs.readFileSync(dataPath, 'utf8')); } catch {}
-  const key = p => (p.address + '|' + p.suburb + '|' + p.week).toLowerCase();
-  const byKey = new Map(existing.map(p => [key(p), p]));
-  for (const p of out) { const prev = byKey.get(key(p)); byKey.set(key(p), prev ? { ...prev, ...p } : p); }
+  const byKey = new Map(existing.map(p => [dedupeKey(p), p]));
+  for (const p of out) { const prev = byKey.get(dedupeKey(p)); byKey.set(dedupeKey(p), prev ? { ...prev, ...p } : p); }
   let merged = [...byKey.values()];
   const cutoff = Date.now() - RETAIN_DAYS * 864e5;
   merged = merged.filter(p => { const d = p.week ? new Date(p.week + 'T00:00:00') : null; return d && d.getTime() >= cutoff; });

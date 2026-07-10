@@ -11,7 +11,7 @@
 //   retention      weeks older than --retain-days (default 84) are dropped from data.js
 'use strict';
 const fs = require('fs'), path = require('path');
-const { parseSuburbPage, weekSaturday, daysAgo, pool, inVic, readDataArray } = require('./lib');
+const { parseSuburbPage, weekSaturday, daysAgo, pool, inVic, dedupeKey, readDataArray } = require('./lib');
 const UA = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36' };
 const SITEMAP = 'https://reiv.com.au/sitemap.xml', BASE = 'https://reiv.com.au/market-insights/suburb/';
 const ROOT = path.join(__dirname, '..'), CACHE = path.join(__dirname, 'geocache.json');
@@ -90,9 +90,8 @@ async function geocode(q) {
   const dataPath = path.join(ROOT, 'data.js');
   let existing = [];
   try { existing = readDataArray(fs.readFileSync(dataPath, 'utf8')); } catch {}
-  const key = p => (p.address + '|' + p.suburb + '|' + p.week).toLowerCase();
-  const byKey = new Map(existing.map(p => [key(p), p]));
-  for (const p of out) { const prev = byKey.get(key(p)); byKey.set(key(p), prev ? { ...prev, ...p } : p); } // fresh scrape wins; enriched fields survive until enrich reruns
+  const byKey = new Map(existing.map(p => [dedupeKey(p), p]));
+  for (const p of out) { const prev = byKey.get(dedupeKey(p)); byKey.set(dedupeKey(p), prev ? { ...prev, ...p } : p); } // fresh scrape wins; enriched fields survive until enrich reruns
   let merged = [...byKey.values()];
   const cutoff = Date.now() - RETAIN_DAYS * 864e5;
   merged = merged.filter(p => { const d = p.week ? new Date(p.week + 'T00:00:00') : null; return d && d.getTime() >= cutoff; });
