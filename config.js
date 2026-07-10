@@ -1,7 +1,5 @@
-﻿// Passd runtime config. EMPTY values = the site runs in legacy free mode
-// (everything public, data from bundled data.js) — exactly the pre-paywall
-// behaviour. scripts/deploy-backend.ps1 fills these when the backend goes live.
+﻿// Passd runtime config - GATED MODE (written by scripts/deploy-backend.ps1).
 window.PASSD_CONFIG = {
-  supabaseUrl: "",        // e.g. https://xxxx.supabase.co
-  supabaseKey: "",        // the project's publishable (anon) key — safe to ship
+  supabaseUrl: "https://fpxlerpmbsqdwlrgnxsq.supabase.co",
+  supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZweGxlcnBtYnNxZHdscmdueHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2NzA3MTQsImV4cCI6MjA5OTI0NjcxNH0.wk_gATvYKsnJqDw9b4yEWoQgiTvi2m-VG2bMUT6xcH0",
 };

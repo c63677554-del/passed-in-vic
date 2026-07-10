@@ -1,19 +1,19 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Passd — Melbourne auction pass-ins, mapped weekly</title>
+  <title>Passd â€” Melbourne auction pass-ins, mapped weekly</title>
   <link rel="icon" href="./logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./logo.svg" />
   <meta name="description" content="Every Melbourne & Victoria home that passed in at auction, mapped and refreshed weekly. Price guides, live listing links, suburb search, filters and a shareable shortlist." />
   <meta name="theme-color" content="#e4002b" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Passd — Melbourne auction pass-ins, mapped weekly" />
+  <meta property="og:title" content="Passd â€” Melbourne auction pass-ins, mapped weekly" />
   <meta property="og:description" content="Every home that passed in at auction across Melbourne/VIC, on a map with price guides and listing links. Refreshed every Sunday night." />
   <meta property="og:url" content="https://c63677554-del.github.io/passed-in-vic/" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Passd — Melbourne auction pass-ins, mapped weekly" />
+  <meta name="twitter:title" content="Passd â€” Melbourne auction pass-ins, mapped weekly" />
   <meta name="twitter:description" content="Every home that passed in at auction across Melbourne/VIC, on a map with price guides and listing links. Refreshed every Sunday night." />
   <link rel="preconnect" href="https://unpkg.com" crossorigin />
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
@@ -33,25 +33,25 @@
         <span class="land-word">passd</span>
       </div>
       <h1>Every passed-in home in Melbourne. One map.</h1>
-      <p class="land-sub">When a home passes in at auction, the vendor's reserve wasn't met — and most convert to private sale within days, open to offers. Passd maps every one of them, refreshed every Sunday night.</p>
+      <p class="land-sub">When a home passes in at auction, the vendor's reserve wasn't met â€” and most convert to private sale within days, open to offers. Passd maps every one of them, refreshed every Sunday night.</p>
       <ul class="land-points">
-        <li><b>Fresh every week</b> — every REIV-reported pass-in across Melbourne &amp; VIC, mapped by Monday</li>
-        <li><b>Price guides &amp; live listings</b> — the agent's guide on the pin, one tap to the listing</li>
-        <li><b>Your shortlist</b> — save homes, filter to your budget, share any home with your partner</li>
+        <li><b>Fresh every week</b> â€” every REIV-reported pass-in across Melbourne &amp; VIC, mapped by Monday</li>
+        <li><b>Price guides &amp; live listings</b> â€” the agent's guide on the pin, one tap to the listing</li>
+        <li><b>Your shortlist</b> â€” save homes, filter to your budget, share any home with your partner</li>
       </ul>
       <div class="land-price">
-        <div class="land-plan"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></div>
+        <div class="land-plan"><b>A$39.99/yr</b><span>= A$3.33/mo Â· save 33%</span></div>
         <div class="land-plan"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></div>
       </div>
       <button id="landCta" class="land-cta" type="button">Start 7-day free trial</button>
       <p class="land-fine">Free for 7 days, cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
-      <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: REIV, guides: soho. Indicative only — not financial advice.</p>
+      <p class="land-legal"><a href="./privacy.html">Privacy</a> Â· <a href="./terms.html">Terms</a> Â· Data: REIV, guides: soho. Indicative only â€” not financial advice.</p>
     </div>
   </section>
 
   <div id="app">
     <header class="header">
-      <a class="brand" href="./" aria-label="Passd — Melbourne auction pass-ins">
+      <a class="brand" href="./" aria-label="Passd â€” Melbourne auction pass-ins">
         <svg class="logo" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
           <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#e4002b"/>
           <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#fff"/>
@@ -80,8 +80,8 @@
           Account
         </button>
         <div id="acctMenu" class="acctmenu" role="menu" hidden>
-          <div id="acctEmail" class="acct-email">—</div>
-          <div id="acctStatus" class="acct-status">—</div>
+          <div id="acctEmail" class="acct-email">â€”</div>
+          <div id="acctStatus" class="acct-status">â€”</div>
           <button id="acctPortal" class="acct-item" type="button" role="menuitem">Manage billing</button>
           <button id="acctSignOut" class="acct-item" type="button" role="menuitem">Sign out</button>
         </div>
@@ -89,7 +89,7 @@
     </header>
 
     <div id="teaser" class="teaser" hidden>
-      <span>Free preview — latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
+      <span>Free preview â€” latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
       <button id="teaserCta" class="teaser-btn" type="button">Start 7-day free trial</button>
     </div>
 
@@ -114,13 +114,13 @@
     </div>
 
     <footer class="foot">
-      <b id="fresh">Updated —</b>
-      <span class="sep">·</span>
+      <b id="fresh">Updated â€”</b>
+      <span class="sep">Â·</span>
       <button id="aboutBtn" class="linkbtn" type="button">About &amp; data</button>
-      <span class="sep">·</span>
+      <span class="sep">Â·</span>
       <span>Data <a href="https://reiv.com.au" target="_blank" rel="noopener noreferrer">REIV</a>, guides <a href="https://soho.com.au" target="_blank" rel="noopener noreferrer">soho</a>, map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
       <span class="foot-spacer"></span>
-      <span class="disc">Price guides are indicative &amp; change — confirm with the agent. Not financial advice.</span>
+      <span class="disc">Price guides are indicative &amp; change â€” confirm with the agent. Not financial advice.</span>
     </footer>
   </div>
 
@@ -133,17 +133,17 @@
     </div>
     <p><b>Passd</b> maps every residential property reported as <b>passed in</b> at auction across Melbourne and Victoria, week by week.</p>
     <h3>Why passed-in homes?</h3>
-    <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days — a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
+    <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days â€” a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
     <h3>Where the data comes from</h3>
     <ul>
-      <li><b>Auction results</b> — REIV's public suburb-by-suburb results. REIV surfaces roughly the last two weekends; Passd accumulates up to ~12 weeks as it refreshes.</li>
-      <li><b>Price guides &amp; listing links</b> — matched from the live listing (soho.com.au) where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are “contact agent” and always stay visible in price filters, since an unknown guide could be in budget.</li>
-      <li><b>Map</b> — OpenStreetMap.</li>
+      <li><b>Auction results</b> â€” REIV's public suburb-by-suburb results. REIV surfaces roughly the last two weekends; Passd accumulates up to ~12 weeks as it refreshes.</li>
+      <li><b>Price guides &amp; listing links</b> â€” matched from the live listing (soho.com.au) where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are â€œcontact agentâ€ and always stay visible in price filters, since an unknown guide could be in budget.</li>
+      <li><b>Map</b> â€” OpenStreetMap.</li>
     </ul>
     <h3>Freshness</h3>
-    <p>Data refreshes automatically every Sunday night after the weekend's auctions — the footer shows the last update. Saves live only in this browser; use <i>Copy link</i> on a home to share it.</p>
-    <p class="dlg-disc">Price guides are indicative and change without notice — always confirm with the agent. Nothing here is financial or property advice.
-    <br /><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></p>
+    <p>Data refreshes automatically every Sunday night after the weekend's auctions â€” the footer shows the last update. Saves live only in this browser; use <i>Copy link</i> on a home to share it.</p>
+    <p class="dlg-disc">Price guides are indicative and change without notice â€” always confirm with the agent. Nothing here is financial or property advice.
+    <br /><a href="./privacy.html">Privacy</a> Â· <a href="./terms.html">Terms</a></p>
   </dialog>
 
   <!-- Sign-in modal (magic link + 6-digit code) -->
@@ -155,7 +155,7 @@
       </button>
       <div id="authStep1">
         <h2>Sign in to Passd</h2>
-        <p class="pm-sub">No password needed — we'll email you a sign-in link and code.</p>
+        <p class="pm-sub">No password needed â€” we'll email you a sign-in link and code.</p>
         <input id="authEmail" class="pm-input" type="email" placeholder="you@email.com" autocomplete="email" inputmode="email" />
         <button id="authSend" class="pm-cta" type="button">Email me a sign-in link</button>
       </div>
@@ -182,7 +182,7 @@
           <span class="plan-badge">Best value</span>
           <span class="plan-name">Annual</span>
           <span class="plan-price">A$39.99<small>/yr</small></span>
-          <span class="plan-per">= A$3.33/mo · save 33%</span>
+          <span class="plan-per">= A$3.33/mo Â· save 33%</span>
         </button>
         <button type="button" class="plan" data-plan="monthly" role="radio" aria-checked="false">
           <span class="plan-name">Monthly</span>
@@ -201,7 +201,6 @@
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="./config.js"></script>
-  <script src="./data.js"></script>
   <script src="./auth.js"></script>
   <script src="./app.js"></script>
 </body>

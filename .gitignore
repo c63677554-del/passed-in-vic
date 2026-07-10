@@ -20,3 +20,6 @@ web/.env*.local
 .claude/
 .passd-backend.env
 supabase/.temp/
+
+data.js
+data.json
