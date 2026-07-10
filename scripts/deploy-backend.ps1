@@ -19,6 +19,7 @@ $envFile = Join-Path $repo ".passd-backend.env"
 if (-not (Test-Path $envFile)) { Write-Error "Missing .passd-backend.env — see docs/GO-LIVE.md"; exit 1 }
 $cfg = @{}
 Get-Content $envFile | ForEach-Object { if ($_ -match '^\s*([A-Z0-9_]+)\s*=\s*(.+?)\s*$') { $cfg[$Matches[1]] = $Matches[2] } }
+@($cfg.Keys) | ForEach-Object { if ($cfg[$_] -match 'REPLACE') { $cfg.Remove($_) } } # unfilled placeholders = absent
 if (-not $cfg.SUPABASE_ACCESS_TOKEN -or -not $cfg.SUPABASE_PROJECT_REF) { Write-Error "env file needs SUPABASE_ACCESS_TOKEN and SUPABASE_PROJECT_REF"; exit 1 }
 $env:SUPABASE_ACCESS_TOKEN = $cfg.SUPABASE_ACCESS_TOKEN
 $ref = $cfg.SUPABASE_PROJECT_REF

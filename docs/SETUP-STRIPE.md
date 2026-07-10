@@ -13,14 +13,14 @@ https://dashboard.stripe.com/register — business details, AUD as default
 currency, bank account for payouts. (ABN: sole trader is fine to start.
 GST: not required below A$75k turnover.)
 
-## 2. Create the products (Product catalogue → Add product)
-| Product | Price | Billing | ID to copy |
+## 2. Create the products — ✅ DONE (via Stripe MCP, 10 Jul 2026, live mode)
+| Product | Price | Billing | Live ID |
 | --- | --- | --- | --- |
-| Passd | **A$4.99** | Recurring, monthly | `price_...` → `STRIPE_PRICE_MONTHLY` |
-| Passd | **A$39.99** | Recurring, yearly | `price_...` → `STRIPE_PRICE_ANNUAL` |
+| Passd (`prod_UrJ4t2hwMyb1tQ`) | **A$4.99** | Recurring, monthly | `price_1TraS8K5F6xN5RVXszhT1Idp` |
+| Passd (`prod_UrJ4t2hwMyb1tQ`) | **A$39.99** | Recurring, yearly | `price_1TraSKK5F6xN5RVXWerKnheQ` |
 
-No trial configuration needed on the prices — the checkout session sets
-`trial_period_days: 7` itself.
+Both IDs are already filled into `.passd-backend.env`. No trial configuration
+needed on the prices — the checkout session sets `trial_period_days: 7` itself.
 
 ## 3. Webhook
 Developers → Webhooks → **Add endpoint**:
