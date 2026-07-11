@@ -17,6 +17,7 @@ create table if not exists public.subscribers (
 alter table public.subscribers enable row level security;
 
 -- Users may read their own row; all writes happen via service role (edge functions only).
+drop policy if exists "read own subscription" on public.subscribers;
 create policy "read own subscription" on public.subscribers
   for select using (auth.uid() = user_id);
 
