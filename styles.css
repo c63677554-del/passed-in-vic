@@ -177,8 +177,11 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; } }
 
 /* ============ Landing (gated mode, signed out) ============ */
-#landing { min-height: 100%; overflow-y: auto; background: var(--card); }
-.land { max-width: 560px; margin: 0 auto; padding: 64px 26px 48px; text-align: center; }
+/* Real product screenshot behind a centered subscription card. The veil is a
+   gradient background layer (not a pseudo-element) so it never scrolls away. */
+#landing { min-height: 100%; overflow-y: auto; display: flex; justify-content: center; align-items: center; padding: 28px 16px; background: linear-gradient(rgba(250, 250, 249, .32), rgba(244, 244, 242, .42)), var(--bg) url("assets/hero-app.jpg") center / cover no-repeat; }
+.land { width: min(560px, 100%); margin: auto; padding: 38px 42px 26px; text-align: center; background: rgba(255, 255, 255, .97); border: 1px solid rgba(15, 23, 42, .07); border-radius: 22px; box-shadow: 0 32px 90px rgba(15, 23, 42, .30), 0 6px 22px rgba(15, 23, 42, .12); }
+@media (max-width: 640px) { #landing { padding: 14px 10px; } .land { padding: 28px 20px 20px; border-radius: 18px; } .land h1 { font-size: 25px; } }
 .land-brand { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .land-brand svg { filter: drop-shadow(0 2px 3px rgba(228,0,43,.25)); }
 .land-word { font-weight: 800; font-size: 25px; letter-spacing: -.02em; }
