@@ -14,8 +14,11 @@ html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; 
 html, body { margin: 0; height: 100%; }
 body { color: var(--ink); background: var(--bg); }
 /* Flex column, not fixed-row grid: children vary by mode (teaser banner appears
-   for free-tier users) and the map/list body must always take the remainder. */
+   for free-tier users) and the map/list body must always take the remainder.
+   The bars are RIGID (flex:none) — only .body absorbs height pressure; without
+   this, flexbox vertically crushes the filterbar/header on short windows. */
 #app { display: flex; flex-direction: column; height: 100%; }
+#app > .header, #app > .filterbar, #app > .teaser, #app > .foot { flex: none; }
 
 /* Header */
 .header { display: flex; align-items: center; gap: 12px; padding: 9px 16px; background: var(--card); border-bottom: 1px solid var(--line); z-index: 1100; }
@@ -64,6 +67,13 @@ body { color: var(--ink); background: var(--bg); }
 .pricesel { font: inherit; font-size: 13px; font-weight: 600; color: #3f4a5a; background-color: var(--card); border: 1px solid var(--line); border-radius: var(--r-chip); padding: 0 32px 0 15px; min-height: 37px; cursor: pointer; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 11 7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' fill='none' stroke='%2394a3b8' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 13px center; transition-property: border-color; transition-duration: 140ms; }
 .pricesel:hover { border-color: #c3cad4; }
 .filterbar .types + .pricesel, .filterbar .pricesel + .pricesel { margin-left: 10px; }
+/* Fixed widths: option text changes (e.g. "Newest" vs "Price high–low") must
+   never resize the selects and shuffle the whole bar. */
+#maxPrice { width: 142px; }
+#sortBy { width: 158px; }
+/* Quiet link-style button (auth modal "Forgot password?" etc.) */
+.pw-link { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--muted); background: none; border: 0; padding: 6px 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; transition-property: color; transition-duration: 140ms; }
+.pw-link:hover { color: var(--ink); }
 
 /* Body: list | map */
 .body { position: relative; flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(340px, 400px) 1fr; }

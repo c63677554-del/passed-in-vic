@@ -292,9 +292,12 @@ function closeSavedPanel() {
 // ---------- adaptive pricing UI ----------
 // If the current city/week has effectively no price signals, price controls are
 // dead weight — hide the max-price filter and drop the price sorts.
+let lastPricingUsable = null;
 function updatePricingUI() {
   const priced = forWeek().filter((p) => pricedValue(p) != null).length;
   const usable = priced >= 5;
+  if (usable === lastPricingUsable) return; // rebuilding selects mid-refresh makes the bar jump
+  lastPricingUsable = usable;
   const mp = el("maxPrice");
   if (mp) { mp.hidden = !usable; if (!usable && maxPrice != null) { maxPrice = null; mp.value = ""; } }
   const sb = el("sortBy");
