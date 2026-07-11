@@ -1,4 +1,4 @@
-// create-checkout — starts a Stripe Checkout session (7-day trial) for the
+// create-checkout - starts a Stripe Checkout session (7-day trial) for the
 // signed-in user. If Stripe secrets aren't configured yet, falls back to a
 // clearly-flagged preview grant (7-day dev trial) when ALLOW_PREVIEW_GRANTS=true.
 // Deployed with verify_jwt=true: only authenticated users reach this.

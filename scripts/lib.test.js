@@ -1,4 +1,4 @@
-// lib.test.js — unit tests for the shared pipeline helpers (node --test scripts/).
+// lib.test.js - unit tests for the shared pipeline helpers (node --test scripts/).
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');

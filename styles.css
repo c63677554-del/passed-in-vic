@@ -15,7 +15,7 @@ html, body { margin: 0; height: 100%; }
 body { color: var(--ink); background: var(--bg); }
 /* Flex column, not fixed-row grid: children vary by mode (teaser banner appears
    for free-tier users) and the map/list body must always take the remainder.
-   The bars are RIGID (flex:none) — only .body absorbs height pressure; without
+   The bars are RIGID (flex:none) - only .body absorbs height pressure; without
    this, flexbox vertically crushes the filterbar/header on short windows. */
 #app { display: flex; flex-direction: column; height: 100%; }
 #app > .header, #app > .filterbar, #app > .teaser, #app > .foot { flex: none; }
@@ -51,7 +51,7 @@ body { color: var(--ink); background: var(--bg); }
 /* Filter bar */
 .filterbar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; background: var(--card); border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .filterbar::-webkit-scrollbar { display: none; }
-/* Chips/selects must never flex-shrink into each other when space is tight —
+/* Chips/selects must never flex-shrink into each other when space is tight -
    the bar scrolls horizontally instead (this was the "jammed filters" bug). */
 .filterbar > *, .filterbar .types > * { flex: none; }
 .fsep { display: none; }

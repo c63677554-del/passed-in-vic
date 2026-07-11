@@ -7,9 +7,9 @@ Everything is built and committed. The flip needs two values only you can mint
 1. https://supabase.com/dashboard → **New project**
    - Organisation: yours · Name: **passd** · Region: **Sydney (ap-southeast-2)**
    - Database password: generate + save anywhere (you rarely need it again).
-   - ⚠️ This must be a **new project** — never the Fireplace one (separate products, separate users).
+   - ⚠️ This must be a **new project** - never the Fireplace one (separate products, separate users).
 2. When it finishes provisioning, copy the **Project ref** (Settings → General,
-   the short id like `abcdefghijkl` — also visible in the URL).
+   the short id like `abcdefghijkl` - also visible in the URL).
 
 ## 2. Create a personal access token (~1 min)
 https://supabase.com/dashboard/account/tokens → **Generate new token**
@@ -43,7 +43,7 @@ Preview grants switch off; the trial button now goes through Stripe Checkout.
 
 ## Notes & limits
 - **Sign-in is email + password** (since 10 Jul 2026): auto-confirm is enabled via
-  the Management API, so signup and sign-in send **no emails at all** — the free
+  the Management API, so signup and sign-in send **no emails at all** - the free
   tier's few-per-hour email rate limit only touches the rare "forgot password" flow.
   For reliable reset emails at scale, add custom SMTP later (Supabase → Auth → SMTP;
   Resend's free tier works).
@@ -53,7 +53,7 @@ Preview grants switch off; the trial button now goes through Stripe Checkout.
   + secret into Supabase dashboard → Authentication → Providers → Google → then set
   `enableGoogle: true` in `config.js` and push. The button is already in the UI, hidden
   until that flag flips.
-- **Existing shared links** keep working — they land on the landing page, which
+- **Existing shared links** keep working - they land on the landing page, which
   is the funnel working as intended.
 - **Mobile apps** (parked repo `passd-mobile`): when revived, point them at
   `https://<ref>.supabase.co/functions/v1/get-data` with the user's session token.

@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Passd — Australia's auction pass-ins, mapped weekly</title>
+  <title>Passd · Australia's auction pass-ins, mapped weekly</title>
   <link rel="icon" href="./logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./logo.svg" />
-  <meta name="description" content="Every Australian home that passed in at auction — Melbourne, Sydney, Brisbane, Adelaide and Canberra — mapped and refreshed weekly. Price guides, direct listing links, suburb search, filters and a shareable shortlist." />
+  <meta name="description" content="Every Australian home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, mapped and refreshed weekly. Price guides, direct listing links, suburb search, filters and a shareable shortlist." />
   <meta name="theme-color" content="#e4002b" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Passd — Australia's auction pass-ins, mapped weekly" />
+  <meta property="og:title" content="Passd · Australia's auction pass-ins, mapped weekly" />
   <meta property="og:description" content="Every home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, on a map with price guides and direct listing links. Refreshed every Sunday night." />
   <meta property="og:url" content="https://passd.au/" />
   <link rel="canonical" href="https://passd.au/" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Passd — Australia's auction pass-ins, mapped weekly" />
+  <meta name="twitter:title" content="Passd · Australia's auction pass-ins, mapped weekly" />
   <meta name="twitter:description" content="Every home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, on a map with price guides and direct listing links. Refreshed every Sunday night." />
   <link rel="preconnect" href="https://unpkg.com" crossorigin />
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
@@ -35,11 +35,11 @@
         <span class="land-word">passd</span>
       </div>
       <h1>The homes that didn't sell at auction, across Australia.</h1>
-      <p class="land-sub">Every weekend, hundreds of homes "pass in" at auction — no sale on the day, a motivated seller, and a short window where a good offer wins. Passd puts every one of them on a map: Melbourne, Sydney, Brisbane, Adelaide and Canberra, updated every Sunday night.</p>
+      <p class="land-sub">Every weekend, hundreds of homes "pass in" at auction. No sale on the day, a motivated seller, and a short window where a good offer wins. Passd puts every one of them on a map: Melbourne, Sydney, Brisbane, Adelaide and Canberra, updated every Sunday night.</p>
       <ul class="land-points">
-        <li><b>Every pass-in, every week</b> — official REIV and Domain results, on the map by Monday morning</li>
-        <li><b>Prices and listings attached</b> — agent guides, final auction bids, and one-tap links to the live listing</li>
-        <li><b>Made for making offers</b> — save a shortlist, filter to your budget, share homes with your partner</li>
+        <li><b>Every pass-in, every week</b>: official REIV and Domain results, on the map by Monday morning</li>
+        <li><b>Prices and listings attached</b>: agent guides, final auction bids, and one-tap links to the live listing</li>
+        <li><b>Made for making offers</b>: save a shortlist, filter to your budget, share homes with your partner</li>
       </ul>
       <div class="land-price" role="radiogroup" aria-label="Choose a plan">
         <button type="button" class="land-plan on" data-plan="annual" role="radio" aria-checked="true"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></button>
@@ -47,13 +47,13 @@
       </div>
       <button id="landCta" class="land-cta" type="button">Start 7-day free trial</button>
       <p class="land-fine">Free for 7 days, cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
-      <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: official REIV &amp; Domain auction results; price guides via Soho. Indicative only — not financial advice.</p>
+      <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: official REIV &amp; Domain auction results; price guides via Soho. Indicative only, not financial advice.</p>
     </div>
   </section>
 
   <div id="app">
     <header class="header">
-      <a class="brand" href="./" aria-label="Passd — Australia's auction pass-ins">
+      <a class="brand" href="./" aria-label="Passd, Australia's auction pass-ins">
         <svg class="logo" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
           <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#e4002b"/>
           <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#fff"/>
@@ -87,8 +87,8 @@
           Account
         </button>
         <div id="acctMenu" class="acctmenu" role="menu" hidden>
-          <div id="acctEmail" class="acct-email">—</div>
-          <div id="acctStatus" class="acct-status">—</div>
+          <div id="acctEmail" class="acct-email">…</div>
+          <div id="acctStatus" class="acct-status">…</div>
           <button id="acctPortal" class="acct-item" type="button" role="menuitem">Manage billing</button>
           <button id="acctSignOut" class="acct-item" type="button" role="menuitem">Sign out</button>
         </div>
@@ -96,7 +96,7 @@
     </header>
 
     <div id="teaser" class="teaser" hidden>
-      <span>Free preview — latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
+      <span>Free preview: latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
       <button id="teaserCta" class="teaser-btn" type="button">Start 7-day free trial</button>
     </div>
 
@@ -115,13 +115,13 @@
     </div>
 
     <footer class="foot">
-      <b id="fresh">Updated —</b>
+      <b id="fresh">Updated…</b>
       <span class="sep">·</span>
       <button id="aboutBtn" class="linkbtn" type="button">About &amp; data</button>
       <span class="sep">·</span>
       <span>Data <a href="https://reiv.com.au" target="_blank" rel="noopener noreferrer">REIV</a> &amp; <a href="https://www.domain.com.au/auction-results/" target="_blank" rel="noopener noreferrer">Domain</a>, guides <a href="https://soho.com.au" target="_blank" rel="noopener noreferrer">soho</a>, map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
       <span class="foot-spacer"></span>
-      <span class="disc">Price guides are indicative &amp; change — confirm with the agent. Not financial advice.</span>
+      <span class="disc">Price guides are indicative &amp; change. Confirm with the agent. Not financial advice.</span>
     </footer>
   </div>
 
@@ -134,16 +134,16 @@
     </div>
     <p><b>Passd</b> maps every residential property reported as <b>passed in</b> at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, week by week.</p>
     <h3>Why passed-in homes?</h3>
-    <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days — a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
+    <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days, a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
     <h3>Where the data comes from</h3>
     <ul>
-      <li><b>Auction results</b> — REIV's public suburb-by-suburb results (Melbourne/VIC) and Domain's public weekend auction results (Sydney, Brisbane, Adelaide, Canberra). Passd accumulates up to ~12 weeks as it refreshes.</li>
-      <li><b>Price guides &amp; listing links</b> — matched from the live listing (soho.com.au) where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are “contact agent” and always stay visible in price filters, since an unknown guide could be in budget.</li>
-      <li><b>Map</b> — OpenStreetMap.</li>
+      <li><b>Auction results</b>: REIV's public suburb-by-suburb results (Melbourne/VIC) and Domain's public weekend auction results (Sydney, Brisbane, Adelaide, Canberra). Passd accumulates up to ~12 weeks as it refreshes.</li>
+      <li><b>Price guides &amp; listing links</b>: matched from the live listing (soho.com.au) where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are “contact agent” and always stay visible in price filters, since an unknown guide could be in budget.</li>
+      <li><b>Map</b>: OpenStreetMap.</li>
     </ul>
     <h3>Freshness</h3>
-    <p>Data refreshes automatically every Sunday night after the weekend's auctions — the footer shows the last update. Saves live only in this browser; use <i>Copy link</i> on a home to share it.</p>
-    <p class="dlg-disc">Price guides are indicative and change without notice — always confirm with the agent. Nothing here is financial or property advice.
+    <p>Data refreshes automatically every Sunday night after the weekend's auctions. The footer shows the last update. Saves live only in this browser; use <i>Copy link</i> on a home to share it.</p>
+    <p class="dlg-disc">Price guides are indicative and change without notice, so always confirm with the agent. Nothing here is financial or property advice.
     <br /><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a></p>
   </dialog>
 
@@ -155,7 +155,7 @@
         <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
       </button>
       <h2>Welcome to Passd</h2>
-      <p class="pm-sub">One account, any device — your trial and shortlist follow you.</p>
+      <p class="pm-sub">One account, any device. Your trial and shortlist follow you.</p>
       <div class="authtabs" role="tablist" aria-label="Sign in or create account">
         <button id="tabSignIn" class="authtab on" type="button" role="tab" aria-selected="true">Sign in</button>
         <button id="tabSignUp" class="authtab" type="button" role="tab" aria-selected="false">Create account</button>
@@ -177,7 +177,7 @@
     <div class="pm-scrim" data-close-modal="recoverModal"></div>
     <div class="pm-card" role="dialog" aria-modal="true" aria-label="Set a new password">
       <h2>Set a new password</h2>
-      <p class="pm-sub">You're signed in — choose a new password for next time.</p>
+      <p class="pm-sub">You're signed in. Choose a new password for next time.</p>
       <input id="recoverPassword" class="pm-input" type="password" placeholder="New password (8+ characters)" autocomplete="new-password" />
       <div id="recoverError" class="autherr" hidden></div>
       <button id="recoverSubmit" class="pm-cta" type="button">Save new password</button>

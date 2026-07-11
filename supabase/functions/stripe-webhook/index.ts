@@ -1,4 +1,4 @@
-// stripe-webhook — keeps public.subscribers in sync with Stripe.
+// stripe-webhook - keeps public.subscribers in sync with Stripe.
 // Signature-verified (HMAC-SHA256 of "t.payload" against STRIPE_WEBHOOK_SECRET).
 // Deployed with verify_jwt=false: Stripe calls this, not users.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";

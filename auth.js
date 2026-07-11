@@ -1,12 +1,12 @@
 "use strict";
 
-/* auth.js — Passd's authentication + subscription gate.
+/* auth.js - Passd's authentication + subscription gate.
    Modes:
    - legacy (config empty): resolves immediately with the bundled data.js
-     dataset; no landing, no sign-in — the original free site.
+     dataset; no landing, no sign-in - the original free site.
    - gated (config set): signed-out visitors see the landing page; signed-in
      users get the teaser (latest week, no guides) or, with an active
-     trial/subscription, the full dataset — enforced SERVER-SIDE by get-data. */
+     trial/subscription, the full dataset - enforced SERVER-SIDE by get-data. */
 
 const PassdGate = (() => {
   const cfg = window.PASSD_CONFIG || {};
@@ -53,14 +53,14 @@ const PassdGate = (() => {
       if (authMode === "signup") {
         const { error } = await sb.auth.signUp({ email, password: pw });
         if (error) {
-          if (/already registered/i.test(error.message)) { setAuthMode("signin"); authErr("That email already has an account — sign in instead."); }
+          if (/already registered/i.test(error.message)) { setAuthMode("signin"); authErr("That email already has an account. Sign in instead."); }
           else authErr(error.message);
         } // success -> SIGNED_IN listener reloads into the app
       } else {
         const { error } = await sb.auth.signInWithPassword({ email, password: pw });
         if (error) authErr(/invalid/i.test(error.message) ? "Wrong email or password. New here? Tap Create account." : error.message);
       }
-    } catch { authErr("Couldn't reach the server — try again."); }
+    } catch { authErr("Couldn't reach the server. Try again."); }
     btn.disabled = false; btn.textContent = was;
   }
   async function forgotPw() {
@@ -70,10 +70,10 @@ const PassdGate = (() => {
     btn.disabled = true; btn.textContent = "Sending…";
     const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
     if (error) {
-      authErr(/rate/i.test(error.message) ? "Too many emails just now — try again in a few minutes." : error.message);
+      authErr(/rate/i.test(error.message) ? "Too many emails just now. Try again in a few minutes." : error.message);
       btn.disabled = false; btn.textContent = "Forgot password?";
     } else {
-      authErr("Reset link sent to " + email + " — tap it and you'll be asked to set a new password.", null, true);
+      authErr("Reset link sent to " + email + ". Tap it and you'll be asked to set a new password.", null, true);
       btn.textContent = "Sent ✓";
       setTimeout(() => { btn.disabled = false; btn.textContent = "Forgot password?"; }, 30000);
     }
@@ -84,14 +84,14 @@ const PassdGate = (() => {
     const { error } = await sb.auth.updateUser({ password: pw });
     if (error) return authErr(error.message, "recoverError");
     closeModal("recoverModal");
-    toastMsg("Password updated — you're signed in");
+    toastMsg("Password updated. You're signed in");
     setTimeout(() => location.reload(), 700);
   }
   async function googleSignIn() {
     try {
       const { error } = await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + location.pathname } });
-      if (error) authErr("Google sign-in isn't enabled yet — use email and password.");
-    } catch { authErr("Google sign-in isn't enabled yet — use email and password."); }
+      if (error) authErr("Google sign-in isn't enabled yet. Use email and password.");
+    } catch { authErr("Google sign-in isn't enabled yet. Use email and password."); }
   }
 
   // ---------- subscribe ----------
@@ -118,9 +118,9 @@ const PassdGate = (() => {
       });
       const body = await r.json();
       if (body.url) { location.href = body.url; return; }
-      if (body.preview) { toastMsg("Preview trial started — payments not wired yet"); setTimeout(() => location.reload(), 900); return; }
+      if (body.preview) { toastMsg("Preview trial started (payments not wired yet)"); setTimeout(() => location.reload(), 900); return; }
       toastMsg(body.error || "Couldn't start checkout");
-    } catch { toastMsg("Couldn't reach the server — try again"); }
+    } catch { toastMsg("Couldn't reach the server. Try again"); }
     btn.disabled = false; btn.textContent = "Start 7-day free trial";
   }
   async function openPortal() {
@@ -134,8 +134,8 @@ const PassdGate = (() => {
       if (body.url) location.href = body.url;
       else if (body.preview) {
         const menu = $("acctMenu"); if (menu) menu.hidden = true;
-        if (state.tier !== "pro") { openModal("subModal"); toastMsg("Nothing to manage yet — start your free trial first"); }
-        else toastMsg(body.devGrant ? "Preview trial — billing opens once a real subscription exists" : "No billing on file yet");
+        if (state.tier !== "pro") { openModal("subModal"); toastMsg("Nothing to manage yet. Start your free trial first"); }
+        else toastMsg(body.devGrant ? "Preview trial. Billing opens once a real subscription exists" : "No billing on file yet");
       }
       else toastMsg(body.error || "Couldn't open billing");
     } catch { toastMsg("Couldn't reach the server"); }
@@ -153,7 +153,7 @@ const PassdGate = (() => {
     if (state.session) {
       $("acctEmail").textContent = state.session.user.email;
       const s = $("acctStatus");
-      if (state.tier === "pro") s.textContent = state.trialEnd ? "Trial — ends " + new Date(state.trialEnd).toLocaleDateString("en-AU", { day: "numeric", month: "short" }) : "Subscribed";
+      if (state.tier === "pro") s.textContent = state.trialEnd ? "Trial ends " + new Date(state.trialEnd).toLocaleDateString("en-AU", { day: "numeric", month: "short" }) : "Subscribed";
       else s.textContent = "Free preview";
     }
     show("teaser", !!state.session && state.tier !== "pro");
@@ -211,7 +211,7 @@ const PassdGate = (() => {
       return { tier: "legacy", properties: typeof PASSED_IN !== "undefined" ? PASSED_IN : [], generated: typeof DATA_GENERATED !== "undefined" ? DATA_GENERATED : null };
     }
     wire();
-    // Sign-ins land here from any path (password, reset link, another tab —
+    // Sign-ins land here from any path (password, reset link, another tab -
     // sessions sync via shared storage): reload this tab into the signed-in app.
     sb.auth.onAuthStateChange((event) => {
       if (event === "PASSWORD_RECOVERY") { closeModal("authModal"); openModal("recoverModal"); return; }
@@ -221,7 +221,7 @@ const PassdGate = (() => {
     state.session = data?.session || null;
 
     if (!state.session) {
-      // Signed out: landing page only — app never boots, data never ships.
+      // Signed out: landing page only - app never boots, data never ships.
       show("landing", true); show("app", false);
       renderHeader();
       return null;
@@ -230,7 +230,7 @@ const PassdGate = (() => {
     show("landing", false); show("app", true);
     let payload;
     try { payload = await fetchData(); }
-    catch { toastMsg("Couldn't load data — refresh to retry"); payload = { tier: "free", properties: [], generated: null }; }
+    catch { toastMsg("Couldn't load data. Refresh to retry"); payload = { tier: "free", properties: [], generated: null }; }
     state.tier = payload.tier === "pro" ? "pro" : "free";
     state.weeksAvailable = payload.weeksAvailable || null;
     try {
@@ -238,7 +238,7 @@ const PassdGate = (() => {
       if (subRow && (subRow.status === "trialing" || subRow.dev_grant)) state.trialEnd = subRow.current_period_end;
     } catch {}
     renderHeader();
-    if ((location.hash || "").includes("sub=success")) { toastMsg("Trial started — welcome to Passd"); history.replaceState(null, "", location.pathname); }
+    if ((location.hash || "").includes("sub=success")) { toastMsg("Trial started. Welcome to Passd"); history.replaceState(null, "", location.pathname); }
     return { tier: state.tier, properties: payload.properties, generated: payload.generated };
   }
 

@@ -1,4 +1,4 @@
-// enrich-prices.js — attach the current agent price guide AND live listing link
+// enrich-prices.js - attach the current agent price guide AND live listing link
 // (soho.com.au) to every property in data.js. Node-only, no API key.
 // Parses soho's structured "The price of <addr> is <$X[ - $Y]>" statement; the
 // listing URL is only stored when that statement matched (high-confidence page).
@@ -41,7 +41,7 @@ async function guideFor(d) {
     const g = await guideFor(d);
     d.listLow = g ? g.low : null;
     d.listHigh = g ? g.high : null;
-    // Domain-sourced listing links are authoritative — never clobber them with
+    // Domain-sourced listing links are authoritative - never clobber them with
     // soho matches (or nulls); soho only fills the gap for REIV-sourced rows.
     if (!hasDomainUrl) d.listUrl = g ? g.url : null;
     if (g) priced++;

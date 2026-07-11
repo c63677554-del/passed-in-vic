@@ -1,4 +1,4 @@
-// validate-data.js — sanity-check data.js before deploying. Exits non-zero on
+// validate-data.js - sanity-check data.js before deploying. Exits non-zero on
 // structural problems so the weekly pipeline fails loudly instead of publishing junk.
 'use strict';
 const fs = require('fs'), path = require('path');

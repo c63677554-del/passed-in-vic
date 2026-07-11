@@ -1,4 +1,4 @@
-// emit-json.js — one-off/standby: regenerate data.json from the current data.js.
+// emit-json.js - one-off/standby: regenerate data.json from the current data.js.
 // (The scrape and enrich scripts also write data.json at the end of every run.)
 'use strict';
 const fs = require('fs'), path = require('path');

@@ -1,6 +1,6 @@
 # Passd 🏠📍
 
-**Every Australian home that passed in at auction — Melbourne, Sydney, Brisbane, Adelaide, Canberra — mapped, priced and refreshed weekly.**
+**Every Australian home that passed in at auction - Melbourne, Sydney, Brisbane, Adelaide, Canberra - mapped, priced and refreshed weekly.**
 
 When a home passes in, bidding didn't reach the reserve. Most convert to private sale within
 days, where vendors are far more open to negotiated offers. Passd is built to catch that window.
@@ -8,16 +8,16 @@ days, where vendors are far more open to negotiated offers. Passd is built to ca
 **Live:** https://c63677554-del.github.io/passed-in-vic/
 
 ## Features
-- **REA-style two-pane UI** — price-pill markers with clustering beside a viewport-synced,
+- **REA-style two-pane UI** - price-pill markers with clustering beside a viewport-synced,
   sortable list. Click a pill or card for the full detail popup.
-- **Search** — suburb, postcode or street address with keyboard-navigable autocomplete.
-- **Filters** — property type, minimum beds, max price, plus a week selector
+- **Search** - suburb, postcode or street address with keyboard-navigable autocomplete.
+- **Filters** - property type, minimum beds, max price, plus a week selector
   (single week or "All recent weeks").
-- **Price guides + listing links** — the agent's current guide and a direct **View listing**
+- **Price guides + listing links** - the agent's current guide and a direct **View listing**
   link (soho.com.au) wherever the live listing publishes one (~25%); the rest link to a
   Google search of the address.
-- **Saved shortlist** — heart any home (stored in your browser); filter to ♥ Saved.
-- **Shareable links** — the URL always encodes week, filters, map position and the selected
+- **Saved shortlist** - heart any home (stored in your browser); filter to ♥ Saved.
+- **Shareable links** - the URL always encodes week, filters, map position and the selected
   home; *Copy link* in a popup deep-links straight to that property.
 - Viewed-state pills, About/data-methodology modal, mobile list/map toggle, keyboard + SR support.
 
@@ -36,8 +36,8 @@ REIV sitemap (~2,955 suburb pages)
 ### Pipeline guards
 | Guard | Behaviour |
 | --- | --- |
-| `--min-rows=15` | exit 2 if REIV markup breaks / returns too few rows — data.js untouched |
-| Geocode floor | exit 3 if <50% of rows geocode — data.js untouched |
+| `--min-rows=15` | exit 2 if REIV markup breaks / returns too few rows - data.js untouched |
+| Geocode floor | exit 3 if <50% of rows geocode - data.js untouched |
 | VIC bounds check | wrong-state geocodes rejected; validator re-checks every row |
 | Guide plausibility | "$1"-style placeholder guides rejected (must be $50k–$30m) |
 | Retention | weeks older than `--retain-days` (default 84) pruned to bound payload |
@@ -52,10 +52,10 @@ npm run validate    # sanity-check data.js
 
 ## Weekly automation
 Two equivalent paths (either keeps the site fresh):
-1. **Windows Task Scheduler** *(active)* — task "Passd weekly refresh" runs
+1. **Windows Task Scheduler** *(active)* - task "Passd weekly refresh" runs
    `scripts/weekly-refresh.ps1` Sundays 8:30pm (catches up at next boot if the PC was off):
    pull → scrape → enrich → validate → commit → push → Pages redeploys.
-2. **GitHub Actions** *(ready, needs a workflow-scoped push)* —
+2. **GitHub Actions** *(ready, needs a workflow-scoped push)* -
    `.github/workflows/scrape-and-deploy.yml` runs the same pipeline Sundays 11:00 UTC in CI.
    Pushing it requires `gh auth refresh -h github.com -s workflow` (one-time) because the
    current token lacks the `workflow` scope.
@@ -66,7 +66,7 @@ Two equivalent paths (either keeps the site fresh):
 - **Prices are guides, not sale prices.** Passed-in homes have no sale price; the figure is
   the agent's *indicative* guide from the live listing and it changes. Most listings are
   **"contact agent."** Always confirm with the agent. Not financial advice.
-- **Saves are per-browser** (localStorage, no accounts) — use *Copy link* to share a home.
+- **Saves are per-browser** (localStorage, no accounts) - use *Copy link* to share a home.
 
 ## Responsible use
 Data comes from REIV (`robots.txt: Allow: /`) and soho.com.au, fetched with limited

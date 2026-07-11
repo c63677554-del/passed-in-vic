@@ -7,7 +7,7 @@
 // fallback; for heavier automated use set a Mapbox/Google key.
 // Guards (so automation fails loudly instead of publishing junk):
 //   --min-rows=N   exit 2 if fewer than N passed-in rows parse (REIV markup change / outage)
-//   geocode floor  exit 3 if <50% of rows geocode (geocoder outage) — data.js left untouched
+//   geocode floor  exit 3 if <50% of rows geocode (geocoder outage) - data.js left untouched
 //   retention      weeks older than --retain-days (default 84) are dropped from data.js
 'use strict';
 const fs = require('fs'), path = require('path');
@@ -81,7 +81,7 @@ async function geocode(q) {
     out.push({ address: p.address, suburb: p.suburb, postcode: p.postcode, lat: g.lat, lng: g.lng, type: p.type, beds: p.beds, baths: null, cars: null, price: null, vendor: null, agency: p.agency, method: p.method, saleDate: p.saleDate, week: weekSaturday(p.saleDate), city: 'Melbourne', state: 'VIC' });
   }
   if (recent.length >= 20 && out.length < recent.length * 0.5) {
-    console.error(`FATAL: geocoded only ${out.length}/${recent.length} rows — geocoder outage? data.js left untouched.`);
+    console.error(`FATAL: geocoded only ${out.length}/${recent.length} rows - geocoder outage? data.js left untouched.`);
     process.exit(3);
   }
 

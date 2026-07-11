@@ -1,4 +1,4 @@
-// upload-data.js — push the freshly-built data.json into the Passd Supabase
+// upload-data.js - push the freshly-built data.json into the Passd Supabase
 // project's app_data table (the gated source of truth once the paywall is live).
 // Reads credentials from .passd-backend.env at the repo root (gitignored):
 //   SUPABASE_URL=https://xxxx.supabase.co
@@ -23,12 +23,12 @@ function readEnv() {
 (async () => {
   const env = readEnv();
   if (!env || !env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
-    console.log('upload-data: .passd-backend.env not configured — skipping (site stays on bundled data)');
+    console.log('upload-data: .passd-backend.env not configured - skipping (site stays on bundled data)');
     return;
   }
   const raw = JSON.parse(fs.readFileSync(path.join(ROOT, 'data.json'), 'utf8'));
   if (!raw || !Array.isArray(raw.properties) || raw.properties.length === 0) {
-    console.error('upload-data: data.json empty or malformed — refusing to upload');
+    console.error('upload-data: data.json empty or malformed - refusing to upload');
     process.exit(1);
   }
   const res = await fetch(env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/app_data', {
@@ -45,5 +45,5 @@ function readEnv() {
     console.error('upload-data: FAILED', res.status, await res.text());
     process.exit(1);
   }
-  console.log('upload-data: OK —', raw.properties.length, 'properties, generated', raw.generated);
+  console.log('upload-data: OK -', raw.properties.length, 'properties, generated', raw.generated);
 })();

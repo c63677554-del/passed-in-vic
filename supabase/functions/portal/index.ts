@@ -1,4 +1,4 @@
-// portal — opens the Stripe customer billing portal (manage/cancel subscription)
+// portal - opens the Stripe customer billing portal (manage/cancel subscription)
 // for the signed-in user. verify_jwt=true.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";

@@ -1,6 +1,6 @@
 // Domain auction-results scraper: Sydney, Brisbane, Adelaide, Canberra
 // (Melbourne stays on REIV to avoid double-counting). Parses the public
-// results pages' embedded __NEXT_DATA__ JSON — per-listing coordinates and
+// results pages' embedded __NEXT_DATA__ JSON - per-listing coordinates and
 // listing URLs included, so no geocoding is needed.
 //   node scrape-domain.js --min-rows=30        # full run -> merge into ../data.js
 //   node scrape-domain.js --dry                # parse + count, write nothing
@@ -48,7 +48,7 @@ async function scrapeCity(c) {
 }
 
 (async () => {
-  console.log('Domain auction results —', CITIES.map(c => c.city).join(', '));
+  console.log('Domain auction results -', CITIES.map(c => c.city).join(', '));
   const out = [];
   for (const c of CITIES) { try { out.push(...await scrapeCity(c)); } catch (e) { console.error('  ' + c.city + ' FAILED: ' + e.message); } }
   console.log('Total passed-in rows:', out.length);

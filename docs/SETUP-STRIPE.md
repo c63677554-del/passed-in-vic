@@ -1,26 +1,26 @@
-# Stripe setup (≈20 min) — activate the FoundersCard deal FIRST
+# Stripe setup (≈20 min) - activate the FoundersCard deal FIRST
 
 ## 0. FoundersCard benefit (do this before anything else)
 FoundersCard's Stripe deal waives processing fees on your first **US$20,000**
-(Standard) or **US$50,000** (Elite) — and applies to new AND existing accounts.
+(Standard) or **US$50,000** (Elite) - and applies to new AND existing accounts.
 Activate it through the FoundersCard member portal (search "Stripe" in benefits)
 and follow its enrolment link so the credit attaches to the account you create.
 At Stripe AU's 1.75% + A$0.30, that's roughly your first ~4,000 subscription
 charges processed free.
 
 ## 1. Create the Stripe account
-https://dashboard.stripe.com/register — business details, AUD as default
+https://dashboard.stripe.com/register - business details, AUD as default
 currency, bank account for payouts. (ABN: sole trader is fine to start.
 GST: not required below A$75k turnover.)
 
-## 2. Create the products — ✅ DONE (via Stripe MCP, 10 Jul 2026, live mode)
+## 2. Create the products - ✅ DONE (via Stripe MCP, 10 Jul 2026, live mode)
 | Product | Price | Billing | Live ID |
 | --- | --- | --- | --- |
 | Passd (`prod_UrJ4t2hwMyb1tQ`) | **A$4.99** | Recurring, monthly | `price_1TraS8K5F6xN5RVXszhT1Idp` |
 | Passd (`prod_UrJ4t2hwMyb1tQ`) | **A$39.99** | Recurring, yearly | `price_1TraSKK5F6xN5RVXWerKnheQ` |
 
 Both IDs are already filled into `.passd-backend.env`. No trial configuration
-needed on the prices — the checkout session sets `trial_period_days: 7` itself.
+needed on the prices - the checkout session sets `trial_period_days: 7` itself.
 
 ## 3. Webhook
 Developers → Webhooks → **Add endpoint**:
@@ -47,7 +47,7 @@ and rerun:
 cd C:\Users\Nzcof\passed-in-vic
 .\scripts\deploy-backend.ps1
 ```
-This disables preview grants — from now on "Start 7-day free trial" goes
+This disables preview grants - from now on "Start 7-day free trial" goes
 through Stripe Checkout (card collected up front, charged on day 8 unless
 cancelled; promo codes enabled).
 

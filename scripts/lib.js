@@ -1,4 +1,4 @@
-// lib.js — shared pure helpers for the Passd data pipeline.
+// lib.js - shared pure helpers for the Passd data pipeline.
 // Used by scrape-reiv.js, enrich-prices.js, validate-data.js and lib.test.js.
 'use strict';
 
@@ -68,7 +68,7 @@ async function pool(items, n, fn) {
   return res;
 }
 
-// State bounding boxes (with slack) — geocode + data sanity checks.
+// State bounding boxes (with slack) - geocode + data sanity checks.
 const STATE_BOUNDS = {
   VIC: { latMin: -39.9, latMax: -33.8, lngMin: 140.5, lngMax: 150.5 },
   NSW: { latMin: -37.6, latMax: -28.0, lngMin: 140.5, lngMax: 154.0 },
@@ -119,7 +119,7 @@ function mapDomainListing(l, auctionDateIso, city) {
     saleDate, week: weekSaturday(saleDate),
     city, state: (l.state || '').toUpperCase() || null,
     listUrl: url,
-    // Domain sometimes reports the final (passed-in/vendor) bid — a real price signal.
+    // Domain sometimes reports the final (passed-in/vendor) bid - a real price signal.
     bid: typeof l.price === 'number' && l.price > 50000 ? l.price : null,
   };
 }

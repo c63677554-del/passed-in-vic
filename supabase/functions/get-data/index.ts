@@ -1,4 +1,4 @@
-// get-data — the gated data endpoint.
+// get-data - the gated data endpoint.
 // Anonymous callers get the free teaser (latest week, no price guides/links).
 // Authenticated + entitled subscribers get the full payload.
 // Deployed with verify_jwt=false: auth is handled here so anon teaser works.

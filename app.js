@@ -1,6 +1,6 @@
 "use strict";
 
-/* Passd — Melbourne auction pass-ins. REA-style two-pane UI: price-pill markers
+/* Passd - Melbourne auction pass-ins. REA-style two-pane UI: price-pill markers
    with clustering, viewport-synced list, suburb/address search, type/beds/price
    filters, sorting, a localStorage shortlist, and shareable URL state.
    Data: data.js (DATA, DATA_GENERATED), refreshed weekly by scripts/. */
@@ -14,7 +14,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
 };
 
-// Stable id from the dedupe key — survives weekly data regeneration.
+// Stable id from the dedupe key - survives weekly data regeneration.
 function hid(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return "p" + h.toString(36); }
 
 function weekLabel(iso) {
@@ -57,7 +57,7 @@ let map, cluster, byId = {}, selectedId = null;
 let week = null;                       // iso Saturday or "all"; defaulted in setDataset()
 const CITIES = ["Melbourne", "Sydney", "Brisbane", "Adelaide", "Canberra"];
 // Metro framing: city feeds are state-wide (e.g. Cairns arrives under the
-// Brisbane feed), so selecting a city orients the map on its metro box —
+// Brisbane feed), so selecting a city orients the map on its metro box -
 // regional homes stay in the list and appear as you zoom/pan out.
 const METRO_BOUNDS = {
   Melbourne: [[-38.35, 144.45], [-37.45, 145.60]],
@@ -135,7 +135,7 @@ const TILES = [
   { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", opt: { maxZoom: 19, attribution: "Tiles &copy; Esri" } },
 ];
 function addBasemap() {
-  // Minimal vector basemap (OpenFreeMap Positron via MapLibre GL) — clean,
+  // Minimal vector basemap (OpenFreeMap Positron via MapLibre GL) - clean,
   // REA-like, free and keyless. Raster chain remains as the fallback when the
   // GL libraries fail to load or the CDN is unreachable.
   if (window.maplibregl && L.maplibreGL) {
@@ -159,7 +159,7 @@ function addBasemap() {
 // ---------- data slices ----------
 const forWeek = () => DATA.filter((p) => (week === "all" || p.week === week) && cityOk(p) && p.lat != null && p.lng != null);
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
-// "Price on request" homes always pass the price filter — an unknown guide could
+// "Price on request" homes always pass the price filter - an unknown guide could
 // be in budget, so showing beats hiding.
 const priceOk = (p) => maxPrice == null || pricedValue(p) == null || pricedValue(p) <= maxPrice;
 const bedsOk = (p) => minBeds == null || (p.beds != null && p.beds >= minBeds);
@@ -187,7 +187,7 @@ function markerPopup(p) {
     ? `<span class="ppg">${fmtGuide(p)}</span> <span class="gmut">price guide</span>`
     : p.bid != null
     ? `<span class="ppg">${fmtPrice(p.bid)}</span> <span class="gmut">passed-in bid</span>`
-    : `<span class="gmut">Price on request — contact agent</span>`;
+    : `<span class="gmut">Price on request · contact agent</span>`;
   const meta = [p.type, p.beds != null ? p.beds + " bed" : null, resultChip(p.method)].filter(Boolean).join(" · ");
   const when = [fmtDay(p.saleDate) ? "Passed in " + fmtDay(p.saleDate) : null, p.agency].filter(Boolean).join(" · ");
   return `<div class="pp">
@@ -261,7 +261,7 @@ function updateList() {
   el("count").innerHTML = `<b>${vis.length}</b>${vis.length !== total ? ` of ${total}` : ""} passed in`;
   const MAX_CARDS = 120; // rendering hundreds of cards per pan is the lag source
   let html;
-  if (vis.length > MAX_CARDS) html = vis.slice(0, MAX_CARDS).map(cardHTML).join("") + `<div class="morecards">Showing ${MAX_CARDS} of ${vis.length} — zoom the map or add filters to narrow down.</div>`;
+  if (vis.length > MAX_CARDS) html = vis.slice(0, MAX_CARDS).map(cardHTML).join("") + `<div class="morecards">Showing ${MAX_CARDS} of ${vis.length}. Zoom the map or add filters to narrow down.</div>`;
   else if (vis.length) html = vis.map(cardHTML).join("");
   else html = `<div class="empty">No passed-in homes match here.<br>Zoom out, pan the map, or <button class="linkbtn" type="button" data-reset>clear the filters</button>.</div>`;
   el("list").innerHTML = html;
@@ -291,7 +291,7 @@ function closeSavedPanel() {
 }
 // ---------- adaptive pricing UI ----------
 // If the current city/week has effectively no price signals, price controls are
-// dead weight — hide the max-price filter and drop the price sorts.
+// dead weight - hide the max-price filter and drop the price sorts.
 let lastPricingUsable = null;
 function updatePricingUI() {
   const priced = forWeek().filter((p) => pricedValue(p) != null).length;
@@ -347,7 +347,7 @@ function toggleSave(id) {
   updateSavedChip();
   const panel = el("savedModal");
   if (panel && !panel.hidden) renderSavedPanel();
-  toast(on ? "Saved — find it under ♥ in the header" : "Removed from saved");
+  toast(on ? "Saved · find it under ♥ in the header" : "Removed from saved");
 }
 async function shareLink(id) {
   select(id, "share-noop"); // ensures sel in URL; no map motion for unknown 'from'
@@ -355,8 +355,8 @@ async function shareLink(id) {
   const h = new URLSearchParams(location.hash.slice(1));
   h.set("sel", id); if (week !== WEEKS[0]) h.set("w", week); else h.delete("w");
   const url = location.origin + location.pathname + "#" + h.toString();
-  try { await navigator.clipboard.writeText(url); toast("Link copied — send it to anyone"); }
-  catch { toast("Copy failed — use the address bar URL"); }
+  try { await navigator.clipboard.writeText(url); toast("Link copied · send it to anyone"); }
+  catch { toast("Copy failed · use the address bar URL"); }
   writeURL();
 }
 
@@ -507,7 +507,7 @@ function searchMatches(q) {
   const subs = SUBURBS.filter((s) => s.suburb.toLowerCase().startsWith(ql) || (s.postcode || "").startsWith(ql));
   const subs2 = subs.length ? subs : SUBURBS.filter((s) => s.suburb.toLowerCase().includes(ql));
   const items = props.concat(subs2.slice(0, 7 - props.length).map((s) => ({ kind: "sub", s })));
-  // Always offer a map-wide location search — works even where nothing passed in.
+  // Always offer a map-wide location search - works even where nothing passed in.
   if (ql.length >= 3) items.push({ kind: "geo", q: q.trim() });
   return items;
 }
@@ -524,7 +524,7 @@ async function geoLocate(q) {
       map.fitBounds([[s, w], [n, e]], { padding: [40, 40], maxZoom: 15 });
     } else map.setView([+g.lat, +g.lon], 14);
     setTimeout(() => { if (!visible().length) toast("No passed-in homes here right now"); }, 800);
-  } catch { toast("Location search unavailable — try again"); }
+  } catch { toast("Location search unavailable · try again"); }
 }
 const forWeekAll = () => DATA.filter((p) => p.lat != null && p.lng != null);
 function renderSearch() {
@@ -533,7 +533,7 @@ function renderSearch() {
   qr.innerHTML = qItems.map((it, i) => {
     const a = `type="button" class="qi${it.kind === "geo" ? " geo" : ""}${i === qActive ? " on" : ""}" id="qi-${i}" role="option" aria-selected="${i === qActive}" data-i="${i}"`;
     if (it.kind === "prop") return `<button ${a}><b>${esc(it.p.address)}</b><span>${esc(it.p.suburb)} · passed in ${esc(fmtDay(it.p.saleDate) || "")}</span></button>`;
-    if (it.kind === "geo") return `<button ${a}><b>Search the map for “${esc(it.q)}”</b><span>Jump to any VIC location — even with no pass-ins</span></button>`;
+    if (it.kind === "geo") return `<button ${a}><b>Search the map for “${esc(it.q)}”</b><span>Jump to any VIC location, even with no pass-ins</span></button>`;
     return `<button ${a}><b>${esc(it.s.suburb)}</b><span>VIC ${esc(it.s.postcode || "")} · ${it.s.n} passed in</span></button>`;
   }).join("");
   qr.hidden = false; el("q").setAttribute("aria-expanded", "true");
@@ -668,7 +668,7 @@ async function init() {
     setTimeout(() => select(deep.sel, "search"), 350);
   }
   // Debounced: re-rendering the card list on every pan frame is the main lag
-  // source — settle for 160ms of stillness before rebuilding.
+  // source - settle for 160ms of stillness before rebuilding.
   let moveT = null;
   map.on("moveend", () => { clearTimeout(moveT); moveT = setTimeout(() => { updateList(); writeURL(); }, 160); });
 }
