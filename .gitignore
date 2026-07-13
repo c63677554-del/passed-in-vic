@@ -23,3 +23,7 @@ supabase/.temp/
 
 data.js
 data.json
+
+# weekly-refresh runtime artifacts (local status + logs)
+refresh-status.json
+enrich-run.out
