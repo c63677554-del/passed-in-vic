@@ -18,7 +18,10 @@
 -- inserted once, out of band, via vault.create_secret('<key>', 'passd_service_key').
 
 create extension if not exists pg_cron;
-create extension if not exists pg_net with schema extensions;
+-- pg_net creates and owns its own `net` schema; the functions are net.http_post
+-- etc. Do NOT qualify them as extensions.net.* - that resolves to nothing and the
+-- job would throw every night while appearing to be scheduled.
+create extension if not exists pg_net;
 
 -- Recreate cleanly so this migration stays idempotent across redeploys.
 select cron.unschedule('passd-daily-refresh')
@@ -28,7 +31,7 @@ select cron.schedule(
   'passd-daily-refresh',
   '30 11 * * *',
   $job$
-  select extensions.net.http_post(
+  select net.http_post(
     url := 'https://fpxlerpmbsqdwlrgnxsq.supabase.co/functions/v1/refresh-data',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
