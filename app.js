@@ -27,6 +27,11 @@ const parseAU = (s) => { const m = (s || "").match(/(\d{1,2})\/(\d{1,2})\/(\d{4}
 const fmtDay = (s) => { const d = parseAU(s); return d ? d.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" }) : null; };
 const isVendor = (m) => /vendor/i.test(m || "");
 const resultChip = (m) => (isVendor(m) ? "Vendor bid" : "At auction");
+// Listing freshness: the check-listings pass marks each home available /
+// under_offer / sold / removed. "gone" = no longer open to an offer.
+const STATUS_LABEL = { sold: "Since sold", under_offer: "Under offer", removed: "Listing removed" };
+const isGone = (p) => p.status === "sold" || p.status === "removed";
+const statusChip = (p) => (STATUS_LABEL[p.status] ? `<span class="stchip st-${p.status}">${STATUS_LABEL[p.status]}</span>` : "");
 const fmtPrice = (n) => (n == null ? null : n >= 1e6 ? "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "m" : "$" + Math.round(n / 1e3) + "k");
 const fmtGuide = (p) => (p.listLow == null ? null : p.listHigh > p.listLow ? fmtPrice(p.listLow) + " – " + fmtPrice(p.listHigh) : fmtPrice(p.listLow));
 // Best available price signal: agent guide first, else the reported passed-in bid.
@@ -47,14 +52,19 @@ function setDataset(props, gen) {
   DATA.forEach((p) => (p.id = hid((p.address + "|" + p.suburb + "|" + p.week).toLowerCase())));
   WEEKS = [...new Set(DATA.map((p) => p.week))].sort().reverse();
   SUBURBS = buildSuburbs();
-  if (!week || (week !== "all" && !WEEKS.includes(week))) week = WEEKS[0] || null;
+  // Default view = the recent window ("all"), not a single week - but "all" now
+  // means the last RECENT_N weeks, so the map isn't flooded with stale results.
+  if (!week || (week !== "all" && !WEEKS.includes(week))) week = WEEKS.length ? "all" : null;
 }
+const RECENT_N = 4; // "All recent weeks" = this many most-recent weeks
+const recentWeeks = () => new Set(WEEKS.slice(0, RECENT_N));
 const TYPES = ["House", "Townhouse", "Apartment", "Unit"];
 const saved = new Set(store.get("passd.saved", []));
 const seenIds = new Set(store.get("passd.seen", []));
 
 let map, cluster, byId = {}, selectedId = null;
-let week = null;                       // iso Saturday or "all"; defaulted in setDataset()
+let week = null;                       // iso Saturday or "all" (= recent weeks); defaulted in setDataset()
+let hideGone = store.get("passd.hideGone", true); // hide sold/removed by default
 const CITIES = ["Melbourne", "Sydney", "Brisbane", "Adelaide", "Canberra"];
 // Metro framing: city feeds are state-wide (e.g. Cairns arrives under the
 // Brisbane feed), so selecting a city orients the map on its metro box -
@@ -157,13 +167,14 @@ function addBasemap() {
 }
 
 // ---------- data slices ----------
-const forWeek = () => DATA.filter((p) => (week === "all" || p.week === week) && cityOk(p) && p.lat != null && p.lng != null);
+const forWeek = () => DATA.filter((p) => (week === "all" ? recentWeeks().has(p.week) : p.week === week) && cityOk(p) && p.lat != null && p.lng != null);
 const typeOk = (p) => activeTypes.size === 0 || activeTypes.has(p.type);
 // "Price on request" homes always pass the price filter - an unknown guide could
 // be in budget, so showing beats hiding.
 const priceOk = (p) => maxPrice == null || pricedValue(p) == null || pricedValue(p) <= maxPrice;
 const bedsOk = (p) => minBeds == null || (p.beds != null && p.beds >= minBeds);
-const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p) && bedsOk(p));
+const statusOk = (p) => !hideGone || !isGone(p);
+const forView = () => forWeek().filter((p) => typeOk(p) && priceOk(p) && bedsOk(p) && statusOk(p));
 function visible() {
   const sz = map.getSize();
   if (!sz || sz.x < 10 || sz.y < 10) return forView(); // map pane hidden (mobile list view)
@@ -173,7 +184,8 @@ function visible() {
 
 // ---------- markers: REA-style price pills + clusters ----------
 function pinHTML(p) {
-  const cls = "pin" + (p.id === selectedId ? " sel" : seenIds.has(p.id) ? " seen" : "");
+  const st = isGone(p) ? " gone" : p.status === "under_offer" ? " uo" : "";
+  const cls = "pin" + st + (p.id === selectedId ? " sel" : seenIds.has(p.id) ? " seen" : "");
   const label = p.listLow != null ? fmtPrice(p.listLow) + (p.listHigh > p.listLow ? "+" : "") : p.bid != null ? fmtPrice(p.bid) : p.beds != null ? p.beds + " bd" : p.type || "•";
   const hh = saved.has(p.id) ? `<span class="ph">${HEART(true)}</span>` : "";
   return `<div class="${cls}" data-pin="${p.id}">${hh}${esc(label)}</div>`;
@@ -190,14 +202,17 @@ function markerPopup(p) {
     : `<span class="gmut">Price on request · contact agent</span>`;
   const meta = [p.type, p.beds != null ? p.beds + " bed" : null, resultChip(p.method)].filter(Boolean).join(" · ");
   const when = [fmtDay(p.saleDate) ? "Passed in " + fmtDay(p.saleDate) : null, p.agency].filter(Boolean).join(" · ");
+  const cta = p.status === "removed"
+    ? `<span class="ppbtn pri disabled" aria-disabled="true">Listing removed</span>`
+    : `<a class="ppbtn pri" href="${esc(listingUrl(p))}" target="_blank" rel="noopener noreferrer">${p.status === "sold" ? "View sold listing" : p.listUrl ? "View listing" : "Search Google"}</a>`;
   return `<div class="pp">
-    <div class="pp-top"><span class="badge">Passed in</span><span class="ppdate">${esc(fmtDay(p.saleDate) || "")}</span></div>
+    <div class="pp-top"><span class="pp-badges"><span class="badge">Passed in</span>${statusChip(p)}</span><span class="ppdate">${esc(fmtDay(p.saleDate) || "")}</span></div>
     <div class="ppprice">${guide}</div>
     <div class="b">${esc(p.address)}</div>
     <div class="s">${esc(subline(p))}</div>
     <div class="m">${esc(meta)}${p.agency ? "<br>" + esc(p.agency) : ""}</div>
     <div class="ppact">
-      <a class="ppbtn pri" href="${esc(listingUrl(p))}" target="_blank" rel="noopener noreferrer">${p.listUrl ? "View listing" : "Search Google"}</a>
+      ${cta}
       <button class="ppbtn ghost heart${on ? " on" : ""}" type="button" data-save="${p.id}" aria-pressed="${on}" aria-label="${on ? "Remove from" : "Add to"} saved">${HEART(on)}</button>
       <button class="ppbtn ghost" type="button" data-share="${p.id}" aria-label="Copy link to this home">${LINKIC}</button>
     </div>
@@ -238,9 +253,9 @@ function cmp(a, b) {
 }
 function cardHTML(p) {
   const on = saved.has(p.id);
-  return `<article class="card${p.id === selectedId ? " sel" : ""}" data-id="${p.id}" role="button" tabindex="0" aria-label="Passed in: ${esc(p.address)}, ${esc(p.suburb)}">
+  return `<article class="card${isGone(p) ? " gone" : ""}${p.id === selectedId ? " sel" : ""}" data-id="${p.id}" role="button" tabindex="0" aria-label="Passed in: ${esc(p.address)}, ${esc(p.suburb)}${STATUS_LABEL[p.status] ? ", " + STATUS_LABEL[p.status] : ""}">
     <button class="heart${on ? " on" : ""}" type="button" data-save="${p.id}" aria-pressed="${on}" aria-label="${on ? "Remove from" : "Add to"} saved">${HEART(on)}</button>
-    <div class="row1"><span class="badge">Passed in</span><span class="datechip">${esc(fmtDay(p.saleDate) || "")}</span>${seenIds.has(p.id) ? '<span class="seenchip">Viewed</span>' : ""}</div>
+    <div class="row1"><span class="badge">Passed in</span>${statusChip(p)}<span class="datechip">${esc(fmtDay(p.saleDate) || "")}</span>${seenIds.has(p.id) ? '<span class="seenchip">Viewed</span>' : ""}</div>
     <div class="price">${p.listLow != null ? `${fmtGuide(p)} <span class="est">price guide</span>` : p.bid != null ? `${fmtPrice(p.bid)} <span class="est">passed-in bid</span>` : `<span class="ca">Contact agent for price</span>`}</div>
     <div class="addr">${esc(p.address)}</div>
     <div class="sub">${esc(subline(p))}</div>
@@ -251,7 +266,9 @@ function cardHTML(p) {
     </div>
     <div class="foot">
       <span>${esc(p.agency || "")}</span>
-      <a class="search" href="${esc(listingUrl(p))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${p.listUrl ? "View listing" : "Search"} &#8599;</a>
+      ${p.status === "removed"
+        ? `<span class="search gonelink">Listing removed</span>`
+        : `<a class="search" href="${esc(listingUrl(p))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${p.status === "sold" ? "View sold listing" : p.listUrl ? "View listing" : "Search"} &#8599;</a>`}
     </div>
   </article>`;
 }
@@ -405,7 +422,7 @@ function switchCityFor(p) { // search picked something outside the current city 
   }
 }
 function buildWeekSelect() {
-  const opts = [`<option value="all">All recent weeks</option>`]
+  const opts = [`<option value="all">Past ${RECENT_N} weeks</option>`]
     .concat(WEEKS.map((w) => `<option value="${w}">${weekLabel(w)}</option>`));
   el("week").innerHTML = opts.join("");
   el("week").value = week;
@@ -475,6 +492,12 @@ function buildSort() {
   el("sortBy").innerHTML = SORTS.map((s) => `<option value="${s.v}">${s.label}</option>`).join("");
   el("sortBy").value = sortBy;
   el("sortBy").onchange = (e) => { sortBy = e.target.value; updateList(); writeURL(); };
+}
+function buildStatusToggle() {
+  const cb = el("hideGone");
+  if (!cb) return;
+  cb.checked = hideGone;
+  cb.onchange = (e) => { hideGone = e.target.checked; store.set("passd.hideGone", hideGone); refresh(); };
 }
 function resetFilters() {
   activeTypes.clear(); maxPrice = null; minBeds = null;
@@ -607,7 +630,7 @@ async function init() {
       })
     : L.layerGroup()).addTo(map);
 
-  buildCitySelect(); buildWeekSelect(); buildTypeChips(); buildBedsChips(); buildPriceFilter(); buildSort(); buildSearch(); buildAbout();
+  buildCitySelect(); buildWeekSelect(); buildTypeChips(); buildBedsChips(); buildPriceFilter(); buildSort(); buildStatusToggle(); buildSearch(); buildAbout();
   el("toMap").onclick = showMap;
   el("toList").onclick = showList;
   el("savedBtn").onclick = openSavedPanel;

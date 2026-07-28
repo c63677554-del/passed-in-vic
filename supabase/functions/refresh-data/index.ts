@@ -99,6 +99,11 @@ function mapDomainListing(l: any, auctionDateIso: unknown, city: string) {
     city, state: (l.state || "").toUpperCase() || null,
     listUrl: url,
     bid: typeof l.price === "number" && l.price > 50000 ? l.price : null,
+    // Freshly passed in this weekend, so it is available by definition. The
+    // check-listings pass later re-checks the older rows and may flip this to
+    // under_offer / sold / removed. statusAt=null means "not yet re-checked".
+    status: "available",
+    statusAt: null,
   };
 }
 
@@ -170,9 +175,11 @@ Deno.serve(async (req: Request) => {
     const k = dedupeKey(p);
     const prev = byKey.get(k);
     if (!prev) added++;
-    // Domain fields win, but never blank an existing listing URL or soho guide.
+    // Domain fields win, but never blank an existing listing URL/guide, and never
+    // reset a status the check-listings pass already established - the daily
+    // re-scrape of the current weekend must not knock rows back to "available".
     // deno-lint-ignore no-explicit-any
-    byKey.set(k, prev ? { ...prev, ...p, listUrl: (p as any).listUrl || prev.listUrl || null } : p);
+    byKey.set(k, prev ? { ...prev, ...p, listUrl: (p as any).listUrl || prev.listUrl || null, status: prev.status ?? (p as any).status, statusAt: prev.statusAt !== undefined ? prev.statusAt : (p as any).statusAt } : p);
   }
   let merged = [...byKey.values()];
   const cutoff = Date.now() - RETAIN_DAYS * 864e5;

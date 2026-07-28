@@ -124,6 +124,24 @@ body { color: var(--ink); background: var(--bg); }
 .linkbtn { font: inherit; font-size: inherit; color: var(--red); background: none; border: 0; padding: 0; cursor: pointer; font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
 .linkbtn:hover { color: var(--red-600); }
 
+/* Listing freshness: sold / under offer / removed */
+.stchip { display: inline-flex; align-items: center; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: var(--r-chip); text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
+.stchip.st-sold, .stchip.st-removed { background: #eef1f4; color: #55617a; }
+.stchip.st-under_offer { background: #fff4e5; color: #b45309; }
+.pp-badges { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+/* de-emphasise homes that are no longer open to an offer */
+.pin.gone { background: #eef1f4; color: #8a93a1; border-color: rgba(15,23,42,.08); box-shadow: 0 1px 3px rgba(15,23,42,.16); text-decoration: line-through; text-decoration-thickness: 1px; }
+.pin.gone.sel { background: var(--red); color: #fff; text-decoration: none; }
+.pin.uo { background: #fff4e5; color: #b45309; border-color: #f6d9ab; }
+.card.gone { opacity: .72; }
+.card.gone:hover, .card.gone.hl { opacity: 1; }
+.card .foot .gonelink { color: var(--muted); font-weight: 700; white-space: nowrap; }
+.ppbtn.pri.disabled { background: #eef1f4; color: #8a93a1; pointer-events: none; text-align: center; }
+/* filter-bar toggle */
+.togchip { display: inline-flex; align-items: center; gap: 7px; margin-left: 10px; font-size: 12.5px; font-weight: 600; color: #3f4a5a; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-chip); padding: 0 13px; min-height: 37px; cursor: pointer; white-space: nowrap; user-select: none; transition-property: border-color, background-color; transition-duration: 140ms; }
+.togchip:hover { border-color: #c3cad4; }
+.togchip input { width: 15px; height: 15px; accent-color: var(--red); cursor: pointer; margin: 0; }
+
 /* Leaflet popup */
 .leaflet-popup-content-wrapper { border-radius: var(--r-card); box-shadow: var(--shadow-lg); }
 .leaflet-popup-content { margin: 14px 16px; width: 250px !important; font-family: inherit; }
