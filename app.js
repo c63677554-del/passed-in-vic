@@ -297,12 +297,17 @@ function renderSavedPanel() {
     ? items.map(cardHTML).join("")
     : `<div class="empty">Nothing saved yet.<br>Tap the <b>♡</b> on any home to build your shortlist.</div>`;
 }
+// Routed through PassdGate so this panel gets the same focus trap, Escape key
+// and background inerting as the auth/subscribe modals. Falls back to the plain
+// show/hide in legacy mode, where PassdGate has no modal helpers.
 function openSavedPanel() {
   renderSavedPanel();
+  if (window.PassdGate && window.PassdGate.openModal) return window.PassdGate.openModal("savedModal");
   const m = el("savedModal");
   m.hidden = false; requestAnimationFrame(() => m.classList.add("open"));
 }
 function closeSavedPanel() {
+  if (window.PassdGate && window.PassdGate.closeModal) return window.PassdGate.closeModal("savedModal");
   const m = el("savedModal");
   m.classList.remove("open"); setTimeout(() => (m.hidden = true), 180);
 }
@@ -513,7 +518,7 @@ function buildSuburbs() {
     if (p.lat == null || !p.suburb) continue;
     const k = p.suburb.toLowerCase() + "|" + (p.postcode || "");
     let e = m.get(k);
-    if (!e) m.set(k, (e = { suburb: p.suburb, postcode: p.postcode, city: p.city || "Melbourne", n: 0, latMin: 90, latMax: -90, lngMin: 180, lngMax: -180 }));
+    if (!e) m.set(k, (e = { suburb: p.suburb, postcode: p.postcode, state: p.state || null, city: p.city || "Melbourne", n: 0, latMin: 90, latMax: -90, lngMin: 180, lngMax: -180 }));
     e.n++;
     e.latMin = Math.min(e.latMin, p.lat); e.latMax = Math.max(e.latMax, p.lat);
     e.lngMin = Math.min(e.lngMin, p.lng); e.lngMax = Math.max(e.lngMax, p.lng);
@@ -537,9 +542,14 @@ function searchMatches(q) {
 async function geoLocate(q) {
   toast("Finding " + q + "…");
   try {
-    const r = await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=au&viewbox=140.5,-39.9,150.5,-33.8&bounded=1&q=" + encodeURIComponent(q));
+    // Was bounded to a Victoria-only viewbox, left over from the Melbourne-only
+    // days. On a national product that silently returned the WRONG PLACE rather
+    // than nothing: "Bondi NSW" resolved to Bondi near Corowa (postcode 2646)
+    // instead of Bondi Beach (2026), because the box clips southern NSW.
+    // Australia-wide via countrycodes=au, with no bounding box.
+    const r = await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=au&q=" + encodeURIComponent(q));
     const j = await r.json();
-    if (!j || !j[0]) { toast("Couldn't find “" + q + "” in Victoria"); return; }
+    if (!j || !j[0]) { toast("Couldn't find “" + q + "” in Australia"); return; }
     const g = j[0];
     if (window.matchMedia("(max-width: 900px)").matches) showMap();
     if (g.boundingbox) {
@@ -556,8 +566,9 @@ function renderSearch() {
   qr.innerHTML = qItems.map((it, i) => {
     const a = `type="button" class="qi${it.kind === "geo" ? " geo" : ""}${i === qActive ? " on" : ""}" id="qi-${i}" role="option" aria-selected="${i === qActive}" data-i="${i}"`;
     if (it.kind === "prop") return `<button ${a}><b>${esc(it.p.address)}</b><span>${esc(it.p.suburb)} · passed in ${esc(fmtDay(it.p.saleDate) || "")}</span></button>`;
-    if (it.kind === "geo") return `<button ${a}><b>Search the map for “${esc(it.q)}”</b><span>Jump to any VIC location, even with no pass-ins</span></button>`;
-    return `<button ${a}><b>${esc(it.s.suburb)}</b><span>VIC ${esc(it.s.postcode || "")} · ${it.s.n} passed in</span></button>`;
+    if (it.kind === "geo") return `<button ${a}><b>Search the map for “${esc(it.q)}”</b><span>Jump anywhere in Australia, even with no pass-ins</span></button>`;
+    // The suburb's own state, not a hardcoded "VIC" - Passd covers five cities.
+    return `<button ${a}><b>${esc(it.s.suburb)}</b><span>${esc([it.s.state, it.s.postcode].filter(Boolean).join(" "))} · ${it.s.n} passed in</span></button>`;
   }).join("");
   qr.hidden = false; el("q").setAttribute("aria-expanded", "true");
   el("q").setAttribute("aria-activedescendant", qActive >= 0 ? "qi-" + qActive : "");
@@ -580,7 +591,16 @@ function chooseSearch(i) {
     switchCityFor(it.p);
     if (week !== "all" && it.p.week !== week) setWeek("all", false);
     if (!forView().some((x) => x.id === it.p.id)) { // filters would hide the searched home
-      activeTypes.clear(); maxPrice = null; minBeds = null; savedOnly = false;
+      // NB: `savedOnly` used to be assigned here. No such variable exists, and
+      // this file is strict-mode, so picking a filtered-out search result threw
+      // a ReferenceError and the home was never selected - the tap did nothing.
+      // `hideGone` is the filter that actually needed clearing: it defaults to
+      // on, so searching a sold or removed home hit exactly this path.
+      activeTypes.clear(); maxPrice = null; minBeds = null;
+      if (isGone(it.p) && hideGone) {
+        hideGone = false; store.set("passd.hideGone", false);
+        const cb = el("hideGone"); if (cb) cb.checked = false;
+      }
       refreshTypeChips(); refreshBedsChips(); el("maxPrice").value = "";
       renderMarkers(); updateList();
     }

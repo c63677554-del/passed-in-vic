@@ -149,8 +149,74 @@ const PassdGate = (() => {
   }
 
   // ---------- modals ----------
-  function openModal(id) { const m = $(id); if (m) { m.hidden = false; requestAnimationFrame(() => m.classList.add("open")); } }
-  function closeModal(id) { const m = $(id); if (m) { m.classList.remove("open"); setTimeout(() => (m.hidden = true), 180); } }
+  // These are plain divs carrying role="dialog" aria-modal="true", not <dialog>,
+  // so no modal semantics come for free. Before this, focus stayed on <body> when
+  // a modal opened, Tab walked straight into the page behind it (356 of 360
+  // tabbable elements were outside the modal), Escape did nothing, and the
+  // background scrolled. aria-modal="true" was therefore telling screen readers
+  // the background was inert while it was fully reachable.
+  //
+  // `inert` does the real work: it removes the background from the tab order AND
+  // the accessibility tree. The Tab wrap is a fallback for browsers without it,
+  // and keeps focus cycling inside the dialog either way.
+  const BACKDROP = ["landing", "app"]; // everything that sits behind a modal
+  const openStack = [];
+
+  const focusables = (root) =>
+    [...root.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+      .filter((e) => e.offsetParent !== null);
+
+  function setBackdropInert(on) {
+    BACKDROP.forEach((id) => { const e = $(id); if (e) e.inert = on; });
+    document.body.style.overflow = on ? "hidden" : "";
+  }
+
+  // dismissible=false is the lapsed gate: Escape must not free it, but focus
+  // still has to stay inside - which is what actually makes it non-dismissible
+  // for keyboard users, who could previously just Tab past it into the app.
+  function enterModal(m, dismissible) {
+    if (!m || openStack.some((x) => x.el === m)) return;
+    openStack.push({ el: m, dismissible, restore: document.activeElement });
+    setBackdropInert(true);
+    const f = focusables(m);
+    if (f.length) f[0].focus();
+    else { m.setAttribute("tabindex", "-1"); m.focus(); }
+  }
+  function exitModal(m) {
+    const i = openStack.findIndex((x) => x.el === m);
+    if (i < 0) return;
+    const [entry] = openStack.splice(i, 1);
+    if (!openStack.length) setBackdropInert(false);
+    try { entry.restore && entry.restore.focus && entry.restore.focus(); } catch {}
+  }
+
+  document.addEventListener("keydown", (e) => {
+    const top = openStack[openStack.length - 1];
+    if (!top) return;
+    if (e.key === "Escape" && top.dismissible) { e.preventDefault(); closeModal(top.el.id); return; }
+    if (e.key !== "Tab") return;
+    const f = focusables(top.el);
+    if (!f.length) { e.preventDefault(); return; }
+    const first = f[0], last = f[f.length - 1];
+    if (!top.el.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+    else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  function openModal(id, dismissible = true) {
+    const m = $(id);
+    if (!m) return;
+    m.hidden = false;
+    requestAnimationFrame(() => m.classList.add("open"));
+    enterModal(m, dismissible);
+  }
+  function closeModal(id) {
+    const m = $(id);
+    if (!m) return;
+    exitModal(m);
+    m.classList.remove("open");
+    setTimeout(() => (m.hidden = true), 180);
+  }
 
   // ---------- header account UI ----------
   function renderHeader() {
@@ -177,6 +243,8 @@ const PassdGate = (() => {
     }
     show("lapsedGate", true);
     show("teaser", false); // the gate supersedes the upgrade banner; avoids a flash of both
+    // Non-dismissible: traps focus so the block holds for keyboard users too.
+    enterModal($("lapsedGate"), false);
     document.querySelectorAll("#lapsedGate .land-plan").forEach((b) => {
       b.classList.toggle("on", b.dataset.plan === plan);
       b.setAttribute("aria-checked", String(b.dataset.plan === plan));
@@ -284,6 +352,8 @@ const PassdGate = (() => {
     return { tier: state.tier, properties: payload.properties, generated: payload.generated };
   }
 
-  return { ready, configured, get tier() { return state.tier; }, subscribeModal: () => openModal("subModal") };
+  // openModal/closeModal are shared with app.js so the saved-homes panel gets the
+  // same focus trap, Escape handling and background inerting as the other modals.
+  return { ready, configured, get tier() { return state.tier; }, subscribeModal: () => openModal("subModal"), openModal, closeModal };
 })();
 window.PassdGate = PassdGate;
