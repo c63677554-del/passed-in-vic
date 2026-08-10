@@ -45,8 +45,8 @@
         <button type="button" class="land-plan on" data-plan="annual" role="radio" aria-checked="true"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></button>
         <button type="button" class="land-plan" data-plan="monthly" role="radio" aria-checked="false"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></button>
       </div>
-      <button id="landCta" class="land-cta" type="button">Start 7-day free trial</button>
-      <p class="land-fine">Free for 7 days, cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
+      <button id="landCta" class="land-cta" type="button">Subscribe, first 7 days free</button>
+      <p class="land-fine">Card required. Free for 7 days, then billed at the plan above. Cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
       <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: official auction results; price guides from live listings. Indicative only, not financial advice.</p>
     </div>
   </section>
@@ -97,7 +97,7 @@
 
     <div id="teaser" class="teaser" hidden>
       <span>Free preview: latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
-      <button id="teaserCta" class="teaser-btn" type="button">Start 7-day free trial</button>
+      <button id="teaserCta" class="teaser-btn" type="button">Upgrade for full access</button>
     </div>
 
     <div class="filterbar">
@@ -185,6 +185,28 @@
     </div>
   </div>
 
+  <!-- Lapsed gate: full-screen block once a trial or subscription has ended.
+       Not dismissible - the only ways out are resubscribing or signing out. -->
+  <div id="lapsedGate" class="lapsed" hidden>
+    <div class="lapsed-card" role="dialog" aria-modal="true" aria-labelledby="lapsedTitle">
+      <div class="land-brand">
+        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e4002b" d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><path fill="#fff" d="M12 6.2 8.4 9.4V14h2.4v-2.6h2.4V14h2.4V9.4z"/></svg>
+      </div>
+      <h2 id="lapsedTitle">Your access has ended</h2>
+      <p id="lapsedMsg" class="lapsed-msg">Your free trial has finished, so full results are locked. Subscribe to get every pass-in, price guides and direct listing links back.</p>
+      <div class="land-price" role="radiogroup" aria-label="Choose a plan">
+        <button type="button" class="land-plan on" data-plan="annual" role="radio" aria-checked="true"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></button>
+        <button type="button" class="land-plan" data-plan="monthly" role="radio" aria-checked="false"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></button>
+      </div>
+      <button id="lapsedCta" class="land-cta" type="button">Subscribe now</button>
+      <p class="land-fine">Card required. Cancel anytime.</p>
+      <p class="lapsed-alt">
+        <button id="lapsedPortal" class="linkbtn" type="button">Manage billing</button> ·
+        <button id="lapsedSignOut" class="linkbtn" type="button">Sign out</button>
+      </p>
+    </div>
+  </div>
+
   <!-- Subscribe modal (7-day trial, annual anchor) -->
   <div id="subModal" class="pmodal" hidden>
     <div class="pm-scrim" data-close-modal="subModal"></div>
@@ -207,8 +229,8 @@
           <span class="plan-per">flexible, cancel anytime</span>
         </button>
       </div>
-      <button id="subCta" class="pm-cta" type="button">Start 7-day free trial</button>
-      <p id="subTerms" class="pm-fine">Free for 7 days. Cancel anytime.</p>
+      <button id="subCta" class="pm-cta" type="button">Subscribe, first 7 days free</button>
+      <p id="subTerms" class="pm-fine">Card required. Free for 7 days. Cancel anytime.</p>
     </div>
   </div>
 

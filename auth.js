@@ -14,7 +14,11 @@ const PassdGate = (() => {
   const sb = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey) : null;
   const fn = (name) => cfg.supabaseUrl.replace(/\/$/, "") + "/functions/v1/" + name;
 
-  const state = { tier: "legacy", session: null, generated: null, weeksAvailable: null, trialEnd: null };
+  const state = { tier: "legacy", session: null, generated: null, weeksAvailable: null, trialEnd: null, lapsed: false };
+
+  // Stripe subscription statuses meaning "this person had access and lost it".
+  // These get the full-screen block; someone who never subscribed gets the teaser.
+  const LAPSED_STATUSES = new Set(["canceled", "past_due", "unpaid", "incomplete_expired"]);
   const $ = (id) => document.getElementById(id);
   const show = (id, on) => { const e = $(id); if (e) e.hidden = !on; };
 
@@ -107,9 +111,12 @@ const PassdGate = (() => {
       ? `Free for 7 days, then A$39.99/year. You won't be charged before ${d}. Cancel anytime.`
       : `Free for 7 days, then A$4.99/month. You won't be charged before ${d}. Cancel anytime.`;
   }
-  async function startCheckout() {
+  async function startCheckout(ev) {
     if (!state.session) { closeModal("subModal"); openModal("authModal"); return; }
-    const btn = $("subCta"); btn.disabled = true; btn.textContent = "Starting your free trial…";
+    // Works from either the subscribe modal or the lapsed gate.
+    const btn = (ev && ev.currentTarget) || $("subCta");
+    const was = btn.textContent;
+    btn.disabled = true; btn.textContent = "Opening secure checkout…";
     try {
       const r = await fetch(fn("create-checkout"), {
         method: "POST",
@@ -121,7 +128,7 @@ const PassdGate = (() => {
       if (body.preview) { toastMsg("Preview trial started (payments not wired yet)"); setTimeout(() => location.reload(), 900); return; }
       toastMsg(body.error || "Couldn't start checkout");
     } catch { toastMsg("Couldn't reach the server. Try again"); }
-    btn.disabled = false; btn.textContent = "Start 7-day free trial";
+    btn.disabled = false; btn.textContent = was;
   }
   async function openPortal() {
     try {
@@ -160,6 +167,21 @@ const PassdGate = (() => {
     if (state.weeksAvailable > 1) { const n = $("teaserWeeks"); if (n) n.textContent = state.weeksAvailable; }
   }
 
+  // Full-screen, non-dismissible block for a lapsed trial/subscription.
+  function showLapsedGate(status) {
+    const msg = $("lapsedMsg");
+    if (msg) {
+      msg.textContent = status === "past_due" || status === "unpaid"
+        ? "We couldn't take your last payment, so full results are locked. Update your card to restore access to every pass-in, price guides and direct listing links."
+        : "Your free trial has finished, so full results are locked. Subscribe to get every pass-in, price guides and direct listing links back.";
+    }
+    show("lapsedGate", true);
+    document.querySelectorAll("#lapsedGate .land-plan").forEach((b) => {
+      b.classList.toggle("on", b.dataset.plan === plan);
+      b.setAttribute("aria-checked", String(b.dataset.plan === plan));
+    });
+  }
+
   function renderLandPlans() {
     document.querySelectorAll("#landing .land-plan").forEach((b) => {
       b.classList.toggle("on", b.dataset.plan === plan);
@@ -177,6 +199,19 @@ const PassdGate = (() => {
         state.session ? openModal("subModal") : openModal("authModal");
       }));
     on("teaserCta", () => openModal("subModal"));
+    // Lapsed gate: checkout directly (no dismissible modal in front of the block).
+    on("lapsedCta", startCheckout);
+    on("lapsedPortal", openPortal);
+    on("lapsedSignOut", async () => { await sb.auth.signOut(); location.reload(); });
+    document.querySelectorAll("#lapsedGate .land-plan").forEach((b) =>
+      b.addEventListener("click", () => {
+        plan = b.dataset.plan;
+        document.querySelectorAll("#lapsedGate .land-plan").forEach((x) => {
+          x.classList.toggle("on", x.dataset.plan === plan);
+          x.setAttribute("aria-checked", String(x.dataset.plan === plan));
+        });
+        renderPlans();
+      }));
     on("tabSignIn", () => setAuthMode("signin"));
     on("tabSignUp", () => setAuthMode("signup"));
     on("authSubmit", submitAuth);
@@ -236,6 +271,12 @@ const PassdGate = (() => {
     try {
       const { data: subRow } = await sb.from("subscribers").select("current_period_end,status,dev_grant").eq("user_id", state.session.user.id).maybeSingle();
       if (subRow && (subRow.status === "trialing" || subRow.dev_grant)) state.trialEnd = subRow.current_period_end;
+      // Had access, lost it -> hard block. Never subscribed -> teaser (the funnel).
+      // Entitlement itself is enforced server-side; this only picks the UI.
+      if (state.tier !== "pro" && subRow && LAPSED_STATUSES.has(subRow.status)) {
+        state.lapsed = true;
+        showLapsedGate(subRow.status);
+      }
     } catch {}
     renderHeader();
     if ((location.hash || "").includes("sub=success")) { toastMsg("Trial started. Welcome to Passd"); history.replaceState(null, "", location.pathname); }
