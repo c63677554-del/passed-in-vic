@@ -201,7 +201,7 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
    margins centre the card while it fits, then collapse to 0 once it is taller
    than the viewport, so the whole card stays scrollable. align-items:center
    keeps centring past the edges and clips the top and bottom unreachably. */
-#landing { min-height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 28px 16px; background: linear-gradient(rgba(250, 250, 249, .32), rgba(244, 244, 242, .42)), var(--bg) url("assets/hero-app.jpg") center / cover no-repeat; }
+#landing { height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 28px 16px; background: linear-gradient(rgba(250, 250, 249, .32), rgba(244, 244, 242, .42)), var(--bg) url("assets/hero-app.jpg") center / cover no-repeat; }
 .land { width: min(560px, 100%); margin: auto 0; padding: 38px 42px 26px; text-align: center; background: rgba(255, 255, 255, .97); border: 1px solid rgba(15, 23, 42, .07); border-radius: 22px; box-shadow: 0 32px 90px rgba(15, 23, 42, .30), 0 6px 22px rgba(15, 23, 42, .12); }
 @media (max-width: 640px) { #landing { padding: 14px 10px; } .land { padding: 28px 20px 20px; border-radius: 18px; } .land h1 { font-size: 25px; } }
 .land-brand { display: flex; flex-direction: column; align-items: center; gap: 6px; }
