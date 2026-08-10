@@ -176,6 +176,7 @@ const PassdGate = (() => {
         : "Your free trial has finished, so full results are locked. Subscribe to get every pass-in, price guides and direct listing links back.";
     }
     show("lapsedGate", true);
+    show("teaser", false); // the gate supersedes the upgrade banner; avoids a flash of both
     document.querySelectorAll("#lapsedGate .land-plan").forEach((b) => {
       b.classList.toggle("on", b.dataset.plan === plan);
       b.setAttribute("aria-checked", String(b.dataset.plan === plan));
