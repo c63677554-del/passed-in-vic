@@ -144,63 +144,78 @@ const TILES = [
   { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", opt: { subdomains: "abc", maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' } },
   { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", opt: { maxZoom: 19, attribution: "Tiles &copy; Esri" } },
 ];
-// Re-tint the stock dark style to the "Slate & Mint" map palette (DESIGN.md).
-// OpenFreeMap's dark style is near-black (rgb(12,12,12)); the design calls for a
-// deep green so mint clusters and teal markers sit on a surface that belongs to
-// the same palette as the rest of the UI. Recolouring the loaded style avoids
-// hosting a style JSON of our own, and every step is individually guarded: if
-// any layer does not exist or is not paintable, the map still renders in the
-// stock dark style rather than failing.
-const MAP_INK = { land: "#16302B", water: "#102622", road: "#22443D", label: "#859E98" };
-function tintDarkStyle(gl) {
+// Re-tint the loaded vector style to the "Signal" greyscale map palette
+// (DESIGN.md ss4). The basemap must carry NO colour of its own, so the signal
+// clusters and price blocks are the only colour on the map. Positron is already
+// near-neutral, but it still ships park green, landuse tints and POI icons -
+// this flattens all of them.
+//
+// Recolouring the loaded style avoids hosting a style JSON of our own, and every
+// step is individually guarded: if a layer does not exist or is not paintable,
+// the map still renders in the stock style rather than failing.
+const MAP_INK = { land: "#E8E8E4", water: "#DEDEDA", road: "#FFFFFF", line: "#CFCFCB", label: "#616161" };
+function tintGreyStyle(gl) {
   let layers;
   try { layers = gl.getStyle().layers || []; } catch { return; }
   for (const layer of layers) {
     const id = String(layer.id || "");
     const set = (prop, val) => { try { gl.setPaintProperty(id, prop, val); } catch { /* layer lacks this paint prop */ } };
+    const hide = () => { try { gl.setLayoutProperty(id, "visibility", "none"); } catch { /* not hideable */ } };
+
+    // POI icons are the loudest non-data thing on a basemap: they are multi-hue
+    // pictograms competing with the markers. Turn them off entirely.
+    if (layer.type === "symbol" && /poi|shop|amenity|icon/i.test(id)) { hide(); continue; }
+
     if (layer.type === "background") set("background-color", MAP_INK.land);
     else if (layer.type === "fill") {
       if (/water|ocean|sea|river|lake/i.test(id)) set("fill-color", MAP_INK.water);
-      else if (/park|wood|forest|grass|green/i.test(id)) set("fill-color", "#1B3A33");
-      else if (/building/i.test(id)) set("fill-color", "#1E3B35");
+      // Park green, wood, landuse and commercial tints all collapse to land.
+      else if (/park|wood|forest|grass|green|landuse|landcover|residential|commercial|industrial|sand|beach/i.test(id)) set("fill-color", MAP_INK.land);
+      else if (/building/i.test(id)) set("fill-color", "#DFDFDA");
       else set("fill-color", MAP_INK.land);
+      set("fill-outline-color", MAP_INK.line);
     } else if (layer.type === "line") {
       if (/water|river|stream/i.test(id)) set("line-color", MAP_INK.water);
-      else set("line-color", MAP_INK.road);
+      // Roads are white with a --map-line casing, so the road network reads as
+      // structure rather than as ink.
+      else if (/casing|outline/i.test(id)) set("line-color", MAP_INK.line);
+      else if (/road|street|highway|motorway|transport|bridge|tunnel/i.test(id)) set("line-color", MAP_INK.road);
+      else set("line-color", MAP_INK.line);
     } else if (layer.type === "symbol") {
-      // No halo: the spec calls for flat labels, and a halo on a dark ground
-      // reads as fringing at small sizes.
+      // Labels keep a white halo (measured 5.04:1 on --map-land, 6.19:1 on the
+      // halo) so they stay legible over roads without becoming a second ink.
       set("text-color", MAP_INK.label);
-      set("text-halo-width", 0);
+      set("text-halo-color", "#FFFFFF");
+      set("text-halo-width", 1.2);
     }
   }
 }
 function addBasemap() {
-  // Dark vector basemap (OpenFreeMap via MapLibre GL), re-tinted to the design
-  // palette. The map is deliberately the ONLY dark region in the UI so the
-  // markers are the loudest thing on screen. Raster chain remains the fallback
-  // when the GL libraries fail to load or the CDN is unreachable.
+  // Light GREYSCALE vector basemap (OpenFreeMap Positron via MapLibre GL),
+  // re-tinted so the basemap carries no colour at all and the data layer is the
+  // only signal on it. Never a dark style, never satellite. Raster chain remains
+  // the fallback when the GL libraries fail to load or the CDN is unreachable.
   if (window.maplibregl && L.maplibreGL) {
     try {
       const layer = L.maplibreGL({
-        style: "https://tiles.openfreemap.org/styles/dark",
+        style: "https://tiles.openfreemap.org/styles/positron",
         attribution: '&copy; <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         fadeDuration: 0, // skip label cross-fade work while panning
       }).addTo(map);
       try {
         const gl = layer.getMaplibreMap && layer.getMaplibreMap();
         if (gl) {
-          if (gl.isStyleLoaded && gl.isStyleLoaded()) tintDarkStyle(gl);
-          else gl.once("styledata", () => tintDarkStyle(gl));
+          if (gl.isStyleLoaded && gl.isStyleLoaded()) tintGreyStyle(gl);
+          else gl.once("styledata", () => tintGreyStyle(gl));
         }
-      } catch { /* untinted dark map is still a working map */ }
+      } catch { /* untinted map is still a working map */ }
       return;
     } catch { /* fall through to raster */ }
   }
-  // Raster fallback. These are LIGHT tiles, but the markers (mint clusters,
-  // white price pills) are tuned for a dark ground, so the container gets a
-  // class that darkens the tile pane in CSS. Without it the fallback path would
-  // put mint on near-white and lose the clusters entirely.
+  // Raster fallback. These tiles carry full colour (OSM green parks, coloured
+  // roads), which would compete with the signal markers, so the container gets a
+  // class that desaturates the TILE PANE only in CSS - never the marker or
+  // overlay panes, or the markers would be greyed out along with the basemap.
   const mapEl = document.getElementById("map");
   if (mapEl) mapEl.classList.add("raster-fallback");
   let i = 0, loaded = false, errs = 0, base = null;

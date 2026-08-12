@@ -1,17 +1,33 @@
 # passd — Design System: "Signal"
 
-> **Status: TARGET, not yet implemented.** The live site currently runs the
-> previous system ("Slate & Mint", teal `#0E7C6B` + mint on a dark basemap), which
-> replaced the original red identity. This document supersedes it. Until the
-> rebuild lands, the site and this spec disagree — trust the spec for intent and
-> the live site for current state.
+> **Status: IMPLEMENTED, 13 Aug 2026.** This is the live system. It replaced
+> "Slate & Mint" (teal + mint on a dark basemap), which replaced the original red
+> identity.
 >
-> **Verify the numbers in this file before trusting them.** Both previous specs
-> stated contrast figures that did not survive measurement, and in both cases the
-> failing token had been assigned to real information rather than decoration.
-> `tools/contrast-audit.mjs` measures the shipped palette; update its token table
-> and re-run it. Do not implement a text colour below 4.5:1 against the surface it
-> sits on, whatever this file says.
+> **Four tokens ship at values different from §1 below**, because the stated
+> palette failed WCAG AA on measurement. This is the third revision of this design
+> system where that happened, and each time the failing token had been assigned to
+> real information rather than decoration — so the correction is to darken the
+> token, not to accept the spec. Measured with `tools/contrast-audit.mjs`, which
+> now covers 29 pairs and exits non-zero on any failure:
+>
+> | Token | Spec | Measured | Shipped | Now | Where it was used |
+> | --- | --- | --- | --- | --- | --- |
+> | `--grey-faint` | `#8A8A8A` | **3.45:1** on white | `#6E6E6E` | 5.10:1 | footer, placeholders, map attribution |
+> | `--sold` | `#8A8A8A` | **3.08:1** on `--bg` | `#5E5E5E` | 5.78:1 | sold/removed status tag |
+> | `--map-label` | `#6E6E6E` | **4.15:1** on `--map-land` | `#616161` | 5.04:1 | every map label |
+> | `--signal-deep` | `#A8C400` | **1.99:1** on white | `#657600` | 5.07:1 | §1 recommends it as the foreground "where contrast is needed" |
+>
+> `--grey` also moved `#6E6E6E` → `#5E5E5E`. It passed (5.10:1), but `--grey-faint`
+> had to land on `#6E6E6E` to pass, which would have collapsed the three-tier
+> hierarchy into one value. The tiers are now 8.86 / 6.48 / 5.10 on white.
+>
+> Two of §1's stated figures were also inaccurate, though harmless: `--black` on
+> `--signal` is **16.04:1** (spec said 15:1), and `--link` on white is **7.04:1**,
+> not 8.2:1. Both pass comfortably.
+>
+> The `--signal`-as-text warning in §1 is correct and now enforced: it measures
+> 1.23:1 on white, and the audit script asserts it stays unused as a foreground.
 
 Spec for implementation. Layout and IA of the current site stay as-is; this changes
 palette, type, component treatment and map styling.
@@ -30,13 +46,13 @@ Principle: the interface is near-monochrome so the **data is the only thing with
   --line:         #DCDCDC;  /* hairline dividers, inactive borders */
   --line-soft:    #E4E4E4;  /* inside-card rules */
   --black:        #0A0A0A;  /* text, borders, structural rules */
-  --grey:         #6E6E6E;  /* secondary text, timestamps */
+  --grey:         #5E5E5E;  /* secondary text, timestamps - see banner */
   --grey-mid:     #4A4A4A;  /* body prose */
-  --grey-faint:   #8A8A8A;  /* placeholders, attribution */
+  --grey-faint:   #6E6E6E;  /* placeholders, attribution - see banner */
 
   /* Signal — used sparingly, never decorative */
   --signal:       #D7F53C;  /* highlight: passed-in state, clusters, key numbers */
-  --signal-deep:  #A8C400;  /* signal on white where contrast is needed (text/icons) */
+  --signal-deep:  #657600;  /* signal as a foreground - see banner; prefer black */
   --link:         #1B34FF;  /* links and outbound actions only */
 
   /* Map */
@@ -44,10 +60,10 @@ Principle: the interface is near-monochrome so the **data is the only thing with
   --map-water:    #DEDEDA;
   --map-road:     #FFFFFF;
   --map-line:     #CFCFCB;
-  --map-label:    #6E6E6E;
+  --map-label:    #616161;  /* see banner */
 
   /* States */
-  --sold:         #8A8A8A;  /* sold / removed */
+  --sold:         #5E5E5E;  /* sold / removed - see banner */
   --focus:        #1B34FF;
 }
 ```
@@ -59,7 +75,10 @@ Rules
 - **No red anywhere.** "Passed in" is a fact, not an alarm — it gets `--signal`. Sold/removed goes `--sold` grey.
 - Budget: at most one `--signal` element per result card, plus map markers.
 
-Contrast: `--black` on `--signal` = 15:1. `--link` on `--white` = 8.2:1. `--grey` only at ≥12px, never for essential info.
+Contrast: `--black` on `--signal` = **16.04:1**. `--link` on `--white` = **7.04:1**.
+All three greys clear 4.5:1 on both `--white` and `--bg`, so any of them may carry
+essential information at any size used here. Re-run `tools/contrast-audit.mjs`
+after touching a token.
 
 ---
 

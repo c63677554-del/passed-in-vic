@@ -7,7 +7,7 @@
   <link rel="icon" href="./logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./logo.svg" />
   <meta name="description" content="Every Australian home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, mapped and refreshed weekly. Price guides, direct listing links, suburb search, filters and a shareable shortlist." />
-  <meta name="theme-color" content="#0E7C6B" />
+  <meta name="theme-color" content="#FFFFFF" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Passd · Australia's auction pass-ins, mapped weekly" />
   <meta property="og:description" content="Every home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, on a map with price guides and direct listing links. Refreshed every Sunday night." />
@@ -18,12 +18,12 @@
   <meta name="twitter:description" content="Every home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, on a map with price guides and direct listing links. Refreshed every Sunday night." />
   <link rel="preconnect" href="https://unpkg.com" crossorigin />
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
-  <!-- Space Grotesk (prose/addresses) + IBM Plex Mono (every numeral). Both are
-       display=swap with system fallbacks in --font-sans/--font-mono, so a blocked
+  <!-- Barlow Condensed (addresses/headings), Barlow (prose) and IBM Plex Mono
+       (every numeral and label). All display=swap with system fallbacks, so a blocked
        or slow font CDN degrades to system text instead of blocking first paint. -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="preload" as="image" href="./assets/hero-app.jpg" />
@@ -34,10 +34,7 @@
   <section id="landing" hidden>
     <div class="land">
       <div class="land-brand">
-        <svg viewBox="0 0 24 24" width="54" height="54" aria-hidden="true">
-          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#0E7C6B"/>
-          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#FFFFFF"/>
-        </svg>
+        <svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" fill="#D7F53C" stroke="#0A0A0A" stroke-width="1.5"/></svg>
         <span class="land-word">passd</span>
       </div>
       <h1>The homes that didn't sell at auction, across Australia.</h1>
@@ -60,10 +57,7 @@
   <div id="app">
     <header class="header">
       <a class="brand" href="./" aria-label="Passd, Australia's auction pass-ins">
-        <svg class="logo" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
-          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#0E7C6B"/>
-          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#FFFFFF"/>
-        </svg>
+        <svg class="logo" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" fill="#D7F53C" stroke="#0A0A0A" stroke-width="1.5"/></svg>
         <span class="word">passd</span>
       </a>
       <div class="search">
@@ -199,7 +193,7 @@
   <div id="lapsedGate" class="lapsed" hidden>
     <div class="lapsed-card" role="dialog" aria-modal="true" aria-labelledby="lapsedTitle">
       <div class="land-brand">
-        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0E7C6B" d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><path fill="#FFFFFF" d="M12 6.2 8.4 9.4V14h2.4v-2.6h2.4V14h2.4V9.4z"/></svg>
+        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" fill="#D7F53C" stroke="#0A0A0A" stroke-width="1.5"/></svg>
       </div>
       <h2 id="lapsedTitle">Your access has ended</h2>
       <p id="lapsedMsg" class="lapsed-msg">Your free trial has finished, so full results are locked. Subscribe to get every reported pass-in, price guides and direct listing links back.</p>
