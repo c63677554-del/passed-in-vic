@@ -1,32 +1,22 @@
-# passd — Design System: "Slate & Mint"
+# passd — Design System: "Signal"
+
+> **Status: TARGET, not yet implemented.** The live site currently runs the
+> previous system ("Slate & Mint", teal `#0E7C6B` + mint on a dark basemap), which
+> replaced the original red identity. This document supersedes it. Until the
+> rebuild lands, the site and this spec disagree — trust the spec for intent and
+> the live site for current state.
+>
+> **Verify the numbers in this file before trusting them.** Both previous specs
+> stated contrast figures that did not survive measurement, and in both cases the
+> failing token had been assigned to real information rather than decoration.
+> `tools/contrast-audit.mjs` measures the shipped palette; update its token table
+> and re-run it. Do not implement a text colour below 4.5:1 against the surface it
+> sits on, whatever this file says.
 
 Spec for implementation. Layout and IA of the current site stay as-is; this changes
 palette, type, component treatment and map styling.
 
-Principle: passd is a **data tool**, not a listings portal. Surfaces are cool and
-quiet, teal carries interaction, mint is reserved for the "passed in" state, and the
-map is the only dark region on screen so markers are the loudest thing in the UI.
-
-This replaces the previous red identity (`#e4002b`), which was the exact brand red of
-realestate.com.au on a near-identical pin-and-house mark. See "Migration" at the end.
-
-> **Contrast note.** Every text/background pair below was computed against WCAG 2.1.
-> Two corrections were made to the original draft:
-> - `--teal` on white measures **5.10:1**, not 4.6:1 — it passes AA for all normal
->   body text, so no "semibold only" caveat is needed.
-> - `--ink-subtle` was `#869492`, which measured 3.15:1 on white and 2.79:1 on
->   `--surface-sunk`. Both fail AA for normal text, and it was assigned to agency
->   names, timestamps and placeholders — information, not decoration. Darkened to
->   `#5F6E6C` (5.34:1 / 4.72:1), the lightest value in that hue passing on both.
->
-> **Third correction, made during implementation (12 Aug 2026).** `--map-ink` was
-> specified as `#6E8B84`, which measures **3.81:1** on `--map-bg` — below AA, on
-> the token this spec assigns to map labels and to the attribution it explicitly
-> asks to keep legible. Lightened to `#859E98` (**4.92:1**), the same hue stepped
-> up until it clears 4.5. Three map elements were also specified as translucent
-> (`seen`/`gone` pills at 86–92%, attribution at 90%); flattened over the dark
-> basemap their text landed at 3.82–4.27:1, so they ship opaque. All 26 pairs in
-> the implementation now pass; the audit script is reproducible.
+Principle: the interface is near-monochrome so the **data is the only thing with colour**. Structure comes from hairline rules and hard edges, not shadows or rounded cards. The basemap is desaturated to greyscale so every cluster, price pill and marker reads as a signal on a neutral field — nothing on the map competes with the data layer.
 
 ---
 
@@ -34,222 +24,173 @@ realestate.com.au on a near-identical pin-and-house mark. See "Migration" at the
 
 ```css
 :root {
-  /* Neutrals (cool, low chroma) */
-  --bg:            #F4F7F6;  /* app background */
-  --surface:       #FFFFFF;  /* cards, top bar, filter bar */
-  --surface-sunk:  #EDF2F1;  /* inactive chips, search field, segment tracks */
-  --border:        #DDE4E2;  /* 1px dividers, input borders */
-  --border-soft:   #E2E8E7;  /* card borders */
+  /* Neutrals */
+  --white:        #FFFFFF;  /* cards, top bar, filter bar */
+  --bg:           #F2F2F0;  /* app background, list gutter */
+  --line:         #DCDCDC;  /* hairline dividers, inactive borders */
+  --line-soft:    #E4E4E4;  /* inside-card rules */
+  --black:        #0A0A0A;  /* text, borders, structural rules */
+  --grey:         #6E6E6E;  /* secondary text, timestamps */
+  --grey-mid:     #4A4A4A;  /* body prose */
+  --grey-faint:   #8A8A8A;  /* placeholders, attribution */
 
-  /* Text */
-  --ink:           #0E1F1C;  /* headings, addresses, primary numbers */
-  --ink-muted:     #5B6B68;  /* suburb, secondary lines */
-  --ink-subtle:    #5F6E6C;  /* agency name, timestamps, placeholders */
-
-  /* Brand / interaction */
-  --teal:          #0E7C6B;  /* primary: active chip, links, logo pin, buttons */
-  --teal-deep:     #0B5F52;  /* hover/pressed, text on mint */
-  --teal-tint:     #E4FAF2;  /* status pill background, selected row */
-  --mint:          #A8F0DC;  /* map clusters, highlight only — never body text */
+  /* Signal — used sparingly, never decorative */
+  --signal:       #D7F53C;  /* highlight: passed-in state, clusters, key numbers */
+  --signal-deep:  #A8C400;  /* signal on white where contrast is needed (text/icons) */
+  --link:         #1B34FF;  /* links and outbound actions only */
 
   /* Map */
-  --map-bg:        #16302B;  /* dark tile base */
-  --map-ink:       #859E98;  /* tile labels/roads - corrected from #6E8B84, see note */
+  --map-land:     #E8E8E4;
+  --map-water:    #DEDEDA;
+  --map-road:     #FFFFFF;
+  --map-line:     #CFCFCB;
+  --map-label:    #6E6E6E;
 
-  /* Signals */
-  --warn:          #C2410C;  /* "Contact agent for price", withdrawn */
-  --sold:          #5B6B68;  /* sold / removed — neutral, not red */
-  --focus:         #0E7C6B;
+  /* States */
+  --sold:         #8A8A8A;  /* sold / removed */
+  --focus:        #1B34FF;
 }
 ```
 
 Rules
+- **Two colours only: `--signal` and `--link`.** Everything else is black, white or grey. If a screen has a third hue, something is wrong.
+- `--signal` is a *background* colour, always with `--black` text on it. It fails contrast as text on white — use `--signal-deep` if you ever need it as a foreground, and prefer black.
+- `--link` is reserved for links and outbound actions (`VIEW ↗`, agent site). Never a fill, never a background.
+- **No red anywhere.** "Passed in" is a fact, not an alarm — it gets `--signal`. Sold/removed goes `--sold` grey.
+- Budget: at most one `--signal` element per result card, plus map markers.
 
-- **Mint is never a background for text smaller than 18px** and never used for links.
-  Its jobs: map clusters, the active-marker halo, and small highlight bars.
-- **No red anywhere.** "Passed in" is a neutral fact, not an alarm — it gets
-  teal/mint. Money-unknown states get `--warn`. Sold/removed goes grey.
-- Max two saturated colors visible in any one viewport (teal + mint). `--warn`
-  appears at most once per card.
-- Dark map is fixed, not a theme toggle. Light UI + dark map is the signature.
-
-### Verified contrast
-
-| Pair | Ratio | Verdict |
-| --- | --- | --- |
-| `--teal` on `--surface` | 5.10 | AA normal text |
-| white on `--teal` (buttons, active chips) | 5.10 | AA normal text |
-| `--ink-muted` on `--surface` | 5.60 | AA normal text |
-| `--ink-subtle` on `--surface` | 5.34 | AA normal text |
-| `--ink-subtle` on `--surface-sunk` | 4.72 | AA normal text |
-| `--warn` on `--surface` | 5.18 | AA normal text |
-| `--sold` on `--surface-sunk` | 4.96 | AA normal text |
-| `--teal-deep` on `--teal-tint` | 6.94 | AA normal text |
-| `#0B3B33` on `--mint` (cluster numerals) | 9.58 | AA normal text |
-
-Re-measure if any token moves. Do not reintroduce a text colour below 4.5:1 against
-the surface it sits on, at any size used in this UI.
+Contrast: `--black` on `--signal` = 15:1. `--link` on `--white` = 8.2:1. `--grey` only at ≥12px, never for essential info.
 
 ---
 
 ## 2. Typography
 
-| Role | Font | Size / weight / tracking |
-| --- | --- | --- |
-| Display (marketing, empty states) | Space Grotesk 700 | 40–56px, -0.03em, line-height 1.05 |
-| Page/section heading | Space Grotesk 600 | 24px, -0.02em |
-| Card title (address) | Space Grotesk 700 | 18px, -0.02em, line-height 1.2 |
-| Body | Space Grotesk 400 | 15px / 1.55 |
-| Secondary (suburb, agency) | Space Grotesk 400 | 13px, `--ink-muted` |
-| Data / labels / counts | IBM Plex Mono 500 | 11–12px, +0.08em, UPPERCASE |
-| Price & result counts | IBM Plex Mono 500 | 12–15px, tabular |
+| Role | Font | Size / weight / treatment |
+|---|---|---|
+| Display (marketing, empty states) | Barlow Condensed 700 | 48–72px, UPPERCASE, line-height 0.95, +0.01em |
+| Section heading | Barlow Condensed 700 | 24–32px, UPPERCASE |
+| Card title (address) | Barlow Condensed 700 | 24px, UPPERCASE, line-height 1.0 |
+| Body prose | Barlow 400 | 15px / 1.5, `--grey-mid` |
+| Secondary (agency) | Barlow 400 | 12–13px, `--grey` |
+| Labels, filters, nav, buttons | IBM Plex Mono 500 | 10.5–11px, +0.08em, UPPERCASE |
+| Data: prices, counts, dates, suburb/postcode | IBM Plex Mono 400/500 | 10–13px, tabular |
 
-- Load `Space+Grotesk:wght@400;500;600;700` and `IBM+Plex+Mono:wght@400;500` with
-  `font-display: swap`.
-- **Every number, date, price, count and status label is IBM Plex Mono.** Prose and
-  addresses are Space Grotesk. This split is the type system — don't blur it.
-- `font-variant-numeric: tabular-nums` on all mono numerics so counts don't jitter on
-  filter change.
-- `text-wrap: pretty` on paragraphs; `text-wrap: balance` on headings.
+- Load: `Barlow+Condensed:wght@600;700`, `Barlow:wght@400;500`, `IBM+Plex+Mono:wght@400;500`. `font-display: swap`.
+- **The type system is the split:** street addresses and headings are condensed uppercase; every number, date, price, status and UI label is mono uppercase; only real sentences are Barlow regular sentence-case.
+- `font-variant-numeric: tabular-nums` on all mono numerics so counts don't jitter when filters change.
+- Never letterspace Barlow Condensed negatively; never lowercase the mono labels.
+- `text-wrap: pretty` on paragraphs.
 
 ---
 
 ## 3. Space, radius, elevation
 
-- Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48. Card padding 16px, card gap 12px,
-  list gutter 16px.
-- Radius: `--r-sm: 8px` (inputs, chips), `--r-md: 12px` (cards, panels),
-  `--r-pill: 999px` (filter chips, status pills, map price labels). No 4px, no 24px.
-- Elevation: almost none. Cards use `1px solid var(--border-soft)`, no shadow. Only
-  floating-over-map elements get shadow: `0 2px 8px rgba(14,31,28,.14)`. Map popups:
-  `0 8px 24px rgba(14,31,28,.24)`.
-- Border width is always 1px. Hairline dividers inside cards use `--border-soft`.
+- Spacing scale: 4 / 8 / 12 / 16 / 24 / 32 / 48. Card padding 16px, list gutter 16px, bar padding 12px 16px.
+- **Radius: 0 everywhere.** No pills, no rounded cards, no rounded inputs. The only circles are single-property map markers (see §4).
+- **Elevation: none.** No box-shadows on cards, chips, bars or inputs. Separation is done with `1px solid var(--line)`.
+  - Sole exception: elements floating over the map (popup, zoom stack, price labels) get `0 1px 0 var(--black)`-style hard offset or `0 2px 0 rgba(10,10,10,.12)` — a hard, un-blurred offset, never a soft glow.
+- Structural rules: 1px `--black` under the top bar (the one heavy rule on screen); 1px `--line` for everything else.
+- Result cards are **not** floating tiles — they are white rows separated by 1px `--line`, edge to edge in the list column.
 
 ---
 
 ## 4. Components
 
 ### Top bar
+White, 56px, 1px `--black` bottom border. Logo: 16px `--signal` square with 1.5px black border + `PASSD` in Barlow Condensed 700 uppercase. Search field: full-width, `1px solid --black`, no radius, mono 11px placeholder in `--grey-faint`. Result count in mono with the number knocked out on signal: `[613] / 617 PASSED IN`. Location and period selectors are plain mono uppercase with a `▾`, no chrome.
 
-White surface, 1px bottom border, 56px tall. Logo: teal map-pin glyph + `passd` in
-Space Grotesk 700, -0.03em, lowercase. Search field is `--surface-sunk` with
-`--border`, radius 8px, mono placeholder. Result count in mono: `613/617 passed in`
-with the first number in `--teal` 500. Location and period selectors are borderless
-sunk pills.
-
-### Filter chips
-
-Pill, 32px tall, 12px horizontal padding. Sans for type/bed labels, mono for numeric
-ones like `2+`.
-
-- default: `--surface-sunk` bg, `--ink-muted` text, no border
-- hover: bg `#E4EAE9`
-- active: `--teal` bg, white text, 500
+### Filter chips (segmented rail, not pills)
+A single flush row of mono uppercase items, divided by 1px `--line`, 36px tall, 12px horizontal padding. No gaps between them — the rule is the separator.
+- default: transparent bg, `--grey-mid` text
+- hover: bg `--bg`
+- active: bg `--black`, `--white` text
 - focus-visible: 2px `--focus` outline, 2px offset
-- disabled: 40% opacity, no pointer
+- disabled: 40% opacity
+Numeric filters (`2+ BED`, `$500K+`) use the same rail. Sort control sits right-aligned in `--grey`.
 
-Checkbox ("Hide sold & removed"): 16px, teal fill when checked, white tick, radius 4px.
+Checkbox ("Hide sold & removed"): 14px square, 1px `--black`, `--signal` fill with black tick when checked.
 
-### Result card
+### Result row / card
+White, 16px padding, 1px `--line` bottom border, no radius, no shadow.
+1. **Status tag** — `--signal` block, `--black` mono 9.5px `PASSED IN`, 2px 6px padding, square. Date on the right, mono 10px `--grey`: `SAT 08 AUG`.
+2. **Address** — Barlow Condensed 700, 24px uppercase, `--black`.
+3. **Suburb line** — mono 11px `--grey`: `ABERFELDIE VIC 3040`.
+4. **Price line** — Barlow 400 12.5px `--black` when known; `Contact agent for price` in `--grey-mid` when not (no colour — the absence of price is not an alert).
+5. **Attribute tags** — mono 10px uppercase, `1px solid --black`, 2px 7px padding, 6px gap: `HOUSE` `3 BED` `AUCTION`.
+6. **Footer** — 1px `--line-soft` top rule, agency in 11px Barlow `--grey`, `VIEW ↗` in mono 10.5px `--link` with a 1px `--link` underline.
 
-`--surface`, radius 12px, 1px `--border-soft`, 16px padding.
+States
+- hover: bg `--bg`
+- selected (synced with map): 3px `--signal` left inset bar, bg `--white`
+- sold/removed: status tag becomes `--bg` with `--sold` text and 1px `--line` border; address at 70% opacity
+- save/heart: 1.5px black outline icon → `--signal` fill with black stroke when saved
 
-1. **Status pill** — `--teal-tint` bg, `--teal-deep` text, 5px teal dot, mono 11px
-   `PASSED IN`; date on the right in mono `SAT 8 AUG`.
-2. **Address** — 18px Space Grotesk 700; suburb below in 13px `--ink-muted`.
-3. **Price line** — mono. Known price: `--ink`. Unknown: `Contact agent for price` in
-   `--warn`.
-4. **Attribute chips** — outlined pills, `1px --border`, 10–11px, `--ink-muted`.
-5. **Footer** — 1px `--border-soft` top rule, agency in 12px `--ink-subtle`,
-   `View ↗` in `--teal` 600.
+### Map — **greyscale basemap (required)**
+The basemap must be visually desaturated so the data layer is the only colour on the map.
+- Preferred: a greyscale/positron-style vector basemap (CARTO Positron, MapTiler "Greyscale"/"Basic" desaturated, or a Protomaps light theme) with land `--map-land`, water `--map-water`, roads `--map-road` with `--map-line` casing, labels `--map-label` mono-ish at 11px with a white halo, and **all POI icons, park green, landuse fills and commercial tints turned off**.
+- Fallback if a raster basemap is used: apply `filter: grayscale(1) contrast(0.92) brightness(1.04)` to the tile layer only — never to marker or overlay panes (wrap tiles in their own pane/canvas so the filter can't touch the data layer).
+- Never a dark basemap. Never a satellite/hybrid layer.
 
-Hover: border to `--teal` at 40% (`#0E7C6B66`), no lift. Selected (synced with map):
-2px left inset bar in `--mint` plus bg `--teal-tint` at 40%. Save/heart:
-`--ink-subtle` outline, `--teal` filled when saved.
-
-Sold/removed cards: status pill in `--sold` on `--surface-sunk`, address at 80%
-opacity.
-
-### Map
-
-- Tiles: dark style on `--map-bg`. Land `#16302B`, water `#102622`, roads `#22443D`,
-  labels `--map-ink` with no halo. Keep attribution legible: `--map-ink` at 12px.
-- **Cluster markers:** circle, `--mint` fill, `#0B3B33` text, mono 500, radius 999px,
-  soft ring `0 0 0 7px rgba(168,240,220,.16)`. Sizes: <10 → 30px, 10–49 → 38px,
-  50+ → 46px (font 11/12/14px).
-- **Single-property markers:** 30px circle, `--teal` fill, mint 1.5px ring, white mono
-  count / `1`.
-- **Active/hovered marker:** swap fill to white, text `--teal-deep`, ring grows to 10px.
-- **Price / bed labels:** white 92% pill, radius 999px, mono 10px `--ink`, 1px
-  `rgba(14,31,28,.08)` border, small shadow.
-- Zoom controls: white 12px-radius stack, `--ink` glyphs, 1px `--border`, shadow.
-- Popups: white, radius 12px, mini version of the result card.
+Markers
+- **Cluster:** square, `--signal` fill, 1.5px `--black` border, `--black` mono 500 count, no radius, no shadow. Sizes 30 / 38 / 46px for <10 / 10–49 / 50+ (font 11 / 12 / 13px).
+- **Single property:** 26px black square, white mono `1`; or a 26px circle if you want singles distinguishable from clusters at a glance — pick one and keep it consistent.
+- **Active / hovered:** invert — `--black` fill, `--signal` text, border stays black. 180ms.
+- **Price / attribute labels:** white block, 1px `--black`, mono 10px `--black`, 3px 8px padding, square: `$740K+`.
+- **Zoom controls:** white square stack, 1px `--black`, black glyphs, no radius.
+- **Popup:** white, 1px `--black`, square, a condensed version of the result row.
+- Map has a 1px `--black` border against the list column.
 
 ### Footer / meta strip
-
-`--surface` with 1px top border. All mono 11px `--ink-subtle`; links `--teal` with
-underline on hover. Disclaimer right-aligned, same treatment, never red.
+White, 1px `--line` top border. All mono 10.5px `--grey-faint`; links `--link` underlined on hover. Disclaimer right-aligned in the same treatment — never red, never boxed.
 
 ---
 
 ## 5. Interaction
 
-- Transitions: 120ms `ease-out` on color/border/opacity; 180ms on marker size. Nothing
-  longer, no bounce easing.
-- Focus: always visible, 2px `--focus` outline + 2px offset; never remove outlines.
-- Loading: skeletons in `--surface-sunk`, no spinners in the list; map shows a 2px
-  `--mint` top progress bar while querying.
-- Empty state: display type, one line of mono explanation, teal text button to clear
-  filters.
-- Reduced motion: drop marker-size and progress-bar animation.
-- Hit targets >= 44px on mobile; chips grow to 40px tall in a horizontally scrolling
-  row.
+- Transitions: 120ms `ease-out` on background/border/colour; 180ms on marker invert. No easing with bounce, no scale transforms, no lift-on-hover.
+- Focus: always visible — 2px `--focus` outline, 2px offset. Never removed.
+- Loading: skeleton blocks in `--bg` (square, no shimmer gradient — a 1.2s opacity pulse only). Map shows a 2px `--signal` progress bar across the top while querying.
+- Empty state: Barlow Condensed display line, one mono line of explanation, `--link` text button to clear filters.
+- Reduced motion: disable marker transitions and the progress bar; keep instant state changes.
+- Mobile: filter rail scrolls horizontally, items grow to 44px tall; all hit targets ≥44px. Map/list toggle is a two-item segment in the same rail style.
 
 ---
 
-## 6. Do / don't
+## 6. Tailwind config (if used)
 
-**Do:** keep the current layout and filter behaviour; put every numeral in mono; let
-the dark map be the only dark surface; keep one accent per card.
+> **Not applicable to this repo.** The site is vanilla CSS with no build step; there
+> is no Tailwind. Implement §1 as CSS custom properties in `styles.css`. This block
+> is kept only as a statement of the intended values.
 
-**Don't:** reintroduce red; use mint for text or links; add drop shadows to list cards;
-add gradients; add a light-map/dark-map toggle; introduce a third typeface; use emoji
-or hand-drawn icon sets (use a single line-icon set at 1.5px stroke, e.g. Lucide).
+```js
+theme: {
+  extend: {
+    colors: {
+      white: '#FFFFFF', bg: '#F2F2F0', black: '#0A0A0A',
+      line: { DEFAULT: '#DCDCDC', soft: '#E4E4E4' },
+      grey: { DEFAULT: '#6E6E6E', mid: '#4A4A4A', faint: '#8A8A8A' },
+      signal: { DEFAULT: '#D7F53C', deep: '#A8C400' },
+      link: '#1B34FF',
+      map: { land: '#E8E8E4', water: '#DEDEDA', road: '#FFFFFF', line: '#CFCFCB', label: '#6E6E6E' },
+      sold: '#8A8A8A',
+    },
+    fontFamily: {
+      display: ['"Barlow Condensed"', 'sans-serif'],
+      sans: ['Barlow', 'system-ui', 'sans-serif'],
+      mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+    },
+    borderRadius: { none: '0px' },
+    boxShadow: { none: 'none' },
+  }
+}
+```
+
+Set `borderRadius.DEFAULT` to `0` and remove shadow utilities from the design vocabulary — if a component needs one, it's the wrong component.
 
 ---
 
-## 7. Migration from the red identity
+## 7. Do / don't
 
-The site has **no build step** — it is vanilla CSS and hand-written HTML. There is no
-Tailwind, so implement these tokens as CSS custom properties in `styles.css`. A
-Tailwind config is not applicable here.
+Do: keep the current layout and filter behaviour; desaturate the basemap and turn off POI/landuse colour; put every numeral in mono; use `--signal` at most once per card; separate with 1px rules.
 
-`#e4002b` appears in **21 hardcoded places across 5 files**, and most do not reference
-the `--red` variable. Changing the variable alone leaves a half-rebranded site:
-
-- `styles.css` — `--red`, `--red-600` (`#c50026`), `--red-050` (`#fff1f3`), plus
-  hardcoded `rgba(228,0,43,...)` shadow values that never reference the variable.
-- `logo.svg` — hardcoded fill.
-- `index.html` — 4: the `theme-color` meta tag plus **three inline copies** of the logo
-  SVG (header, landing, lapsed gate).
-- `privacy.html` and `terms.html` — 2 each: an inline logo SVG and a link colour.
-- `assets/hero-app.jpg` — a baked screenshot of the old red app. Re-shoot with the
-  `scripts/screenshot/` rig in the pipeline repo, or the landing page will still show
-  the old identity after everything else changes.
-
-Sequencing notes:
-
-- The **56px top bar** in this spec directly helps the known mobile problem, where
-  header + teaser + filter bar consume ~340px of a 375px-wide viewport and leave
-  roughly one card visible. Do the rebrand and the mobile fix together rather than
-  twice over the same CSS.
-- The **>= 44px hit targets** rule likewise supersedes the current ~113 targets that
-  fall under the 24px WCAG minimum.
-- The **dark basemap is the riskiest item.** The map currently loads OpenFreeMap
-  Positron, a light style, via MapLibre GL. Swapping to a dark style means a different
-  style URL and re-tuning marker contrast against it. Verify markers, cluster
-  legibility and attribution against real data before shipping, and keep the raster
-  fallback chain working.
-- The two web fonts add render-blocking third-party requests to a site that currently
-  ships no webfonts. Self-host or preload them, and confirm the landing page still
-  paints quickly.
+Don't: reintroduce red; use `--signal` as text on white; round any corner; add drop shadows or gradients; add a dark-map or satellite toggle; introduce a fourth typeface; use emoji or multicolour icon sets — use a single line-icon set at 1.5px stroke (Lucide), black only.
