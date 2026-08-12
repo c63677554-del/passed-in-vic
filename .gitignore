@@ -29,3 +29,7 @@ refresh-status.json
 enrich-run.out
 
 check-listings.last
+
+# Local runtime artifacts. *.out was not covered before, which left
+# dress-rehearsal.out and recovery-run.out sitting untracked in a public repo.
+*.out

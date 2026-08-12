@@ -7,7 +7,7 @@
   <link rel="icon" href="./logo.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./logo.svg" />
   <meta name="description" content="Every Australian home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, mapped and refreshed weekly. Price guides, direct listing links, suburb search, filters and a shareable shortlist." />
-  <meta name="theme-color" content="#e4002b" />
+  <meta name="theme-color" content="#0E7C6B" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Passd · Australia's auction pass-ins, mapped weekly" />
   <meta property="og:description" content="Every home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, on a map with price guides and direct listing links. Refreshed every Sunday night." />
@@ -18,6 +18,12 @@
   <meta name="twitter:description" content="Every home that passed in at auction across Melbourne, Sydney, Brisbane, Adelaide and Canberra, on a map with price guides and direct listing links. Refreshed every Sunday night." />
   <link rel="preconnect" href="https://unpkg.com" crossorigin />
   <link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin />
+  <!-- Space Grotesk (prose/addresses) + IBM Plex Mono (every numeral). Both are
+       display=swap with system fallbacks in --font-sans/--font-mono, so a blocked
+       or slow font CDN degrades to system text instead of blocking first paint. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="preload" as="image" href="./assets/hero-app.jpg" />
@@ -29,15 +35,15 @@
     <div class="land">
       <div class="land-brand">
         <svg viewBox="0 0 24 24" width="54" height="54" aria-hidden="true">
-          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#e4002b"/>
-          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#fff"/>
+          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#0E7C6B"/>
+          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#FFFFFF"/>
         </svg>
         <span class="land-word">passd</span>
       </div>
       <h1>The homes that didn't sell at auction, across Australia.</h1>
-      <p class="land-sub">When a home passes in, the seller is motivated and there's a short window where a good offer wins. Passd maps every one across Melbourne, Sydney, Brisbane, Adelaide and Canberra, updated Sunday nights.</p>
+      <p class="land-sub">When a home passes in, the seller is motivated and there's a short window where a good offer wins. Passd maps the reported pass-ins across Melbourne, Sydney, Brisbane, Adelaide and Canberra, updated Sunday nights.</p>
       <ul class="land-points">
-        <li><b>Every pass-in, every week</b>: official auction results, on the map by Monday morning</li>
+        <li><b>Reported pass-ins, every week</b>: weekend auction results from Domain, on the map by Monday morning</li>
         <li><b>Prices and listings attached</b>: agent guides, final auction bids, and one-tap links to the live listing</li>
         <li><b>Made for making offers</b>: save a shortlist, filter to your budget, share homes with your partner</li>
       </ul>
@@ -47,7 +53,7 @@
       </div>
       <button id="landCta" class="land-cta" type="button">Subscribe, first 7 days free</button>
       <p class="land-fine">Card required. Free for 7 days, then billed at the plan above. Cancel anytime. Already subscribed? <button id="landSignIn" class="linkbtn" type="button">Sign in</button></p>
-      <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: official auction results; price guides from live listings. Indicative only, not financial advice.</p>
+      <p class="land-legal"><a href="./privacy.html">Privacy</a> · <a href="./terms.html">Terms</a> · Data: publicly reported auction results (Domain); price guides from live listings. Coverage depends on what agents report. Indicative only, not financial advice.</p>
     </div>
   </section>
 
@@ -55,8 +61,8 @@
     <header class="header">
       <a class="brand" href="./" aria-label="Passd, Australia's auction pass-ins">
         <svg class="logo" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
-          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#e4002b"/>
-          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#fff"/>
+          <path d="M12 1.5c-4.69 0-8.5 3.81-8.5 8.5 0 5.86 7.4 12.66 8.5 13.66 1.1-1 8.5-7.8 8.5-13.66 0-4.69-3.81-8.5-8.5-8.5z" fill="#0E7C6B"/>
+          <path d="M12 6l5.2 4.4v.35H15.7V16h-2.5v-3.2h-2.4V16H8.3v-5.25H6.8v-.35z" fill="#FFFFFF"/>
         </svg>
         <span class="word">passd</span>
       </a>
@@ -78,13 +84,13 @@
       </div>
       <button id="savedBtn" class="tchip heartchip" type="button" aria-label="Your saved homes">
         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21s-7.5-4.7-10-9.3C.6 8.6 2.3 4.9 5.9 4.3c2-.3 3.9.6 5 2.2a5.6 5.6 0 0 1 5-2.2c3.7.6 5.4 4.3 4 7.4-2.6 4.6-10 9.3-10 9.3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
-        <span>Saved</span><span id="savedCount" class="savedn" hidden></span>
+        <span class="lab">Saved</span><span id="savedCount" class="savedn" hidden></span>
       </button>
       <button id="signInBtn" class="tchip" type="button" hidden>Sign in</button>
       <div id="acctWrap" class="acct" hidden>
-        <button id="acctBtn" class="tchip" type="button" aria-haspopup="menu">
+        <button id="acctBtn" class="tchip" type="button" aria-haspopup="menu" aria-label="Account">
           <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          Account
+          <span class="lab">Account</span>
         </button>
         <div id="acctMenu" class="acctmenu" role="menu" hidden>
           <div id="acctEmail" class="acct-email">…</div>
@@ -98,6 +104,9 @@
     <div id="teaser" class="teaser" hidden>
       <span>Free preview: latest week only, price guides hidden. Unlock <b id="teaserWeeks">3</b> weeks + guides &amp; listings.</span>
       <button id="teaserCta" class="teaser-btn" type="button">Upgrade for full access</button>
+      <button id="teaserDismiss" class="teaser-x" type="button" aria-label="Dismiss this banner">
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
     </div>
 
     <div class="filterbar">
@@ -120,7 +129,7 @@
       <span class="sep">·</span>
       <button id="aboutBtn" class="linkbtn" type="button">About &amp; data</button>
       <span class="sep">·</span>
-      <span>Data: official auction results · map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
+      <span>Data: reported auction results (Domain) · map <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OSM</a></span>
       <span class="foot-spacer"></span>
       <span class="disc">Price guides are indicative &amp; change. Confirm with the agent. Not financial advice.</span>
     </footer>
@@ -138,7 +147,7 @@
     <p>When a home passes in, bidding didn't reach the vendor's reserve. Most convert to private sale in the following days, a window where vendors are far more open to negotiated offers. That window is what Passd is built to catch.</p>
     <h3>Where the data comes from</h3>
     <ul>
-      <li><b>Auction results</b>: official public weekend auction results for Melbourne, Sydney, Brisbane, Adelaide and Canberra. Passd accumulates up to ~12 weeks as it refreshes.</li>
+      <li><b>Auction results</b>: publicly reported weekend auction results for Melbourne, Sydney, Brisbane, Adelaide and Canberra, sourced from Domain. Domain is a listings portal, not an official reporting body, and results depend on what selling agents report, so a pass-in that goes unreported will not appear here. Passd accumulates up to ~12 weeks as it refreshes.</li>
       <li><b>Price guides &amp; listing links</b>: matched from the live listing where a guide is published. Roughly a quarter of passed-in homes publish one; the rest are “contact agent” and always stay visible in price filters, since an unknown guide could be in budget.</li>
       <li><b>Map</b>: OpenStreetMap.</li>
     </ul>
@@ -190,10 +199,10 @@
   <div id="lapsedGate" class="lapsed" hidden>
     <div class="lapsed-card" role="dialog" aria-modal="true" aria-labelledby="lapsedTitle">
       <div class="land-brand">
-        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path fill="#e4002b" d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><path fill="#fff" d="M12 6.2 8.4 9.4V14h2.4v-2.6h2.4V14h2.4V9.4z"/></svg>
+        <svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path fill="#0E7C6B" d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/><path fill="#FFFFFF" d="M12 6.2 8.4 9.4V14h2.4v-2.6h2.4V14h2.4V9.4z"/></svg>
       </div>
       <h2 id="lapsedTitle">Your access has ended</h2>
-      <p id="lapsedMsg" class="lapsed-msg">Your free trial has finished, so full results are locked. Subscribe to get every pass-in, price guides and direct listing links back.</p>
+      <p id="lapsedMsg" class="lapsed-msg">Your free trial has finished, so full results are locked. Subscribe to get every reported pass-in, price guides and direct listing links back.</p>
       <div class="land-price" role="radiogroup" aria-label="Choose a plan">
         <button type="button" class="land-plan on" data-plan="annual" role="radio" aria-checked="true"><b>A$39.99/yr</b><span>= A$3.33/mo · save 33%</span></button>
         <button type="button" class="land-plan" data-plan="monthly" role="radio" aria-checked="false"><b>A$4.99/mo</b><span>flexible, cancel anytime</span></button>

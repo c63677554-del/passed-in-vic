@@ -1,12 +1,17 @@
 "use strict";
 
 /* auth.js - Passd's authentication + subscription gate.
-   Modes:
-   - legacy (config empty): resolves immediately with the bundled data.js
-     dataset; no landing, no sign-in - the original free site.
-   - gated (config set): signed-out visitors see the landing page; signed-in
-     users get the teaser (latest week, no guides) or, with an active
-     trial/subscription, the full dataset - enforced SERVER-SIDE by get-data. */
+
+   The site is ALWAYS gated: signed-out visitors see the landing page; signed-in
+   users get the teaser (latest week, no guides) or, with an active
+   trial/subscription, the full dataset - enforced SERVER-SIDE by get-data.
+
+   There used to be a second "legacy" mode here, taken whenever config.js was
+   empty, which served a bundled data.js with no landing page and no sign-in.
+   That bundled dataset no longer exists, so the branch had become a way for a
+   broken or half-deployed config.js to quietly serve an UNGATED, EMPTY app -
+   failing open on the paywall in the one situation nobody would be watching.
+   A missing config is now a loud error instead. */
 
 const PassdGate = (() => {
   const cfg = window.PASSD_CONFIG || {};
@@ -14,7 +19,7 @@ const PassdGate = (() => {
   const sb = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey) : null;
   const fn = (name) => cfg.supabaseUrl.replace(/\/$/, "") + "/functions/v1/" + name;
 
-  const state = { tier: "legacy", session: null, generated: null, weeksAvailable: null, trialEnd: null, lapsed: false };
+  const state = { tier: "gated", session: null, generated: null, weeksAvailable: null, trialEnd: null, lapsed: false };
 
   // Stripe subscription statuses meaning "this person had access and lost it".
   // These get the full-screen block; someone who never subscribed gets the teaser.
@@ -100,16 +105,40 @@ const PassdGate = (() => {
 
   // ---------- subscribe ----------
   let plan = "annual";
+  // null = not asked yet. One trial exists per real inbox (Gmail dots and +tags
+  // collapse to one identity), so someone who already used theirs is charged on
+  // day one. The copy has to say that BEFORE the redirect, not leave Stripe's
+  // checkout page to break the news.
+  let trialEligible = null;
+  async function refreshTrialEligibility() {
+    if (!state.session) return;
+    try {
+      const r = await fetch(fn("create-checkout"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: cfg.supabaseKey, Authorization: "Bearer " + state.session.access_token },
+        body: JSON.stringify({ probe: true }),
+      });
+      const body = await r.json();
+      if (typeof body.trialEligible === "boolean") { trialEligible = body.trialEligible; renderPlans(); }
+    } catch { /* leave copy as-is rather than showing a wrong, more generous claim */ }
+  }
   function renderPlans() {
     document.querySelectorAll("#subModal .plan").forEach((b) => {
       b.classList.toggle("on", b.dataset.plan === plan);
       b.setAttribute("aria-checked", String(b.dataset.plan === plan));
     });
-    const d = new Date(Date.now() + 7 * 864e5).toLocaleDateString("en-AU", { day: "numeric", month: "long" });
+    const price = plan === "annual" ? "A$39.99/year" : "A$4.99/month";
     const t = $("subTerms");
-    if (t) t.textContent = plan === "annual"
-      ? `Free for 7 days, then A$39.99/year. You won't be charged before ${d}. Cancel anytime.`
-      : `Free for 7 days, then A$4.99/month. You won't be charged before ${d}. Cancel anytime.`;
+    const cta = $("subCta");
+    if (trialEligible === false) {
+      // Known repeat: no trial. Say so plainly and drop the "free" promise.
+      if (t) t.textContent = `You've already used your free trial, so this starts today at ${price}. Cancel anytime.`;
+      if (cta) cta.textContent = `Subscribe ${plan === "annual" ? "A$39.99/yr" : "A$4.99/mo"}`;
+    } else {
+      const d = new Date(Date.now() + 7 * 864e5).toLocaleDateString("en-AU", { day: "numeric", month: "long" });
+      if (t) t.textContent = `Free for 7 days, then ${price}. You won't be charged before ${d}. Cancel anytime.`;
+      if (cta) cta.textContent = "Subscribe, first 7 days free";
+    }
   }
   async function startCheckout(ev) {
     if (!state.session) { closeModal("subModal"); openModal("authModal"); return; }
@@ -125,7 +154,9 @@ const PassdGate = (() => {
       });
       const body = await r.json();
       if (body.url) { location.href = body.url; return; }
-      if (body.preview) { toastMsg("Preview trial started (payments not wired yet)"); setTimeout(() => location.reload(), 900); return; }
+      // No preview-grant branch: create-checkout now returns a 503 rather than
+      // granting free access when Stripe config is missing, so a broken payment
+      // setup surfaces as an error instead of silently giving the product away.
       toastMsg(body.error || "Couldn't start checkout");
     } catch { toastMsg("Couldn't reach the server. Try again"); }
     btn.disabled = false; btn.textContent = was;
@@ -207,6 +238,9 @@ const PassdGate = (() => {
     const m = $(id);
     if (!m) return;
     m.hidden = false;
+    // Ask the server whether the free week is actually available before the
+    // subscribe copy is read, so the offer on screen is the offer they get.
+    if (id === "subModal") refreshTrialEligibility();
     requestAnimationFrame(() => m.classList.add("open"));
     enterModal(m, dismissible);
   }
@@ -229,7 +263,9 @@ const PassdGate = (() => {
       if (state.tier === "pro") s.textContent = state.trialEnd ? "Trial ends " + new Date(state.trialEnd).toLocaleDateString("en-AU", { day: "numeric", month: "short" }) : "Subscribed";
       else s.textContent = "Free preview";
     }
-    show("teaser", !!state.session && state.tier !== "pro");
+    let dismissed = false;
+    try { dismissed = sessionStorage.getItem("passd_teaser_dismissed") === "1"; } catch { /* private mode */ }
+    show("teaser", !!state.session && state.tier !== "pro" && !dismissed);
     if (state.weeksAvailable > 1) { const n = $("teaserWeeks"); if (n) n.textContent = state.weeksAvailable; }
   }
 
@@ -268,6 +304,13 @@ const PassdGate = (() => {
         state.session ? openModal("subModal") : openModal("authModal");
       }));
     on("teaserCta", () => openModal("subModal"));
+    // The teaser costs ~40px of a phone screen that only fits a few cards. It is
+    // a nudge, not a gate, so it can be dismissed for the session; it returns on
+    // the next visit and the upgrade path stays in the account menu regardless.
+    on("teaserDismiss", () => {
+      const t = $("teaser"); if (t) t.hidden = true;
+      try { sessionStorage.setItem("passd_teaser_dismissed", "1"); } catch { /* private mode */ }
+    });
     // Lapsed gate: checkout directly (no dismissible modal in front of the block).
     on("lapsedCta", startCheckout);
     on("lapsedPortal", openPortal);
@@ -312,7 +355,8 @@ const PassdGate = (() => {
   // ---------- boot ----------
   async function ready() {
     if (!configured) {
-      return { tier: "legacy", properties: typeof PASSED_IN !== "undefined" ? PASSED_IN : [], generated: typeof DATA_GENERATED !== "undefined" ? DATA_GENERATED : null };
+      // Fail loudly and show nothing rather than rendering an ungated empty app.
+      throw new Error("Passd config missing: supabaseUrl/supabaseKey are not set, or supabase-js failed to load.");
     }
     wire();
     // Sign-ins land here from any path (password, reset link, another tab -

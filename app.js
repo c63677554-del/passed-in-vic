@@ -3,7 +3,7 @@
 /* Passd - Melbourne auction pass-ins. REA-style two-pane UI: price-pill markers
    with clustering, viewport-synced list, suburb/address search, type/beds/price
    filters, sorting, a localStorage shortlist, and shareable URL state.
-   Data: data.js (DATA, DATA_GENERATED), refreshed weekly by scripts/. */
+   Data: fetched at runtime from the gated get-data edge function. */
 
 // ---------- tiny helpers ----------
 const el = (id) => document.getElementById(id);
@@ -43,9 +43,9 @@ const HEART = (on) => `<svg viewBox="0 0 24 24" width="17" height="17" aria-hidd
 const LINKIC = `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M10 13.5a4.7 4.7 0 0 0 7 .4l2.6-2.6a4.7 4.7 0 0 0-6.6-6.6l-1.5 1.5M14 10.5a4.7 4.7 0 0 0-7-.4l-2.6 2.6a4.7 4.7 0 0 0 6.6 6.6l1.5-1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
 
 // ---------- data + persistent state ----------
-// The dataset arrives via PassdGate.ready(): bundled data.js in legacy mode,
-// or the authenticated get-data endpoint (teaser/full) in gated mode.
-let DATA = [], WEEKS = [], GENERATED = null, appTier = "legacy";
+// The dataset arrives via PassdGate.ready() from the authenticated get-data
+// endpoint, which decides teaser vs full server-side.
+let DATA = [], WEEKS = [], GENERATED = null, appTier = "gated";
 function setDataset(props, gen) {
   DATA = props || [];
   GENERATED = gen || null;
@@ -144,20 +144,65 @@ const TILES = [
   { url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", opt: { subdomains: "abc", maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' } },
   { url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", opt: { maxZoom: 19, attribution: "Tiles &copy; Esri" } },
 ];
+// Re-tint the stock dark style to the "Slate & Mint" map palette (DESIGN.md).
+// OpenFreeMap's dark style is near-black (rgb(12,12,12)); the design calls for a
+// deep green so mint clusters and teal markers sit on a surface that belongs to
+// the same palette as the rest of the UI. Recolouring the loaded style avoids
+// hosting a style JSON of our own, and every step is individually guarded: if
+// any layer does not exist or is not paintable, the map still renders in the
+// stock dark style rather than failing.
+const MAP_INK = { land: "#16302B", water: "#102622", road: "#22443D", label: "#859E98" };
+function tintDarkStyle(gl) {
+  let layers;
+  try { layers = gl.getStyle().layers || []; } catch { return; }
+  for (const layer of layers) {
+    const id = String(layer.id || "");
+    const set = (prop, val) => { try { gl.setPaintProperty(id, prop, val); } catch { /* layer lacks this paint prop */ } };
+    if (layer.type === "background") set("background-color", MAP_INK.land);
+    else if (layer.type === "fill") {
+      if (/water|ocean|sea|river|lake/i.test(id)) set("fill-color", MAP_INK.water);
+      else if (/park|wood|forest|grass|green/i.test(id)) set("fill-color", "#1B3A33");
+      else if (/building/i.test(id)) set("fill-color", "#1E3B35");
+      else set("fill-color", MAP_INK.land);
+    } else if (layer.type === "line") {
+      if (/water|river|stream/i.test(id)) set("line-color", MAP_INK.water);
+      else set("line-color", MAP_INK.road);
+    } else if (layer.type === "symbol") {
+      // No halo: the spec calls for flat labels, and a halo on a dark ground
+      // reads as fringing at small sizes.
+      set("text-color", MAP_INK.label);
+      set("text-halo-width", 0);
+    }
+  }
+}
 function addBasemap() {
-  // Minimal vector basemap (OpenFreeMap Positron via MapLibre GL) - clean,
-  // REA-like, free and keyless. Raster chain remains as the fallback when the
-  // GL libraries fail to load or the CDN is unreachable.
+  // Dark vector basemap (OpenFreeMap via MapLibre GL), re-tinted to the design
+  // palette. The map is deliberately the ONLY dark region in the UI so the
+  // markers are the loudest thing on screen. Raster chain remains the fallback
+  // when the GL libraries fail to load or the CDN is unreachable.
   if (window.maplibregl && L.maplibreGL) {
     try {
-      L.maplibreGL({
-        style: "https://tiles.openfreemap.org/styles/positron",
+      const layer = L.maplibreGL({
+        style: "https://tiles.openfreemap.org/styles/dark",
         attribution: '&copy; <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         fadeDuration: 0, // skip label cross-fade work while panning
       }).addTo(map);
+      try {
+        const gl = layer.getMaplibreMap && layer.getMaplibreMap();
+        if (gl) {
+          if (gl.isStyleLoaded && gl.isStyleLoaded()) tintDarkStyle(gl);
+          else gl.once("styledata", () => tintDarkStyle(gl));
+        }
+      } catch { /* untinted dark map is still a working map */ }
       return;
     } catch { /* fall through to raster */ }
   }
+  // Raster fallback. These are LIGHT tiles, but the markers (mint clusters,
+  // white price pills) are tuned for a dark ground, so the container gets a
+  // class that darkens the tile pane in CSS. Without it the fallback path would
+  // put mint on near-white and lose the clusters entirely.
+  const mapEl = document.getElementById("map");
+  if (mapEl) mapEl.classList.add("raster-fallback");
   let i = 0, loaded = false, errs = 0, base = null;
   (function add() {
     base = L.tileLayer(TILES[i].url, TILES[i].opt).addTo(map);
@@ -253,7 +298,18 @@ function cmp(a, b) {
 }
 function cardHTML(p) {
   const on = saved.has(p.id);
-  return `<article class="card${isGone(p) ? " gone" : ""}${p.id === selectedId ? " sel" : ""}" data-id="${p.id}" role="button" tabindex="0" aria-label="Passed in: ${esc(p.address)}, ${esc(p.suburb)}${STATUS_LABEL[p.status] ? ", " + STATUS_LABEL[p.status] : ""}">
+  const label = `Passed in: ${esc(p.address)}, ${esc(p.suburb)}${STATUS_LABEL[p.status] ? ", " + STATUS_LABEL[p.status] : ""}`;
+  // The card is NOT role="button" any more. It used to be, with a heart <button>
+  // and a listing <a> nested inside it - interactive controls inside an
+  // interactive control, which is invalid and leaves screen readers announcing a
+  // button whose children are unreachable or double-announced.
+  //
+  // Instead the <article> stays a plain container, and a visually-hidden button
+  // carries the "select this home" action for keyboard and screen-reader users.
+  // Pointer users still get the whole-card click via the existing delegated
+  // handler, which is a pointer affordance rather than an ARIA claim.
+  return `<article class="card${isGone(p) ? " gone" : ""}${p.id === selectedId ? " sel" : ""}" data-id="${p.id}" aria-label="${label}">
+    <button class="card-select" type="button" data-select="${p.id}" aria-label="Show ${esc(p.address)}, ${esc(p.suburb)} on the map"></button>
     <button class="heart${on ? " on" : ""}" type="button" data-save="${p.id}" aria-pressed="${on}" aria-label="${on ? "Remove from" : "Add to"} saved">${HEART(on)}</button>
     <div class="row1"><span class="badge">Passed in</span>${statusChip(p)}<span class="datechip">${esc(fmtDay(p.saleDate) || "")}</span>${seenIds.has(p.id) ? '<span class="seenchip">Viewed</span>' : ""}</div>
     <div class="price">${p.listLow != null ? `${fmtGuide(p)} <span class="est">price guide</span>` : p.bid != null ? `${fmtPrice(p.bid)} <span class="est">passed-in bid</span>` : `<span class="ca">Contact agent for price</span>`}</div>
@@ -299,7 +355,7 @@ function renderSavedPanel() {
 }
 // Routed through PassdGate so this panel gets the same focus trap, Escape key
 // and background inerting as the auth/subscribe modals. Falls back to the plain
-// show/hide in legacy mode, where PassdGate has no modal helpers.
+// show/hide directly when PassdGate has no modal helpers available.
 function openSavedPanel() {
   renderSavedPanel();
   if (window.PassdGate && window.PassdGate.openModal) return window.PassdGate.openModal("savedModal");
@@ -646,7 +702,13 @@ async function init() {
     ? L.markerClusterGroup({
         maxClusterRadius: 46, showCoverageOnHover: false, disableClusteringAtZoom: 15,
         spiderfyOnMaxZoom: false, zoomToBoundsOnClick: true,
-        iconCreateFunction: (c) => L.divIcon({ className: "pinwrap", html: `<div class="clus">${c.getChildCount()}</div>`, iconSize: [0, 0] }),
+        // Cluster size steps with count (<10 / 10-49 / 50+) so density reads at
+        // a glance rather than every cluster looking equally busy.
+        iconCreateFunction: (c) => {
+          const n = c.getChildCount();
+          const size = n < 10 ? " sm" : n < 50 ? "" : " lg";
+          return L.divIcon({ className: "pinwrap", html: `<div class="clus${size}">${n}</div>`, iconSize: [0, 0] });
+        },
       })
     : L.layerGroup()).addTo(map);
 
@@ -679,12 +741,9 @@ async function init() {
       if (window.matchMedia("(max-width: 900px)").matches) { showMap(); setTimeout(go, 140); } else go();
     }
   });
-  list.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      if (e.target.closest("[data-save]")) return;
-      const c = e.target.closest(".card"); if (c) { e.preventDefault(); select(c.dataset.id, "list"); }
-    }
-  });
+  // No keydown handler for cards: .card-select is a real <button>, so Enter and
+  // Space already produce a click that the delegated handler above picks up.
+  // Keeping a manual handler as well fired select() twice per keypress.
   list.addEventListener("mouseover", (e) => { const c = e.target.closest(".card"); if (c && byId[c.dataset.id]) { const g = byId[c.dataset.id].getElement(); if (g) { const pin = g.querySelector(".pin"); if (pin) pin.classList.add("hov"); } } });
   list.addEventListener("mouseout", (e) => { const c = e.target.closest(".card"); if (c && byId[c.dataset.id]) { const g = byId[c.dataset.id].getElement(); if (g) { const pin = g.querySelector(".pin"); if (pin) pin.classList.remove("hov"); } } });
 

@@ -18,6 +18,15 @@ realestate.com.au on a near-identical pin-and-house mark. See "Migration" at the
 >   `--surface-sunk`. Both fail AA for normal text, and it was assigned to agency
 >   names, timestamps and placeholders — information, not decoration. Darkened to
 >   `#5F6E6C` (5.34:1 / 4.72:1), the lightest value in that hue passing on both.
+>
+> **Third correction, made during implementation (12 Aug 2026).** `--map-ink` was
+> specified as `#6E8B84`, which measures **3.81:1** on `--map-bg` — below AA, on
+> the token this spec assigns to map labels and to the attribution it explicitly
+> asks to keep legible. Lightened to `#859E98` (**4.92:1**), the same hue stepped
+> up until it clears 4.5. Three map elements were also specified as translucent
+> (`seen`/`gone` pills at 86–92%, attribution at 90%); flattened over the dark
+> basemap their text landed at 3.82–4.27:1, so they ship opaque. All 26 pairs in
+> the implementation now pass; the audit script is reproducible.
 
 ---
 
@@ -45,7 +54,7 @@ realestate.com.au on a near-identical pin-and-house mark. See "Migration" at the
 
   /* Map */
   --map-bg:        #16302B;  /* dark tile base */
-  --map-ink:       #6E8B84;  /* tile labels/roads (from tile style) */
+  --map-ink:       #859E98;  /* tile labels/roads - corrected from #6E8B84, see note */
 
   /* Signals */
   --warn:          #C2410C;  /* "Contact agent for price", withdrawn */
