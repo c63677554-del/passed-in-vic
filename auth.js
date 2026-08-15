@@ -274,8 +274,8 @@ const PassdGate = (() => {
     const msg = $("lapsedMsg");
     if (msg) {
       msg.textContent = status === "past_due" || status === "unpaid"
-        ? "We couldn't take your last payment, so full results are locked. Update your card to restore access to every pass-in, price guides and direct listing links."
-        : "Your free trial has finished, so full results are locked. Subscribe to get every pass-in, price guides and direct listing links back.";
+        ? "We couldn't take your last payment, so full results are locked. Update your card to restore access to all reported pass-ins, price guides and direct listing links."
+        : "Your free trial has finished, so full results are locked. Subscribe to get all reported pass-ins, price guides and direct listing links back.";
     }
     show("lapsedGate", true);
     show("teaser", false); // the gate supersedes the upgrade banner; avoids a flash of both
