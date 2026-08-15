@@ -405,9 +405,10 @@ dialog#about .dlg-disc { color: var(--muted); font-size: 12px; border-top: 1px s
 .authtabs { display: flex; gap: 0; background: transparent; border: 1px solid var(--black); border-radius: 0; padding: 0; margin-bottom: 14px; }
 .authtab { flex: 1; font: inherit; font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--grey-mid); background: none; border: 0; border-radius: 0; min-height: 40px; cursor: pointer; transition-property: background-color, color; transition-duration: 120ms; }
 .authtab.on { background: var(--black); color: var(--white); box-shadow: none; }
-/* An auth error must NOT be teal - teal means "interactive" everywhere else in
-   this UI, so a failure rendered in it reads as a button. --warn is the signal
-   colour (5.18:1 on white, 5.02:1 on this tint); it is still not red. */
+/* An auth error is plain black on --bg with a heavy left rule - not --signal
+   (which marks data, and would make a failure read as a highlight) and not
+   --link (which means "press me"). Structure carries the emphasis, per the
+   system: no third hue exists to borrow. */
 .autherr { background: var(--bg); color: var(--black); border-left: 3px solid var(--black); font-size: 12.5px; font-weight: 400; border-radius: 0; padding: 10px 12px; margin-bottom: 10px; line-height: 1.45; text-wrap: pretty; }
 .autherr.ok { background: var(--signal); border-left-color: var(--black); color: var(--black); }
 .authaux { display: flex; justify-content: center; margin-top: 10px; }
